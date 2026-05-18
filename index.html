@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cylindrical Involute Gear Design</title>
+    <meta name="description" content="Calculate gear parameters and ratings.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        window.onerror = function (msg, url, line, col, error) {
+            console.error("Global Error: " + msg + " at " + url + ":" + line + ":" + col);
+            return false;
+        };
+    </script>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- New Top Controls Container -->
+        <section class="top-controls-card">
+            <div class="drop-zone" id="csv-drop-zone">
+                <span class="drop-zone-text">Drag & Drop CSV</span>
+                <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
+            </div>
+            <div class="controls-actions">
+                <button id="export-csv-btn" class="action-btn">Export</button>
+                <button id="calc-all-btn" class="action-btn primary-btn">Calculate All</button>
+                <button id="report-btn" class="action-btn">Report</button>
+            </div>
+        </section>
+
+        <!-- Main Workspace -->
+        <main class="calculator-card">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="basic-data">Basic Data</button>
+                <button class="tab-btn" data-tab="profile">Profile</button>
+                <button class="tab-btn" data-tab="tolerances">Tolerances</button>
+                <button class="tab-btn" data-tab="rating">Rating</button>
+                <button class="tab-btn" data-tab="graphics">Graphics</button>
+            </div>
+
+            <div class="tab-content active" id="basic-data">
+                <div class="two-column-grid">
+                    <div class="input-group">
+                        <label for="project-name">Project Name</label>
+                        <input type="text" id="project-name" placeholder="e.g., Main Gear Assembly">
+                    </div>
+                    <div class="input-group">
+                        <label for="gear-config">Gear Configuration</label>
+                        <select id="gear-config">
+                            <option value="pair">Gear Pair</option>
+                            <option value="3-train">3-Gear Train</option>
+                            <option value="4-train">4-Gear Train</option>
+                            <option value="planetary">Planetary Gear Train</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="module">Normal Module (m<sub>n</sub>, mm)</label>
+                        <input type="number" id="module" min="0.50" step="0.50" placeholder="e.g., 2.5">
+                    </div>
+                    <div class="input-group">
+                        <label for="pressure-angle">Normal Pressure Angle (α<sub>n</sub>, degrees)</label>
+                        <input type="number" id="pressure-angle" min="10" max="45" step="2.5" placeholder="e.g., 20">
+                    </div>
+                    <div class="input-group">
+                        <label for="helix-angle">Helix Angle (β, degrees)</label>
+                        <input type="number" id="helix-angle" min="-89" max="89" step="any"
+                            placeholder="e.g., 0 for Spur Gear">
+                    </div>
+                    <div class="input-group">
+                        <label>Gear 1 Hand of Helix</label>
+                        <div class="result-display" style="padding-top: 10px;">
+                            <span id="gear1-helix-hand-out"
+                                style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gear-properties-section" id="gear-properties-section">
+                    <h3 class="section-title">Gear Properties</h3>
+                    <div class="gear-grid-container">
+                        <div class="gear-column" id="gear-col-1">
+                            <h4 class="gear-title" id="gear-title-1">Gear 1</h4>
+                            <div class="input-group">
+                                <label for="z1">Number of Teeth (z<sub>1</sub>)</label>
+                                <input type="number" id="z1" min="1" step="1">
+                            </div>
+                            <div class="input-group">
+                                <label for="b1">Facewidth (b<sub>1</sub>, mm)</label>
+                                <input type="number" id="b1" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label for="x1">Profile Shift (x<sub>1</sub>)</label>
+                                <input type="number" id="x1" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="gear-column" id="gear-col-2">
+                            <h4 class="gear-title" id="gear-title-2">Gear 2</h4>
+                            <div class="input-group">
+                                <label for="z2">Number of Teeth (z<sub>2</sub>)</label>
+                                <input type="number" id="z2" min="1" step="1">
+                            </div>
+                            <div class="input-group">
+                                <label for="b2">Facewidth (b<sub>2</sub>, mm)</label>
+                                <input type="number" id="b2" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label>Profile Shift (x<sub>2</sub>)</label>
+                                <div class="result-display" style="padding-top: 10px;">
+                                    <span id="x2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="gear-column hidden" id="gear-col-3">
+                            <h4 class="gear-title" id="gear-title-3">Gear 3</h4>
+                            <div class="input-group">
+                                <label for="z3">Number of Teeth (z<sub>3</sub>)</label>
+                                <input type="number" id="z3" min="1" step="1">
+                            </div>
+                            <div class="input-group">
+                                <label for="b3">Facewidth (b<sub>3</sub>, mm)</label>
+                                <input type="number" id="b3" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label>Profile Shift (x<sub>3</sub>)</label>
+                                <div class="result-display" style="padding-top: 10px;">
+                                    <span id="x3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="gear-column hidden" id="gear-col-4">
+                            <h4 class="gear-title" id="gear-title-4">Gear 4</h4>
+                            <div class="input-group">
+                                <label for="z4">Number of Teeth (z<sub>4</sub>)</label>
+                                <input type="number" id="z4" min="1" step="1">
+                            </div>
+                            <div class="input-group">
+                                <label for="b4">Facewidth (b<sub>4</sub>, mm)</label>
+                                <input type="number" id="b4" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label>Profile Shift (x<sub>4</sub>)</label>
+                                <div class="result-display" style="padding-top: 10px;">
+                                    <span id="x4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gear-properties-section" id="mounting-geometry-section" style="margin-top: 20px;">
+                    <h3 class="section-title">Mounting Geometry</h3>
+                    <div class="gear-grid-container">
+                        <div class="gear-column" id="mounting-col-1">
+                            <h4 class="gear-title" id="mounting-title-1">Gear 1</h4>
+                            <div class="input-group">
+                                <label for="di1">Inside/Outside Diameter (d<sub>i1</sub>, mm)</label>
+                                <input type="number" id="di1" min="0" step="any">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Recommended diameter to avoid thin rim: <span id="di-rec-1"
+                                        style="font-weight: 500;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-circle-1">Hole Circle Diameter (mm)</label>
+                                <input type="number" id="hole-circle-1" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-diameter-1">Hole Diameter (mm)</label>
+                                <input type="number" id="hole-diameter-1" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label for="num-holes-1">Number of Holes</label>
+                                <input type="number" id="num-holes-1" min="0" step="1">
+                            </div>
+                        </div>
+                        <div class="gear-column" id="mounting-col-2">
+                            <h4 class="gear-title" id="mounting-title-2">Gear 2</h4>
+                            <div class="input-group">
+                                <label for="di2">Inside/Outside Diameter (d<sub>i2</sub>, mm)</label>
+                                <input type="number" id="di2" min="0" step="any">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Recommended diameter to avoid thin rim: <span id="di-rec-2"
+                                        style="font-weight: 500;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-circle-2">Hole Circle Diameter (mm)</label>
+                                <input type="number" id="hole-circle-2" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-diameter-2">Hole Diameter (mm)</label>
+                                <input type="number" id="hole-diameter-2" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label for="num-holes-2">Number of Holes</label>
+                                <input type="number" id="num-holes-2" min="0" step="1">
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="mounting-col-3">
+                            <h4 class="gear-title" id="mounting-title-3">Gear 3</h4>
+                            <div class="input-group">
+                                <label for="di3">Inside/Outside Diameter (d<sub>i3</sub>, mm)</label>
+                                <input type="number" id="di3" min="0" step="any">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Recommended diameter to avoid thin rim: <span id="di-rec-3"
+                                        style="font-weight: 500;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-circle-3">Hole Circle Diameter (mm)</label>
+                                <input type="number" id="hole-circle-3" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-diameter-3">Hole Diameter (mm)</label>
+                                <input type="number" id="hole-diameter-3" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label for="num-holes-3">Number of Holes</label>
+                                <input type="number" id="num-holes-3" min="0" step="1">
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="mounting-col-4">
+                            <h4 class="gear-title" id="mounting-title-4">Gear 4</h4>
+                            <div class="input-group">
+                                <label for="di4">Inside/Outside Diameter (d<sub>i4</sub>, mm)</label>
+                                <input type="number" id="di4" min="0" step="any">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Recommended diameter to avoid thin rim: <span id="di-rec-4"
+                                        style="font-weight: 500;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-circle-4">Hole Circle Diameter (mm)</label>
+                                <input type="number" id="hole-circle-4" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-diameter-4">Hole Diameter (mm)</label>
+                                <input type="number" id="hole-diameter-4" min="0" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label for="num-holes-4">Number of Holes</label>
+                                <input type="number" id="num-holes-4" min="0" step="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="center-distance-section" id="center-distance-section">
+                    <h3 class="section-title">Center Distance</h3>
+                    <div class="cd-groups-container">
+                        <div class="input-group" id="cd-group-1">
+                            <label for="aw1" id="cd-label-1">Working Center Distance (a<sub>w,12</sub>, mm)</label>
+                            <input type="number" id="aw1" min="0" step="any" placeholder="e.g., 100.0">
+                            <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                Standard: <span id="cd-std-1" style="font-weight: 500;">--</span><br>
+                                Working Transverse PA (&alpha;<sub>wt</sub>): <span id="aw-alpha-1"
+                                    style="font-weight: 500;">--</span>
+                                <span id="aw-alpha-23-container" class="hidden">| <span id="aw-alpha-23"
+                                        style="font-weight: 500;">--</span></span>
+                            </div>
+                        </div>
+                        <div class="input-group hidden" id="cd-group-2">
+                            <label for="aw2">Working Center Distance, Gear 2-3 (a<sub>w,23</sub>, mm)</label>
+                            <input type="number" id="aw2" min="0" step="any" placeholder="e.g., 100.0">
+                            <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                Standard: <span id="cd-std-2" style="font-weight: 500;">--</span><br>
+                                Working Transverse PA (&alpha;<sub>wt</sub>): <span id="aw-alpha-2"
+                                    style="font-weight: 500;">--</span>
+                            </div>
+                        </div>
+                        <div class="input-group hidden" id="cd-group-3">
+                            <label for="aw3">Working Center Distance, Gear 3-4 (a<sub>w,34</sub>, mm)</label>
+                            <input type="number" id="aw3" min="0" step="any" placeholder="e.g., 100.0">
+                            <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                Standard: <span id="cd-std-3" style="font-weight: 500;">--</span><br>
+                                Working Transverse PA (&alpha;<sub>wt</sub>): <span id="aw-alpha-3"
+                                    style="font-weight: 500;">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculated-geometry-section" id="calculated-geometry-section">
+                    <h3 class="section-title">Calculated Geometry</h3>
+                    <div class="gear-grid-container">
+                        <div class="gear-column" id="calc-col-1">
+                            <h4 class="gear-title" id="calc-title-1">Gear 1</h4>
+                            <div class="input-group">
+                                <label>Reference Diameter (d<sub>1</sub>)</label>
+                                <div class="result-display">
+                                    <span id="d1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Base Diameter (d<sub>b1</sub>)</label>
+                                <div class="result-display">
+                                    <span id="db1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column" id="calc-col-2">
+                            <h4 class="gear-title" id="calc-title-2">Gear 2</h4>
+                            <div class="input-group">
+                                <label>Reference Diameter (d<sub>2</sub>)</label>
+                                <div class="result-display">
+                                    <span id="d2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Base Diameter (d<sub>b2</sub>)</label>
+                                <div class="result-display">
+                                    <span id="db2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="calc-col-3">
+                            <h4 class="gear-title" id="calc-title-3">Gear 3</h4>
+                            <div class="input-group">
+                                <label>Reference Diameter (d<sub>3</sub>)</label>
+                                <div class="result-display">
+                                    <span id="d3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Base Diameter (d<sub>b3</sub>)</label>
+                                <div class="result-display">
+                                    <span id="db3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="calc-col-4">
+                            <h4 class="gear-title" id="calc-title-4">Gear 4</h4>
+                            <div class="input-group">
+                                <label>Reference Diameter (d<sub>4</sub>)</label>
+                                <div class="result-display">
+                                    <span id="d4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Base Diameter (d<sub>b4</sub>)</label>
+                                <div class="result-display">
+                                    <span id="db4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-container" id="result-container">
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <span class="result-label">Transverse PA (&alpha;<sub>t</sub>)</span>
+                            <span class="result-value-small" id="alpha-t-out">--</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Working Transverse PA</span>
+                            <span class="result-value-small" id="alpha-wt-out">--</span>
+                        </div>
+                        <div class="result-item hidden" id="alpha-wt-23-container">
+                            <span class="result-label">Working Transverse PA</span>
+                            <span class="result-value-small" id="alpha-wt-23-out">--</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Involute (&alpha;<sub>t</sub>)</span>
+                            <span class="result-value-small" id="inv-alpha-t-out">--</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Involute (&alpha;<sub>wt</sub>)</span>
+                            <span class="result-value-small" id="inv-alpha-wt-out">--</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Sum of Profile Shift (&sum;x)</span>
+                            <span class="result-value-small" id="sum-x-out">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="profile">
+                <div class="gear-grid-container">
+                    <div class="gear-column" id="profile-col-1">
+                        <h4 class="gear-title" id="profile-title-1">Gear 1</h4>
+                        <div class="input-group">
+                            <label for="tool-type-1">Manufacturing Process</label>
+                            <select id="tool-type-1">
+                                <option value="hob">Hobbing</option>
+                                <option value="shaper">Shaping</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="alpha-p0-1">Gen. Pressure Angle, &alpha;<sub>P0</sub> (&deg;)</label>
+                            <input type="number" id="alpha-p0-1" min="10" step="2.5" placeholder="e.g., 20">
+                        </div>
+                        <div class="input-group">
+                            <label for="cutter-teeth-1">Number of Cutter Teeth</label>
+                            <input type="number" id="cutter-teeth-1" min="4" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="reference-profile-1">Reference Profile</label>
+                            <select id="reference-profile-1">
+                                <option value="iso-a">ISO 53 Profile A</option>
+                                <option value="iso-b">ISO 53 Profile B</option>
+                                <option value="iso-c">ISO 53 Profile C</option>
+                                <option value="iso-d">ISO 53 Profile D</option>
+                                <option value="manual">Manual Input</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="dedendum-coeff-1">Dedendum Coefficient</label>
+                            <input type="number" id="dedendum-coeff-1" min="0" step="0.05">
+                        </div>
+                        <div class="input-group">
+                            <label for="root-radius-coeff-1">Root Radius Coefficient</label>
+                            <input type="number" id="root-radius-coeff-1" min="0" step="0.05">
+                            <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                Max: <span id="max-root-radius-coeff-1" style="font-weight: 500;">--</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="addendum-coeff-1">Addendum Coefficient</label>
+                            <input type="number" id="addendum-coeff-1" min="0" step="0.05">
+                        </div>
+                    </div>
+
+                    <div class="gear-column" id="profile-col-2">
+                        <h4 class="gear-title" id="profile-title-2">Gear 2</h4>
+                        <div class="input-group">
+                            <label for="tool-type-2">Manufacturing Process</label>
+                            <select id="tool-type-2">
+                                <option value="hob">Hobbing</option>
+                                <option value="shaper">Shaping</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="alpha-p0-2">Gen. Pressure Angle, &alpha;<sub>P0</sub> (&deg;)</label>
+                            <input type="number" id="alpha-p0-2" min="10" step="2.5" placeholder="e.g., 20">
+                        </div>
+                        <div class="input-group">
+                            <label for="cutter-teeth-2">Number of Cutter Teeth</label>
+                            <input type="number" id="cutter-teeth-2" min="4" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="reference-profile-2">Reference Profile</label>
+                            <select id="reference-profile-2">
+                                <option value="iso-a">ISO 53 Profile A</option>
+                                <option value="iso-b">ISO 53 Profile B</option>
+                                <option value="iso-c">ISO 53 Profile C</option>
+                                <option value="iso-d">ISO 53 Profile D</option>
+                                <option value="manual">Manual Input</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="dedendum-coeff-2">Dedendum Coefficient</label>
+                            <input type="number" id="dedendum-coeff-2" min="0" step="0.05">
+                        </div>
+                        <div class="input-group">
+                            <label for="root-radius-coeff-2">Root Radius Coefficient</label>
+                            <input type="number" id="root-radius-coeff-2" min="0" step="0.05">
+                            <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                Max: <span id="max-root-radius-coeff-2" style="font-weight: 500;">--</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="addendum-coeff-2">Addendum Coefficient</label>
+                            <input type="number" id="addendum-coeff-2" min="0" step="0.05">
+                        </div>
+                    </div>
+
+                    <div class="gear-column hidden" id="profile-col-3">
+                        <h4 class="gear-title" id="profile-title-3">Gear 3</h4>
+                        <div class="input-group">
+                            <label for="tool-type-3">Manufacturing Process</label>
+                            <select id="tool-type-3">
+                                <option value="hob">Hobbing</option>
+                                <option value="shaper">Shaping</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="alpha-p0-3">Gen. Pressure Angle, &alpha;<sub>P0</sub> (&deg;)</label>
+                            <input type="number" id="alpha-p0-3" min="10" step="2.5" placeholder="e.g., 20">
+                        </div>
+                        <div class="input-group">
+                            <label for="cutter-teeth-3">Number of Cutter Teeth</label>
+                            <input type="number" id="cutter-teeth-3" min="4" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="reference-profile-3">Reference Profile</label>
+                            <select id="reference-profile-3">
+                                <option value="iso-a">ISO 53 Profile A</option>
+                                <option value="iso-b">ISO 53 Profile B</option>
+                                <option value="iso-c">ISO 53 Profile C</option>
+                                <option value="iso-d">ISO 53 Profile D</option>
+                                <option value="manual">Manual Input</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="dedendum-coeff-3">Dedendum Coefficient</label>
+                            <input type="number" id="dedendum-coeff-3" min="0" step="0.05">
+                        </div>
+                        <div class="input-group">
+                            <label for="root-radius-coeff-3">Root Radius Coefficient</label>
+                            <input type="number" id="root-radius-coeff-3" min="0" step="0.05">
+                            <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                Max: <span id="max-root-radius-coeff-3" style="font-weight: 500;">--</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="addendum-coeff-3">Addendum Coefficient</label>
+                            <input type="number" id="addendum-coeff-3" min="0" step="0.05">
+                        </div>
+                    </div>
+
+                    <div class="gear-column hidden" id="profile-col-4">
+                        <h4 class="gear-title" id="profile-title-4">Gear 4</h4>
+                        <div class="input-group">
+                            <label for="tool-type-4">Manufacturing Process</label>
+                            <select id="tool-type-4">
+                                <option value="hob">Hobbing</option>
+                                <option value="shaper">Shaping</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="alpha-p0-4">Gen. Pressure Angle, &alpha;<sub>P0</sub> (&deg;)</label>
+                            <input type="number" id="alpha-p0-4" min="10" step="2.5" placeholder="e.g., 20">
+                        </div>
+                        <div class="input-group">
+                            <label for="cutter-teeth-4">Number of Cutter Teeth</label>
+                            <input type="number" id="cutter-teeth-4" min="4" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="reference-profile-4">Reference Profile</label>
+                            <select id="reference-profile-4">
+                                <option value="iso-a">ISO 53 Profile A</option>
+                                <option value="iso-b">ISO 53 Profile B</option>
+                                <option value="iso-c">ISO 53 Profile C</option>
+                                <option value="iso-d">ISO 53 Profile D</option>
+                                <option value="manual">Manual Input</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="dedendum-coeff-4">Dedendum Coefficient</label>
+                            <input type="number" id="dedendum-coeff-4" min="0" step="0.05">
+                        </div>
+                        <div class="input-group">
+                            <label for="root-radius-coeff-4">Root Radius Coefficient</label>
+                            <input type="number" id="root-radius-coeff-4" min="0" step="0.05">
+                            <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                Max: <span id="max-root-radius-coeff-4" style="font-weight: 500;">--</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="addendum-coeff-4">Addendum Coefficient</label>
+                            <input type="number" id="addendum-coeff-4" min="0" step="0.05">
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="tab-content" id="tolerances">
+                <div class="gear-properties-section" id="cd-tol-section" style="margin-bottom: 20px;">
+                    <h3 class="section-title">Center Distance Tolerances</h3>
+                    <div class="gear-grid-container">
+                        <div class="gear-column" id="aw-tol-group-1">
+                            <h4 class="gear-title" id="aw-tol-title-1">Mesh 1-2</h4>
+                            <div class="input-group">
+                                <label for="aw-tol-1">Tol. (&plusmn;) (mm)</label>
+                                <input type="number" id="aw-tol-1" min="0" step="0.01" placeholder="0.000">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Max CD: <span id="aw-max-1" style="font-weight: 500;">--</span><br>
+                                    Min CD: <span id="aw-min-1" style="font-weight: 500;">--</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="aw-tol-group-2">
+                            <h4 class="gear-title" id="aw-tol-title-2">Mesh 2-3</h4>
+                            <div class="input-group">
+                                <label for="aw-tol-2">Tol. (&plusmn;) (mm)</label>
+                                <input type="number" id="aw-tol-2" min="0" step="0.01" placeholder="0.000">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Max CD: <span id="aw-max-2" style="font-weight: 500;">--</span><br>
+                                    Min CD: <span id="aw-min-2" style="font-weight: 500;">--</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="aw-tol-group-3">
+                            <h4 class="gear-title" id="aw-tol-title-3">Mesh 3-4</h4>
+                            <div class="input-group">
+                                <label for="aw-tol-3">Tol. (&plusmn;) (mm)</label>
+                                <input type="number" id="aw-tol-3" min="0" step="0.01" placeholder="0.000">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Max CD: <span id="aw-max-3" style="font-weight: 500;">--</span><br>
+                                    Min CD: <span id="aw-min-3" style="font-weight: 500;">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gear-properties-section" style="margin-bottom: 20px;">
+                    <h3 class="section-title">Gear Tolerances</h3>
+                    <div class="gear-grid-container">
+                        <div class="gear-column" id="tolerance-col-1">
+                            <h4 class="gear-title" id="tolerance-title-1">Gear 1</h4>
+                            <div class="input-group">
+                                <label for="quality-grade-1">Gear Tolerance Class (ISO 1328-1:2013)</label>
+                                <input type="number" id="quality-grade-1" min="1" max="11" step="1"
+                                    placeholder="e.g., 6">
+                            </div>
+                            <div class="input-group">
+                                <label for="tip-alteration-1">Tip Alteration Coefficient (k)</label>
+                                <input type="number" id="tip-alteration-1" step="any">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 1.5rem;">
+                                <label for="da-tol-1">Tip Diameter Tolerance (mm)</label>
+                                <input type="number" id="da-tol-1" min="0" step="0.05" placeholder="0.000">
+                            </div>
+                            <div class="side-by-side-group">
+                                <div class="input-group">
+                                    <label for="sn-tol-upper-1">Circ. Tooth Thickness reduction, min (mm)</label>
+                                    <input type="number" id="sn-tol-upper-1" min="0" step="0.01" placeholder="0.000">
+                                </div>
+                                <div class="input-group">
+                                    <label for="sn-tol-lower-1">Circ. Tooth Thickness reduction, max (mm)</label>
+                                    <input type="number" id="sn-tol-lower-1" min="0" step="0.01" placeholder="0.000">
+                                </div>
+                            </div>
+                            <div class="result-display"
+                                style="font-size: 0.85em; margin-top: -5px; margin-bottom: 2px; color: #6c757d;">
+                                Min. reduction to avoid negative backlash: <span id="sn-min-backlash-1"
+                                    style="font-weight: 500;">--</span>
+                            </div>
+                            <div style="font-size: 0.75em; color: #6c757d; margin-bottom: 10px; line-height: 1.4;">
+                                (1) &alpha;<sub>wt</sub>: <span id="backlash-alpha-1">--</span> |
+                                (2) &sum;F<sub>rT</sub>: <span id="backlash-sumfrt-1">--</span><br>
+                                (3) &Delta;s<sub>t</sub>: <span id="backlash-dst-1">--</span> |
+                                (4) &Delta;s<sub>n</sub>: <span id="backlash-dsn-1">--</span>
+                            </div>
+                            <div class="input-group"
+                                title="The root diameter varies due to the difference in cutting tool infeed when producing the maximum and minimum tooth thickness. Additional root diameter allowance should be given to account for cutting tool tolerances and other factors such as heat treatment distortion. The additional root diameter allowance will be used to calculate the minimum and maximum tip-to-root clearance for each gear in each mesh.">
+                                <label for="df-allowance-1">Additional Root Diameter Allowance (mm)</label>
+                                <input type="number" id="df-allowance-1" min="0" step="0.05" placeholder="0.000">
+                            </div>
+                            <div class="side-by-side-group">
+                                <div class="input-group">
+                                    <label for="dm-1">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
+                                    <input type="number" id="dm-1" min="0" step="0.001" placeholder="0.000">
+                                </div>
+                                <div class="input-group">
+                                    <label for="k-spanned-1">Number of Teeth Spanned (k)</label>
+                                    <input type="number" id="k-spanned-1" min="1" step="1" placeholder="e.g., 3">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column" id="tolerance-col-2">
+                            <h4 class="gear-title" id="tolerance-title-2">Gear 2</h4>
+                            <div class="input-group">
+                                <label for="quality-grade-2">Gear Tolerance Class (ISO 1328-1:2013)</label>
+                                <input type="number" id="quality-grade-2" min="1" max="11" step="1"
+                                    placeholder="e.g., 6">
+                            </div>
+                            <div class="input-group">
+                                <label for="tip-alteration-2">Tip Alteration Coefficient (k)</label>
+                                <input type="number" id="tip-alteration-2" step="any">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 1.5rem;">
+                                <label for="da-tol-2">Tip Diameter Tolerance (mm)</label>
+                                <input type="number" id="da-tol-2" min="0" step="0.05" placeholder="0.000">
+                            </div>
+                            <div class="side-by-side-group">
+                                <div class="input-group">
+                                    <label for="sn-tol-upper-2">Circ. Tooth Thickness reduction, min (mm)</label>
+                                    <input type="number" id="sn-tol-upper-2" min="0" step="0.01" placeholder="0.000">
+                                </div>
+                                <div class="input-group">
+                                    <label for="sn-tol-lower-2">Circ. Tooth Thickness reduction, max (mm)</label>
+                                    <input type="number" id="sn-tol-lower-2" min="0" step="0.01" placeholder="0.000">
+                                </div>
+                            </div>
+                            <div class="result-display"
+                                style="font-size: 0.85em; margin-top: -5px; margin-bottom: 2px; color: #6c757d;">
+                                Min. reduction to avoid negative backlash: <span id="sn-min-backlash-2"
+                                    style="font-weight: 500;">--</span>
+                            </div>
+                            <div style="font-size: 0.75em; color: #6c757d; margin-bottom: 10px; line-height: 1.4;">
+                                (1) &alpha;<sub>wt</sub>: <span id="backlash-alpha-2">--</span> |
+                                (2) &sum;F<sub>rT</sub>: <span id="backlash-sumfrt-2">--</span><br>
+                                (3) &Delta;s<sub>t</sub>: <span id="backlash-dst-2">--</span> |
+                                (4) &Delta;s<sub>n</sub>: <span id="backlash-dsn-2">--</span>
+                            </div>
+                            <div class="input-group"
+                                title="The root diameter varies due to the difference in cutting tool infeed when producing the maximum and minimum tooth thickness. Additional root diameter allowance should be given to account for cutting tool tolerances and other factors such as heat treatment distortion.">
+                                <label for="df-allowance-2">Additional Root Diameter Allowance (mm)</label>
+                                <input type="number" id="df-allowance-2" min="0" step="0.05" placeholder="0.000">
+                            </div>
+                            <div class="side-by-side-group">
+                                <div class="input-group">
+                                    <label for="dm-2">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
+                                    <input type="number" id="dm-2" min="0" step="0.001" placeholder="0.000">
+                                </div>
+                                <div class="input-group">
+                                    <label for="k-spanned-2">Number of Teeth Spanned (k)</label>
+                                    <input type="number" id="k-spanned-2" min="1" step="1" placeholder="e.g., 3">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="tolerance-col-3">
+                            <h4 class="gear-title" id="tolerance-title-3">Gear 3</h4>
+                            <div class="input-group">
+                                <label for="quality-grade-3">Gear Tolerance Class (ISO 1328-1:2013)</label>
+                                <input type="number" id="quality-grade-3" min="1" max="11" step="1"
+                                    placeholder="e.g., 6">
+                            </div>
+                            <div class="input-group">
+                                <label for="tip-alteration-3">Tip Alteration Coefficient (k)</label>
+                                <input type="number" id="tip-alteration-3" step="any">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 1.5rem;">
+                                <label for="da-tol-3">Tip Diameter Tolerance (mm)</label>
+                                <input type="number" id="da-tol-3" min="0" step="0.05" placeholder="0.000">
+                            </div>
+                            <div class="side-by-side-group">
+                                <div class="input-group">
+                                    <label for="sn-tol-upper-3">Circ. Tooth Thickness reduction, min (mm)</label>
+                                    <input type="number" id="sn-tol-upper-3" min="0" step="0.01" placeholder="0.000">
+                                </div>
+                                <div class="input-group">
+                                    <label for="sn-tol-lower-3">Circ. Tooth Thickness reduction, max (mm)</label>
+                                    <input type="number" id="sn-tol-lower-3" min="0" step="0.01" placeholder="0.000">
+                                </div>
+                            </div>
+                            <div class="result-display"
+                                style="font-size: 0.85em; margin-top: -5px; margin-bottom: 2px; color: #6c757d;">
+                                Min. reduction to avoid negative backlash: <span id="sn-min-backlash-3"
+                                    style="font-weight: 500;">--</span>
+                            </div>
+                            <div style="font-size: 0.75em; color: #6c757d; margin-bottom: 10px; line-height: 1.4;">
+                                (1) &alpha;<sub>wt</sub>: <span id="backlash-alpha-3">--</span> |
+                                (2) &sum;F<sub>rT</sub>: <span id="backlash-sumfrt-3">--</span><br>
+                                (3) &Delta;s<sub>t</sub>: <span id="backlash-dst-3">--</span> |
+                                (4) &Delta;s<sub>n</sub>: <span id="backlash-dsn-3">--</span>
+                            </div>
+                            <div class="input-group"
+                                title="The root diameter varies due to the difference in cutting tool infeed when producing the maximum and minimum tooth thickness. Additional root diameter allowance should be given to account for cutting tool tolerances and other factors such as heat treatment distortion.">
+                                <label for="df-allowance-3">Additional Root Diameter Allowance (mm)</label>
+                                <input type="number" id="df-allowance-3" min="0" step="0.05" placeholder="0.000">
+                            </div>
+                            <div class="side-by-side-group">
+                                <div class="input-group">
+                                    <label for="dm-3">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
+                                    <input type="number" id="dm-3" min="0" step="0.001" placeholder="0.000">
+                                </div>
+                                <div class="input-group">
+                                    <label for="k-spanned-3">Number of Teeth Spanned (k)</label>
+                                    <input type="number" id="k-spanned-3" min="1" step="1" placeholder="e.g., 3">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="tolerance-col-4">
+                            <h4 class="gear-title" id="tolerance-title-4">Gear 4</h4>
+                            <div class="input-group">
+                                <label for="quality-grade-4">Gear Tolerance Class (ISO 1328-1:2013)</label>
+                                <input type="number" id="quality-grade-4" min="1" max="11" step="1"
+                                    placeholder="e.g., 6">
+                            </div>
+                            <div class="input-group">
+                                <label for="tip-alteration-4">Tip Alteration Coefficient (k)</label>
+                                <input type="number" id="tip-alteration-4" step="any">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 1.5rem;">
+                                <label for="da-tol-4">Tip Diameter Tolerance (mm)</label>
+                                <input type="number" id="da-tol-4" min="0" step="0.05" placeholder="0.000">
+                            </div>
+                            <div class="side-by-side-group">
+                                <div class="input-group">
+                                    <label for="sn-tol-upper-4">Circ. Tooth Thickness reduction, min (mm)</label>
+                                    <input type="number" id="sn-tol-upper-4" min="0" step="0.01" placeholder="0.000">
+                                </div>
+                                <div class="input-group">
+                                    <label for="sn-tol-lower-4">Circ. Tooth Thickness reduction, max (mm)</label>
+                                    <input type="number" id="sn-tol-lower-4" min="0" step="0.01" placeholder="0.000">
+                                </div>
+                            </div>
+                            <div class="result-display"
+                                style="font-size: 0.85em; margin-top: -5px; margin-bottom: 2px; color: #6c757d;">
+                                Min. reduction to avoid negative backlash: <span id="sn-min-backlash-4"
+                                    style="font-weight: 500;">--</span>
+                            </div>
+                            <div style="font-size: 0.75em; color: #6c757d; margin-bottom: 10px; line-height: 1.4;">
+                                (1) &alpha;<sub>wt</sub>: <span id="backlash-alpha-4">--</span> |
+                                (2) &sum;F<sub>rT</sub>: <span id="backlash-sumfrt-4">--</span><br>
+                                (3) &Delta;s<sub>t</sub>: <span id="backlash-dst-4">--</span> |
+                                (4) &Delta;s<sub>n</sub>: <span id="backlash-dsn-4">--</span>
+                            </div>
+                            <div class="input-group"
+                                title="The root diameter varies due to the difference in cutting tool infeed when producing the maximum and minimum tooth thickness. Additional root diameter allowance should be given to account for cutting tool tolerances and other factors such as heat treatment distortion.">
+                                <label for="df-allowance-4">Additional Root Diameter Allowance (mm)</label>
+                                <input type="number" id="df-allowance-4" min="0" step="0.05" placeholder="0.000">
+                            </div>
+                            <div class="side-by-side-group">
+                                <div class="input-group">
+                                    <label for="dm-4">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
+                                    <input type="number" id="dm-4" min="0" step="0.001" placeholder="0.000">
+                                </div>
+                                <div class="input-group">
+                                    <label for="k-spanned-4">Number of Teeth Spanned (k)</label>
+                                    <input type="number" id="k-spanned-4" min="1" step="1" placeholder="e.g., 3">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculated-geometry-section" id="calculated-tolerances-section" style="margin-top: 20px;">
+                    <h3 class="section-title">Calculated Manufacturing Tolerances</h3>
+                    <div class="gear-grid-container">
+                        <!-- Gear 1 Tolerances -->
+                        <div class="gear-column" id="tol-calc-col-1">
+                            <h4 class="gear-title" id="tol-calc-title-1">Gear 1</h4>
+                            <div class="input-group">
+                                <label>Runout Tolerance (F<sub>rT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Frt-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Single Pitch Tolerance (f<sub>pT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="fpt-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Cum. Pitch Tolerance (F<sub>pT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Fpt-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Profile Slope Tol. (f<sub>H&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">&plusmn;</span><span
+                                        id="fHalpha-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Profile Form Tol. (f<sub>f&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="ffalpha-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Total Profile Tol. (F<sub>&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Falpha-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Helix Slope Tol. (f<sub>H&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">&plusmn;</span><span
+                                        id="fHbeta-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Helix Form Tol. (f<sub>f&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="ffbeta-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Total Helix Tol. (F<sub>&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Fbeta-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gear 2 Tolerances -->
+                        <div class="gear-column" id="tol-calc-col-2">
+                            <h4 class="gear-title" id="tol-calc-title-2">Gear 2</h4>
+                            <div class="input-group">
+                                <label>Runout Tolerance (F<sub>rT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Frt-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Single Pitch Tolerance (f<sub>pT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="fpt-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Cum. Pitch Tolerance (F<sub>pT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Fpt-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Profile Slope Tol. (f<sub>H&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">&plusmn;</span><span
+                                        id="fHalpha-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Profile Form Tol. (f<sub>f&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="ffalpha-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Total Profile Tol. (F<sub>&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Falpha-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Helix Slope Tol. (f<sub>H&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">&plusmn;</span><span
+                                        id="fHalpha-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Helix Form Tol. (f<sub>f&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="ffbeta-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Total Helix Tol. (F<sub>&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Fbeta-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gear 3 Tolerances -->
+                        <div class="gear-column hidden" id="tol-calc-col-3">
+                            <h4 class="gear-title" id="tol-calc-title-3">Gear 3</h4>
+                            <div class="input-group">
+                                <label>Runout Tolerance (F<sub>rT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Frt-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Single Pitch Tolerance (f<sub>pT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="fpt-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Cum. Pitch Tolerance (F<sub>pT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Fpt-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Profile Slope Tol. (f<sub>H&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">&plusmn;</span><span
+                                        id="fHalpha-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Profile Form Tol. (f<sub>f&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="ffalpha-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Total Profile Tol. (F<sub>&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Falpha-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Helix Slope Tol. (f<sub>H&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">&plusmn;</span><span
+                                        id="fHbeta-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Helix Form Tol. (f<sub>f&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="ffbeta-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Total Helix Tol. (F<sub>&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Fbeta-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gear 4 Tolerances -->
+                        <div class="gear-column hidden" id="tol-calc-col-4">
+                            <h4 class="gear-title" id="tol-calc-title-4">Gear 4</h4>
+                            <div class="input-group">
+                                <label>Runout Tolerance (F<sub>rT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Frt-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Single Pitch Tolerance (f<sub>pT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="fpt-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Cum. Pitch Tolerance (F<sub>pT</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Fpt-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Profile Slope Tol. (f<sub>H&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">&plusmn;</span><span
+                                        id="fHalpha-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Profile Form Tol. (f<sub>f&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="ffalpha-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Total Profile Tol. (F<sub>&alpha;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Falpha-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Helix Slope Tol. (f<sub>H&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">&plusmn;</span><span
+                                        id="fHbeta-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Helix Form Tol. (f<sub>f&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="ffbeta-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Total Helix Tol. (F<sub>&beta;T</sub>)</label>
+                                <div class="result-display">
+                                    <span id="Fbeta-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">&mu;m</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculated-geometry-section" id="manufacturing-results-section" style="margin-top: 20px;">
+                    <h3 class="section-title">Calculated Manufacturing Results</h3>
+                    <div class="gear-grid-container">
+                        <!-- Gear 1 Manufacturing Results -->
+                        <div class="gear-column" id="mfg-res-col-1">
+                            <h4 class="gear-title" id="mfg-res-title-1">Gear 1</h4>
+                            <div class="input-group">
+                                <label>Gen. Profile Shift (x<sub>E</sub>)</label>
+                                <div class="result-display">
+                                    <span id="xe-min-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="xe-max-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Root Diameter (d<sub>f</sub>)</label>
+                                <div class="result-display">
+                                    <span id="df-min-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="df-max-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Active Root Dia. (d<sub>Nf</sub>)</label>
+                                <div class="result-display">
+                                    <span id="dnf-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Root Form Dia. (d<sub>Ff</sub>)</label>
+                                <div class="result-display">
+                                    <span id="dff-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Tip Diameter (d<sub>a</sub>)</label>
+                                <div class="result-display">
+                                    <span id="da-min-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="da-max-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Trans. Tooth Thickness (s<sub>t</sub>)</label>
+                                <div class="result-display">
+                                    <span id="st-min-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="st-max-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Normal Tooth Thickness (s<sub>n</sub>)</label>
+                                <div class="result-display">
+                                    <span id="sn-min-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="sn-max-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label id="md-1-label">Dimension Over Balls (M<sub>dK</sub>)</label>
+                                <div class="result-display">
+                                    <span id="md-min-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="md-max-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>V-Circle at Maximum Tooth Thickness</label>
+                                <div class="result-display">
+                                    <span id="dv-max-1-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gear 2 Manufacturing Results -->
+                        <div class="gear-column" id="mfg-res-col-2">
+                            <h4 class="gear-title" id="mfg-res-title-2">Gear 2</h4>
+                            <div class="input-group">
+                                <label>Gen. Profile Shift (x<sub>E</sub>)</label>
+                                <div class="result-display">
+                                    <span id="xe-min-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="xe-max-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Root Diameter (d<sub>f</sub>)</label>
+                                <div class="result-display">
+                                    <span id="df-min-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="df-max-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Active Root Dia. (d<sub>Nf</sub>)</label>
+                                <div class="result-display">
+                                    <span id="dnf-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Root Form Dia. (d<sub>Ff</sub>)</label>
+                                <div class="result-display">
+                                    <span id="dff-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Tip Diameter (d<sub>a</sub>)</label>
+                                <div class="result-display">
+                                    <span id="da-min-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="da-max-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Trans. Tooth Thickness (s<sub>t</sub>)</label>
+                                <div class="result-display">
+                                    <span id="st-min-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="st-max-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Normal Tooth Thickness (s<sub>n</sub>)</label>
+                                <div class="result-display">
+                                    <span id="sn-min-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="sn-max-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label id="md-2-label">Dimension Over Balls (M<sub>dK</sub>)</label>
+                                <div class="result-display">
+                                    <span id="md-min-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="md-max-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>V-Circle at Maximum Tooth Thickness</label>
+                                <div class="result-display">
+                                    <span id="dv-max-2-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gear 3 Manufacturing Results -->
+                        <div class="gear-column hidden" id="mfg-res-col-3">
+                            <h4 class="gear-title" id="mfg-res-title-3">Gear 3</h4>
+                            <div class="input-group">
+                                <label>Gen. Profile Shift (x<sub>E</sub>)</label>
+                                <div class="result-display">
+                                    <span id="xe-min-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="xe-max-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Root Diameter (d<sub>f</sub>)</label>
+                                <div class="result-display">
+                                    <span id="df-min-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="df-max-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Active Root Dia. (d<sub>Nf</sub>)</label>
+                                <div class="result-display">
+                                    <span id="dnf-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Root Form Dia. (d<sub>Ff</sub>)</label>
+                                <div class="result-display">
+                                    <span id="dff-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Tip Diameter (d<sub>a</sub>)</label>
+                                <div class="result-display">
+                                    <span id="da-min-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="da-max-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Trans. Tooth Thickness (s<sub>t</sub>)</label>
+                                <div class="result-display">
+                                    <span id="st-min-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="st-max-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Normal Tooth Thickness (s<sub>n</sub>)</label>
+                                <div class="result-display">
+                                    <span id="sn-min-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="sn-max-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label id="md-3-label">Dimension Over Balls (M<sub>dK</sub>)</label>
+                                <div class="result-display">
+                                    <span id="md-min-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="md-max-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>V-Circle at Maximum Tooth Thickness</label>
+                                <div class="result-display">
+                                    <span id="dv-max-3-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gear 4 Manufacturing Results -->
+                        <div class="gear-column hidden" id="mfg-res-col-4">
+                            <h4 class="gear-title" id="mfg-res-title-4">Gear 4</h4>
+                            <div class="input-group">
+                                <label>Gen. Profile Shift (x<sub>E</sub>)</label>
+                                <div class="result-display">
+                                    <span id="xe-min-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="xe-max-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Root Diameter (d<sub>f</sub>)</label>
+                                <div class="result-display">
+                                    <span id="df-min-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="df-max-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Active Root Dia. (d<sub>Nf</sub>)</label>
+                                <div class="result-display">
+                                    <span id="dnf-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Root Form Dia. (d<sub>Ff</sub>)</label>
+                                <div class="result-display">
+                                    <span id="dff-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Tip Diameter (d<sub>a</sub>)</label>
+                                <div class="result-display">
+                                    <span id="da-min-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="da-max-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Trans. Tooth Thickness (s<sub>t</sub>)</label>
+                                <div class="result-display">
+                                    <span id="st-min-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="st-max-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Normal Tooth Thickness (s<sub>n</sub>)</label>
+                                <div class="result-display">
+                                    <span id="sn-min-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="sn-max-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label id="md-4-label">Dimension Over Balls (M<sub>dK</sub>)</label>
+                                <div class="result-display">
+                                    <span id="md-min-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span
+                                        style="font-size: 1.1rem; font-weight: 600; color: #6c757d; margin: 0 8px;">/</span>
+                                    <span id="md-max-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                                    <span style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>V-Circle at Maximum Tooth Thickness</label>
+                                <div class="result-display">
+                                    <span id="dv-max-4-out"
+                                        style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span><span
+                                        style="font-size: 0.9rem; color: #6c757d; margin-left: 5px;">mm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculated-geometry-section" id="dff-debug-section" style="margin-top: 20px;">
+                    <h3 class="section-title">Root Form Diameter (d<sub>Ff</sub>) Calculation Steps</h3>
+                    <div class="gear-grid-container" id="dff-debug-grid">
+                        <div class="gear-column" id="dff-debug-col-1">
+                            <h4 class="gear-title" id="dff-debug-title-1">Gear 1</h4>
+                            <div id="dff-steps-1" class="debug-steps-container"></div>
+                        </div>
+                        <div class="gear-column" id="dff-debug-col-2">
+                            <h4 class="gear-title" id="dff-debug-title-2">Gear 2</h4>
+                            <div id="dff-steps-2" class="debug-steps-container"></div>
+                        </div>
+                        <div class="gear-column hidden" id="dff-debug-col-3">
+                            <h4 class="gear-title" id="dff-debug-title-3">Gear 3</h4>
+                            <div id="dff-steps-3" class="debug-steps-container"></div>
+                        </div>
+                        <div class="gear-column hidden" id="dff-debug-col-4">
+                            <h4 class="gear-title" id="dff-debug-title-4">Gear 4</h4>
+                            <div id="dff-steps-4" class="debug-steps-container"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="tab-content" id="rating">
+                <div class="gear-properties-section" style="margin-bottom: 20px;">
+                    <h3 class="section-title">Material Selection</h3>
+                    <div class="gear-grid-container">
+                        <div class="gear-column" id="rating-col-1">
+                            <h4 class="gear-title" id="rating-title-1">Gear 1</h4>
+                            <div class="input-group">
+                                <label for="mat1">Material</label>
+                                <select id="mat1">
+                                    <option value="carb-1">Carburized - AGMA Grade 1</option>
+                                    <option value="carb-2">Carburized - AGMA Grade 2</option>
+                                    <option value="carb-3">Carburized - AGMA Grade 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="gear-column" id="rating-col-2">
+                            <h4 class="gear-title" id="rating-title-2">Gear 2</h4>
+                            <div class="input-group">
+                                <label for="mat2">Material</label>
+                                <select id="mat2">
+                                    <option value="carb-1">Carburized - AGMA Grade 1</option>
+                                    <option value="carb-2">Carburized - AGMA Grade 2</option>
+                                    <option value="carb-3">Carburized - AGMA Grade 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="rating-col-3">
+                            <h4 class="gear-title" id="rating-title-3">Gear 3</h4>
+                            <div class="input-group">
+                                <label for="mat3">Material</label>
+                                <select id="mat3">
+                                    <option value="carb-1">Carburized - AGMA Grade 1</option>
+                                    <option value="carb-2">Carburized - AGMA Grade 2</option>
+                                    <option value="carb-3">Carburized - AGMA Grade 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="rating-col-4">
+                            <h4 class="gear-title" id="rating-title-4">Gear 4</h4>
+                            <div class="input-group">
+                                <label for="mat4">Material</label>
+                                <select id="mat4">
+                                    <option value="carb-1">Carburized - AGMA Grade 1</option>
+                                    <option value="carb-2">Carburized - AGMA Grade 2</option>
+                                    <option value="carb-3">Carburized - AGMA Grade 3</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="two-column-grid">
+                    <div class="input-group">
+                        <label for="torque">Input Torque (Nm)</label>
+                        <input type="number" id="torque" min="0" step="any" placeholder="e.g., 150">
+                    </div>
+                    <div class="input-group">
+                        <label for="speed">Input Speed (RPM)</label>
+                        <input type="number" id="speed" min="0" step="1" placeholder="e.g., 1440">
+                    </div>
+                </div>
+
+                <div class="result-container" id="rating-result-container">
+                    <span class="result-label">Power (kW)</span>
+                    <span class="result-value" id="rating-result-value">--</span>
+                </div>
+            </div>
+
+            <!-- Graphics Tab -->
+            <div class="tab-content" id="graphics">
+                <div class="gear-properties-section">
+                    <h3 class="section-title">2D Gear Profiles</h3>
+                    <div class="gear-grid-container" id="graphics-2d-container">
+                        <div class="gear-column" id="graphics-col-1">
+                            <h4 class="gear-title" id="graphics-title-1">Gear 1</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-2d-1" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="action-btn" id="reset-2d-1"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Reset View</button>
+                                    <button class="action-btn" id="toggle-grid-1"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Toggle Grid</button>
+                                    <button class="action-btn" id="box-zoom-1"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Box Zoom</button>
+                                    <button class="action-btn" id="export-dxf-1"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Export DXF</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column" id="graphics-col-2">
+                            <h4 class="gear-title" id="graphics-title-2">Gear 2</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-2d-2" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="action-btn" id="reset-2d-2"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Reset View</button>
+                                    <button class="action-btn" id="toggle-grid-2"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Toggle Grid</button>
+                                    <button class="action-btn" id="box-zoom-2"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Box Zoom</button>
+                                    <button class="action-btn" id="export-dxf-2"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Export DXF</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="graphics-col-3">
+                            <h4 class="gear-title" id="graphics-title-3">Gear 3</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-2d-3" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="action-btn" id="reset-2d-3"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Reset View</button>
+                                    <button class="action-btn" id="toggle-grid-3"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Toggle Grid</button>
+                                    <button class="action-btn" id="box-zoom-3"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Box Zoom</button>
+                                    <button class="action-btn" id="export-dxf-3"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Export DXF</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="graphics-col-4">
+                            <h4 class="gear-title" id="graphics-title-4">Gear 4</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-2d-4" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="action-btn" id="reset-2d-4"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Reset View</button>
+                                    <button class="action-btn" id="toggle-grid-4"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Toggle Grid</button>
+                                    <button class="action-btn" id="box-zoom-4"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Box Zoom</button>
+                                    <button class="action-btn" id="export-dxf-4"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Export DXF</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gear-properties-section" style="margin-top: 20px;">
+                    <h3 class="section-title">3D Gear Models</h3>
+                    <div class="gear-grid-container" id="graphics-3d-container">
+                        <div class="gear-column" id="graphics-3d-col-1">
+                            <h4 class="gear-title" id="graphics-3d-title-1">Gear 1</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-3d-1" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="action-btn" id="reset-3d-1"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Reset View</button>
+                                    <button class="action-btn" id="export-stl-1"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Export STL</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column" id="graphics-3d-col-2">
+                            <h4 class="gear-title" id="graphics-3d-title-2">Gear 2</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-3d-2" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="action-btn" id="reset-3d-2"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Reset View</button>
+                                    <button class="action-btn" id="export-stl-2"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Export STL</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="graphics-3d-col-3">
+                            <h4 class="gear-title" id="graphics-3d-title-3">Gear 3</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-3d-3" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="action-btn" id="reset-3d-3"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Reset View</button>
+                                    <button class="action-btn" id="export-stl-3"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Export STL</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="graphics-3d-col-4">
+                            <h4 class="gear-title" id="graphics-3d-title-4">Gear 4</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-3d-4" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="action-btn" id="reset-3d-4"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Reset View</button>
+                                    <button class="action-btn" id="export-stl-4"
+                                        style="font-size: 0.8rem; padding: 4px 10px;">Export STL</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gear-properties-section" style="margin-top: 20px;">
+                    <h3 class="section-title">2D Full Assembly Meshing View</h3>
+                    <div class="gear-column">
+                        <div class="result-display"
+                            style="min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <canvas id="canvas-assembly" width="1600" height="700"
+                                style="max-width: 100%; height: auto; max-height: 700px;"></canvas>
+                            <div
+                                style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin-top: 15px;">
+                                <input type="range" id="roll-slider-assembly" min="-1" max="1" step="0.01" value="0"
+                                    style="width: 150px;" title="Manual Roll Phase">
+                                <button class="action-btn" id="rotate-ccw-assembly"
+                                    style="font-size: 0.85rem; padding: 5px 12px;"
+                                    title="Hold to rotate counter-clockwise">↺ CCW</button>
+                                <button class="action-btn" id="rotate-cw-assembly"
+                                    style="font-size: 0.85rem; padding: 5px 12px;" title="Hold to rotate clockwise">↻
+                                    CW</button>
+                                <span style="font-size: 0.85rem; color: #adb5bd;">Speed (teeth/s):</span>
+                                <input type="number" id="rotate-speed-assembly" value="1" min="0.1" step="0.5"
+                                    style="width: 60px; font-size: 0.85rem; padding: 3px 6px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;">
+                                <button class="action-btn" id="reset-assembly"
+                                    style="font-size: 0.85rem; padding: 5px 12px;">Reset</button>
+                                <button class="action-btn" id="box-zoom-assembly"
+                                    style="font-size: 0.85rem; padding: 5px 12px;">Box Zoom</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="gear-properties-section" style="margin-top: 20px;">
+                    <h3 class="section-title">2D In-Mesh Tool View</h3>
+                    <div class="gear-grid-container" id="graphics-inmesh-container">
+                        <div class="gear-column" id="graphics-inmesh-col-1">
+                            <h4 class="gear-title" id="graphics-inmesh-title-1">Gear 1 Mesh</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-inmesh-1" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div
+                                    style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 10px;">
+                                    <input type="range" id="roll-slider-1" min="-1" max="1" step="0.01" value="0"
+                                        style="width: 100px;" title="Manual Roll Phase">
+                                    <button class="action-btn" id="rotate-ccw-1"
+                                        style="font-size: 0.8rem; padding: 4px 8px;"
+                                        title="Hold to rotate counter-clockwise">↺ CCW</button>
+                                    <button class="action-btn" id="rotate-cw-1"
+                                        style="font-size: 0.8rem; padding: 4px 8px;" title="Hold to rotate clockwise">↻
+                                        CW</button>
+                                    <span style="font-size: 0.8rem; color: #adb5bd;">Speed (teeth/s):</span>
+                                    <input type="number" id="rotate-speed-1" value="1" min="0.1" step="0.5"
+                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;">
+                                    <button class="action-btn" id="reset-inmesh-1"
+                                        style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
+                                    <button class="action-btn" id="box-zoom-inmesh-1"
+                                        style="font-size: 0.8rem; padding: 4px 8px;">Box Zoom</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column" id="graphics-inmesh-col-2">
+                            <h4 class="gear-title" id="graphics-inmesh-title-2">Gear 2 Mesh</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-inmesh-2" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div
+                                    style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 10px;">
+                                    <input type="range" id="roll-slider-2" min="-1" max="1" step="0.01" value="0"
+                                        style="width: 100px;" title="Manual Roll Phase">
+                                    <button class="action-btn" id="rotate-ccw-2"
+                                        style="font-size: 0.8rem; padding: 4px 8px;"
+                                        title="Hold to rotate counter-clockwise">↺ CCW</button>
+                                    <button class="action-btn" id="rotate-cw-2"
+                                        style="font-size: 0.8rem; padding: 4px 8px;" title="Hold to rotate clockwise">↻
+                                        CW</button>
+                                    <span style="font-size: 0.8rem; color: #adb5bd;">Speed (teeth/s):</span>
+                                    <input type="number" id="rotate-speed-2" value="1" min="0.1" step="0.5"
+                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;">
+                                    <button class="action-btn" id="reset-inmesh-2"
+                                        style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
+                                    <button class="action-btn" id="box-zoom-inmesh-2"
+                                        style="font-size: 0.8rem; padding: 4px 8px;">Box Zoom</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="graphics-inmesh-col-3">
+                            <h4 class="gear-title" id="graphics-inmesh-title-3">Gear 3 Mesh</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-inmesh-3" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div
+                                    style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 10px;">
+                                    <input type="range" id="roll-slider-3" min="-1" max="1" step="0.01" value="0"
+                                        style="width: 100px;" title="Manual Roll Phase">
+                                    <button class="action-btn" id="rotate-ccw-3"
+                                        style="font-size: 0.8rem; padding: 4px 8px;"
+                                        title="Hold to rotate counter-clockwise">↺ CCW</button>
+                                    <button class="action-btn" id="rotate-cw-3"
+                                        style="font-size: 0.8rem; padding: 4px 8px;" title="Hold to rotate clockwise">↻
+                                        CW</button>
+                                    <span style="font-size: 0.8rem; color: #adb5bd;">Speed (teeth/s):</span>
+                                    <input type="number" id="rotate-speed-3" value="1" min="0.1" step="0.5"
+                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;">
+                                    <button class="action-btn" id="reset-inmesh-3"
+                                        style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
+                                    <button class="action-btn" id="box-zoom-inmesh-3"
+                                        style="font-size: 0.8rem; padding: 4px 8px;">Box Zoom</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="graphics-inmesh-col-4">
+                            <h4 class="gear-title" id="graphics-inmesh-title-4">Gear 4 Mesh</h4>
+                            <div class="result-display"
+                                style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+                                <canvas id="canvas-inmesh-4" width="600" height="600" style="max-width: 100%;"></canvas>
+                                <div
+                                    style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 10px;">
+                                    <input type="range" id="roll-slider-4" min="-1" max="1" step="0.01" value="0"
+                                        style="width: 100px;" title="Manual Roll Phase">
+                                    <button class="action-btn" id="rotate-ccw-4"
+                                        style="font-size: 0.8rem; padding: 4px 8px;"
+                                        title="Hold to rotate counter-clockwise">↺ CCW</button>
+                                    <button class="action-btn" id="rotate-cw-4"
+                                        style="font-size: 0.8rem; padding: 4px 8px;" title="Hold to rotate clockwise">↻
+                                        CW</button>
+                                    <span style="font-size: 0.8rem; color: #adb5bd;">Speed (teeth/s):</span>
+                                    <input type="number" id="rotate-speed-4" value="1" min="0.1" step="0.5"
+                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;">
+                                    <button class="action-btn" id="reset-inmesh-4"
+                                        style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
+                                    <button class="action-btn" id="box-zoom-inmesh-4"
+                                        style="font-size: 0.8rem; padding: 4px 8px;">Box Zoom</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="ISO-21771.js"></script>
+    <script src="ISO-1328.js"></script>
+    <script src="ISO-6336-1.js"></script>
+    <script src="ISO-6336-2.js"></script>
+    <script src="ISO-6336-3.js"></script>
+    <script src="ISO-6336-4.js"></script>
+    <script src="ISO-6336-5.js"></script>
+    <script src="ISO-6336-6.js"></script>
+    <script src="report.js"></script>
+    <script src="import-export.js"></script>
+    <script src="three.min.js"></script>
+    <script src="OrbitControls.js"></script>
+    <script src="graphics2D.js"></script>
+    <script src="graphics3D.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
