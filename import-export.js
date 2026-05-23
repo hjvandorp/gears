@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const calcAllBtn = document.getElementById('calc-all-btn');
 
     const fields = [
-        'project-name', 'gear-config', 'module', 'pressure-angle', 'helix-angle', 'aw1', 'aw2', 'aw3',
+        'project-name', 'gear-config', 'module', 'pressure-angle', 'helix-angle', 'num-planets', 'aw1', 'aw2', 'aw3',
         'z1', 'b1', 'x1', 'di1', 'hole-circle-1', 'hole-diameter-1', 'num-holes-1', 'mat1',
         'z2', 'b2', 'di2', 'hole-circle-2', 'hole-diameter-2', 'num-holes-2', 'mat2',
         'z3', 'b3', 'di3', 'hole-circle-3', 'hole-diameter-3', 'num-holes-3', 'mat3',

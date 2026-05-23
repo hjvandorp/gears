@@ -892,7 +892,17 @@ function calculateToolProfile(cache) {
     } else {
         const pitch = Math.PI * p.gen_mt;
         const ha = p.gen_haP0_coeff * p.gen_mn;
-        const hf = p.gen_hfP0_coeff * p.gen_mn;
+        const hf = (p.gen_hfP0_coeff + 0.2) * p.gen_mn;
+        //JVD, 2026-05-20: sonnet 4.6 made this section. It also doesn't fix the issue of the rack not rendering properly. 
+        //Instead of the tip of the gear hitting the root of the rack, the root of the rack is self-intersecting.
+
+        // const ha = p.gen_haP0_coeff * p.gen_mn; // rack tip at gear root circle (correct, unchanged)
+        // // Rack root must clear the gear tip: hf anchored to da/2 - gen_d/2, then add tool clearance.
+        // // This ensures rack whole depth = gear whole depth + clearance, regardless of gen_mn.
+        // const _clearance = (cache.hfPCoeff !== undefined && cache.haPCoeff !== undefined)
+        //     ? (cache.hfPCoeff - cache.haPCoeff) * cache.mn
+        //     : p.gen_hfP0_coeff * p.gen_mn; // fallback to old behaviour if coefficients missing
+        // const hf = (cache.da / 2 - p.gen_d / 2) + _clearance;
         const alpha = p.gen_alpha_t;
         const tanA = Math.tan(alpha);
         const s0 = p.gen_st0;
@@ -1227,20 +1237,33 @@ function _drawFullAssembly2D(canvas, state) {
 
     let z2 = 20, z3 = 20, z4 = 20;
 
-    // Gear 2 (Planet / Driven) at (aw1, 0)
-    // Contact with G1 is at angle π (-x axis). Needs space at π.
+    // Gear 2 (Planet / Driven)
     const g2 = window.assemblyCache[2];
     if (g2 && g2.cache && gearCount >= 2) {
         z2 = Math.abs(g2.cache.z || 20);
-        const rot2 = baseRot + Math.PI + Math.PI / z2 - phi * (z1 / z2);
-        gearInstances.push({
-            idx: 2,
-            x: aw1,
-            y: 0,
-            rot: rot2,
-            data: g2,
-            col: '#e67e22'
-        });
+        
+        let numPlanets = 1;
+        if (config === 'planetary') {
+            const npEl = document.getElementById('num-planets');
+            if (npEl && !isNaN(parseInt(npEl.value))) {
+                numPlanets = parseInt(npEl.value);
+            }
+        }
+        
+        for (let i = 0; i < numPlanets; i++) {
+            const theta = i * (2 * Math.PI / numPlanets);
+            // Contact with G1 is at angle π (-x axis) for the first planet. 
+            // For other planets, adjust by theta (coordinate rotation) + theta*(z1/z2) (tooth phase shift).
+            const rot2 = baseRot + Math.PI + Math.PI / z2 + theta * (1 + z1 / z2) - phi * (z1 / z2);
+            gearInstances.push({
+                idx: 2,
+                x: aw1 * Math.cos(theta),
+                y: aw1 * Math.sin(theta),
+                rot: rot2,
+                data: g2,
+                col: '#e67e22'
+            });
+        }
     }
 
     // Gear 3

@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const z3 = document.getElementById('z3');
         const z4 = document.getElementById('z4');
         const alphaWt23Container = document.getElementById('alpha-wt-23-container');
+        const numPlanetsGroup = document.getElementById('num-planets-group');
 
         // Reset all to positive min=1 first
         [z1, z2, z3, z4].forEach(z => {
@@ -108,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cdLabel1.innerHTML = 'Working Center Distance (a<sub>w</sub>, mm)';
             cgGroup2.classList.add('hidden');
             cgGroup3.classList.add('hidden');
+            if (numPlanetsGroup) numPlanetsGroup.classList.add('hidden');
             if (aw2Input) aw2Input.disabled = false;
             if (aw3Input) aw3Input.disabled = false;
 
@@ -149,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cdLabel2) cdLabel2.innerHTML = 'Working Center Distance, Planet-Ring (a<sub>w,23</sub>, mm)';
             cgGroup2.classList.remove('hidden');
             cgGroup3.classList.add('hidden');
+            if (numPlanetsGroup) numPlanetsGroup.classList.remove('hidden');
             if (aw2Input) aw2Input.disabled = true;
             if (aw3Input) aw3Input.disabled = false;
 
@@ -209,6 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cdLabel2) cdLabel2.innerHTML = 'Working Center Distance, Gear 2-3 (a<sub>w,23</sub>, mm)';
             cgGroup2.classList.remove('hidden');
             cgGroup3.classList.add('hidden');
+            if (numPlanetsGroup) numPlanetsGroup.classList.add('hidden');
             if (aw2Input) aw2Input.disabled = false;
             if (aw3Input) aw3Input.disabled = false;
 
@@ -269,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cdLabel2) cdLabel2.innerHTML = 'Working Center Distance, Gear 2-3 (a<sub>w,23</sub>, mm)';
             cgGroup2.classList.remove('hidden');
             cgGroup3.classList.remove('hidden');
+            if (numPlanetsGroup) numPlanetsGroup.classList.add('hidden');
             if (aw2Input) aw2Input.disabled = false;
             if (aw3Input) aw3Input.disabled = false;
 
@@ -473,6 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+
         // 1.5 Standard & Working Center Distance Calculations
         // Calculate transverse pressure angle (alpha_t)
         const alphaRadians = alphaN * Math.PI / 180;
@@ -658,6 +664,66 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (x4Out) {
             x4Out.textContent = '--';
             x4Out.style.color = '#6c757d';
+        }
+
+        // 1.9 Number of Planets Options
+        if (config === 'planetary') {
+            const planetOptionsOut = document.getElementById('planet-options-out');
+            if (planetOptionsOut) {
+                if (!isNaN(z1) && !isNaN(z3) && !isNaN(z2) && awRes1.success && !isNaN(x2Val) && !isNaN(mn) && !isNaN(beta)) {
+                    const haPCoeff2El = document.getElementById('addendum-coeff-2');
+                    const haPCoeff2 = parseFloat(haPCoeff2El ? haPCoeff2El.value : NaN);
+
+                    if (!isNaN(haPCoeff2)) {
+                        const kCoeff2El = document.getElementById('tip-alteration-2');
+                        const kCoeff2 = parseFloat(kCoeff2El ? kCoeff2El.value : 0) || 0;
+                        const daTol2El = document.getElementById('da-tol-2');
+                        const daTol2 = daTol2El ? Math.abs(parseFloat(daTol2El.value) || 0) : 0;
+
+                        const cosBeta = Math.cos(Math.abs(beta) * Math.PI / 180);
+                        const d2 = (Math.abs(z2) * mn) / cosBeta;
+                        const daRes2 = calculateTipDiameter(d2, z2, haPCoeff2, x2Val, kCoeff2, mn);
+
+                        if (daRes2.success) {
+                            const baseTipDia = daRes2.value;
+                            let da2Max;
+                            if (z2 > 0) {
+                                da2Max = baseTipDia;
+                            } else {
+                                da2Max = baseTipDia + daTol2;
+                            }
+
+                            const aw12 = !isNaN(aw1) ? aw1 : calculateStandardCenterDistance(z1, z2, mn, beta).value;
+
+                            const validPlanets = [];
+                            for (let N = 1; N <= 50; N++) {
+                                if (Math.abs(z1 - z3) % N === 0) {
+                                    const distance = 2 * aw12 * Math.sin(Math.PI / N);
+                                    if (da2Max < distance) {
+                                        validPlanets.push(N);
+                                    }
+                                }
+                            }
+                            if (validPlanets.length > 0) {
+                                planetOptionsOut.textContent = validPlanets.join(', ');
+                                planetOptionsOut.style.color = '#0056b3';
+                            } else {
+                                planetOptionsOut.textContent = 'None';
+                                planetOptionsOut.style.color = '#dc3545';
+                            }
+                        } else {
+                            planetOptionsOut.textContent = '--';
+                            planetOptionsOut.style.color = '#dc3545';
+                        }
+                    } else {
+                        planetOptionsOut.textContent = '--';
+                        planetOptionsOut.style.color = '#6c757d';
+                    }
+                } else {
+                    planetOptionsOut.textContent = '--';
+                    planetOptionsOut.style.color = '#6c757d';
+                }
+            }
         }
 
         // 3. Rating Data (Power)
@@ -1188,7 +1254,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                                 const holeDiameter = parseFloat(document.getElementById('hole-diameter-' + i)?.value) || 0;
                                                 const numHoles = parseInt(document.getElementById('num-holes-' + i)?.value, 10) || 0;
                                                 const holePattern = { holeCircle, holeDiameter, numHoles };
-                                                
+
                                                 if (canvas2d) {
                                                     _drawGear2D(canvas2d, profileRes.points, profileRes.geom, diVal, holePattern);
                                                 }

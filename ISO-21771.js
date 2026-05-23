@@ -70,7 +70,7 @@ function calculateWorkingTransversePressureAngle(z1, z2, mn, alpha_t, aw, beta) 
     return { success: true, value: alphaWtDegrees };
 }
 
-// Involute function: inv(ÃŽÂ±) = tan(ÃŽÂ±) - ÃŽÂ± (where ÃŽÂ± is in radians)
+// Involute function: inv(alpha) = tan(alpha) - alpha (where alpha is in radians)
 function involute(alphaDegrees) {
     const alphaRad = alphaDegrees * (Math.PI / 180);
     return Math.tan(alphaRad) - alphaRad;

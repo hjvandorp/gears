@@ -67,16 +67,31 @@
                         <label for="pressure-angle">Normal Pressure Angle (α<sub>n</sub>, degrees)</label>
                         <input type="number" id="pressure-angle" min="10" max="45" step="2.5" placeholder="e.g., 20">
                     </div>
-                    <div class="input-group">
-                        <label for="helix-angle">Helix Angle (β, degrees)</label>
-                        <input type="number" id="helix-angle" min="-89" max="89" step="any"
-                            placeholder="e.g., 0 for Spur Gear">
+                    <div class="side-by-side-group">
+                        <div class="input-group">
+                            <label for="helix-angle">Helix Angle (β, degrees)</label>
+                            <input type="number" id="helix-angle" min="-89" max="89" step="any"
+                                placeholder="e.g., 0 for Spur Gear">
+                        </div>
+                        <div class="input-group">
+                            <label>Gear 1 Hand of Helix</label>
+                            <div class="result-display" style="padding-top: 10px;">
+                                <span id="gear1-helix-hand-out"
+                                    style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>Gear 1 Hand of Helix</label>
-                        <div class="result-display" style="padding-top: 10px;">
-                            <span id="gear1-helix-hand-out"
-                                style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                    <div class="side-by-side-group hidden" id="num-planets-group">
+                        <div class="input-group">
+                            <label for="num-planets">Number of Planets</label>
+                            <input type="number" id="num-planets" min="3" step="1" placeholder="e.g., 3">
+                        </div>
+                        <div class="input-group">
+                            <label>Options (Equally Spaced)</label>
+                            <div class="result-display" style="padding-top: 10px;">
+                                <span id="planet-options-out"
+                                    style="font-size: 1.1rem; font-weight: 600; color: #0056b3;">--</span>
+                            </div>
                         </div>
                     </div>
                 </div>
