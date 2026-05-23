@@ -4,6 +4,7 @@ gear-config,planetary
 module,4.5
 pressure-angle,20
 helix-angle,0
+num-planets,4
 aw1,109
 aw2,109
 aw3,
