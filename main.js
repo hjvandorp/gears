@@ -1166,16 +1166,19 @@ document.addEventListener('DOMContentLoaded', () => {
                             const d = (Math.abs(zVal) * mn) / cosBeta;
                             const dbRes = calculateBaseDiameter(d, alphaT);
                             const dfMaxRes = calculateRootDiameter(d, zVal, hfPCoeff, resMax.value, mn);
-                            const daMaxRes = calculateTipDiameter(d, zVal, haPCoeff, resMax.value, 0, mn);
+                            const daRes = calculateTipDiameter(d, zVal, haPCoeff, resMax.value, kCoeff, mn);
+                            let dA = NaN;
+                            if (daRes.success) {
+                                dA = daRes.value; // For both external (positive zVal where daMax = baseTipDia) and internal (negative zVal where daMin = baseTipDia)
+                            }
 
                             const tanAlphaN = Math.tan(alphaN * Math.PI / 180);
                             const snMax = mn * (Math.PI / 2 + 2 * resMax.value * tanAlphaN);
                             const snMin = mn * (Math.PI / 2 + 2 * resMin.value * tanAlphaN);
 
-                            if (dbRes.success && dfMaxRes.success && daMaxRes.success) {
+                            if (dbRes.success && dfMaxRes.success && !isNaN(dA)) {
                                 const db = dbRes.value;
                                 const dF = dfMaxRes.value;
-                                const dA = daMaxRes.value;
 
                                 // Recommended diameter to avoid thin rim
                                 const wholeDepth = Math.abs(dA - dF) / 2;
@@ -1230,6 +1233,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                         if (maxRootRadiusCoeffEl) {
                                             maxRootRadiusCoeffEl.textContent = eqResult.value.rhoaP_coeff_max.toFixed(4);
                                         }
+                                        const diVal = parseFloat(document.getElementById('di' + i)?.value) || 0;
+                                        const holeCircle = parseFloat(document.getElementById('hole-circle-' + i)?.value) || 0;
+                                        const holeDiameter = parseFloat(document.getElementById('hole-diameter-' + i)?.value) || 0;
+                                        const numHoles = parseInt(document.getElementById('num-holes-' + i)?.value, 10) || 0;
+                                        const holePattern = { holeCircle, holeDiameter, numHoles };
+
                                         const stMax = snMax / cosBetaG;
                                         gearGeomCache[i] = {
                                             z: zVal,
@@ -1242,18 +1251,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                             da: dA,
                                             df: dF,
                                             rhoaP_coeff: rhoFpCoeff,
-                                            eqResult: eqResult
+                                            eqResult: eqResult,
+                                            di: diVal,
+                                            holePattern: holePattern
                                         };
 
                                         if (typeof calculateGearProfile === 'function') {
                                             const profileRes = calculateGearProfile(gearGeomCache[i]);
                                             if (profileRes.success) {
                                                 const canvas2d = document.getElementById('canvas-2d-' + i);
-                                                const diVal = parseFloat(document.getElementById('di' + i).value) || 0;
-                                                const holeCircle = parseFloat(document.getElementById('hole-circle-' + i)?.value) || 0;
-                                                const holeDiameter = parseFloat(document.getElementById('hole-diameter-' + i)?.value) || 0;
-                                                const numHoles = parseInt(document.getElementById('num-holes-' + i)?.value, 10) || 0;
-                                                const holePattern = { holeCircle, holeDiameter, numHoles };
 
                                                 if (canvas2d) {
                                                     _drawGear2D(canvas2d, profileRes.points, profileRes.geom, diVal, holePattern);

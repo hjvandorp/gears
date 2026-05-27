@@ -1088,7 +1088,12 @@ function _drawInMesh2D(canvas, gearPts, toolPts, gearCache, toolRes, rollPhase =
 
     ctx.beginPath();
     if (isInternal) {
-        ctx.arc(0, 0, gearCache.da / 2 + 2 * gearCache.mn, 0, 2 * Math.PI, false);
+        const diVal = gearCache.di || 0;
+        if (diVal > 0) {
+            ctx.arc(0, 0, diVal / 2, 0, 2 * Math.PI, false);
+        } else {
+            ctx.arc(0, 0, gearCache.da / 2 + 2 * gearCache.mn, 0, 2 * Math.PI, false);
+        }
         ctx.moveTo(gearPts[0].x, gearPts[0].y);
         for (let i = 1; i < gearPts.length; i++) ctx.lineTo(gearPts[i].x, gearPts[i].y);
         ctx.closePath();
@@ -1096,7 +1101,28 @@ function _drawInMesh2D(canvas, gearPts, toolPts, gearCache, toolRes, rollPhase =
         ctx.moveTo(gearPts[0].x, gearPts[0].y);
         for (let i = 1; i < gearPts.length; i++) ctx.lineTo(gearPts[i].x, gearPts[i].y);
         ctx.closePath();
+
+        // Center bore
+        const boreR = gearCache.di > 0 ? gearCache.di / 2 : (gearCache.da / 2) * 0.20;
+        ctx.moveTo(boreR, 0);
+        ctx.arc(0, 0, boreR, 0, 2 * Math.PI);
     }
+
+    // Add hole pattern
+    const hp = gearCache.holePattern;
+    if (hp && hp.holeCircle > 0 && hp.holeDiameter > 0 && hp.numHoles > 0) {
+        const r_hc = hp.holeCircle / 2;
+        const r_h = hp.holeDiameter / 2;
+        const angleStep = 2 * Math.PI / hp.numHoles;
+        for (let h = 0; h < hp.numHoles; h++) {
+            const angle = h * angleStep;
+            const hx = r_hc * Math.cos(angle);
+            const hy = r_hc * Math.sin(angle);
+            ctx.moveTo(hx + r_h, hy);
+            ctx.arc(hx, hy, r_h, 0, 2 * Math.PI);
+        }
+    }
+
     ctx.fillStyle = '#7f8c8d';
     ctx.fill('evenodd');
     ctx.lineWidth = 1.5 / currentScale;
@@ -1236,11 +1262,14 @@ function _drawFullAssembly2D(canvas, state) {
     });
 
     let z2 = 20, z3 = 20, z4 = 20;
+    const k_rot = [0, 1]; // 1-based indexing for matching gear indices
 
     // Gear 2 (Planet / Driven)
     const g2 = window.assemblyCache[2];
     if (g2 && g2.cache && gearCount >= 2) {
         z2 = Math.abs(g2.cache.z || 20);
+        const s1 = (g1.cache.z < 0 || g2.cache.z < 0) ? 1 : -1;
+        k_rot[2] = k_rot[1] * s1 * (Math.abs(g1.cache.z) / Math.abs(g2.cache.z));
         
         let numPlanets = 1;
         if (config === 'planetary') {
@@ -1254,7 +1283,7 @@ function _drawFullAssembly2D(canvas, state) {
             const theta = i * (2 * Math.PI / numPlanets);
             // Contact with G1 is at angle π (-x axis) for the first planet. 
             // For other planets, adjust by theta (coordinate rotation) + theta*(z1/z2) (tooth phase shift).
-            const rot2 = baseRot + Math.PI + Math.PI / z2 + theta * (1 + z1 / z2) - phi * (z1 / z2);
+            const rot2 = baseRot + Math.PI + Math.PI / z2 + theta * (1 + z1 / z2) + phi * k_rot[2];
             gearInstances.push({
                 idx: 2,
                 x: aw1 * Math.cos(theta),
@@ -1270,11 +1299,14 @@ function _drawFullAssembly2D(canvas, state) {
     const g3 = window.assemblyCache[3];
     if (g3 && g3.cache && gearCount >= 3) {
         z3 = Math.abs(g3.cache.z || 20);
+        const s2 = ((g2?.cache?.z ?? 1) < 0 || g3.cache.z < 0) ? 1 : -1;
+        k_rot[3] = (k_rot[2] ?? -1) * s2 * (Math.abs(g2?.cache?.z || 20) / Math.abs(g3.cache.z));
+
         if (config === 'planetary') {
             // Ring gear centered at (0,0). Contact with Planet is at angle 0 (+x axis).
             // If z2 is odd, Planet has tip at 0 -> Ring needs space at 0 (add π/z3).
             // If z2 is even, Planet has space at 0 -> Ring needs tip at 0 (add 0).
-            const rot3 = baseRot + ((z2 % 2 !== 0) ? Math.PI / z3 : 0) - phi * (z1 / z3);
+            const rot3 = baseRot + ((z2 % 2 !== 0) ? Math.PI / z3 : 0) + phi * k_rot[3];
             gearInstances.push({
                 idx: 3,
                 x: 0,
@@ -1287,7 +1319,7 @@ function _drawFullAssembly2D(canvas, state) {
             // Train: G3 at (aw1+aw2, 0). Contact with G2 is at angle π (-x axis).
             // If z2 is even, G2 has space at 0 -> G3 needs tip at π (rot30 = baseRot + π).
             // If z2 is odd, G2 has tip at 0 -> G3 needs space at π (rot30 = baseRot + π + π/z3).
-            const rot3 = baseRot + Math.PI + ((z2 % 2 !== 0) ? Math.PI / z3 : 0) + phi * (z1 / z3);
+            const rot3 = baseRot + Math.PI + ((z2 % 2 !== 0) ? Math.PI / z3 : 0) + phi * k_rot[3];
             gearInstances.push({
                 idx: 3,
                 x: aw1 + aw2,
@@ -1303,9 +1335,12 @@ function _drawFullAssembly2D(canvas, state) {
     const g4 = window.assemblyCache[4];
     if (g4 && g4.cache && gearCount >= 4) {
         z4 = Math.abs(g4.cache.z || 20);
+        const s3 = ((g3?.cache?.z ?? 1) < 0 || g4.cache.z < 0) ? 1 : -1;
+        k_rot[4] = (k_rot[3] ?? -1) * s3 * (Math.abs(g3?.cache?.z || 20) / Math.abs(g4.cache.z));
+
         // Contact with G3 is at angle π (-x axis).
         const k3 = z3 + (z2 % 2 === 0 ? 0 : 1);
-        const rot4 = baseRot + Math.PI + ((k3 % 2 === 0) ? Math.PI / z4 : 0) - phi * (z1 / z4);
+        const rot4 = baseRot + Math.PI + ((k3 % 2 === 0) ? Math.PI / z4 : 0) + phi * k_rot[4];
         gearInstances.push({
             idx: 4,
             x: aw1 + aw2 + aw3,
@@ -1352,7 +1387,12 @@ function _drawFullAssembly2D(canvas, state) {
 
         ctx.beginPath();
         if (isInt) {
-            ctx.arc(0, 0, (inst.data.cache.da / 2) + 2 * inst.data.cache.mn, 0, 2 * Math.PI, false);
+            const diVal = inst.data.cache.di || 0;
+            if (diVal > 0) {
+                ctx.arc(0, 0, diVal / 2, 0, 2 * Math.PI, false);
+            } else {
+                ctx.arc(0, 0, (inst.data.cache.da / 2) + 2 * inst.data.cache.mn, 0, 2 * Math.PI, false);
+            }
             ctx.moveTo(pts[0].x, pts[0].y);
             for (let j = 1; j < pts.length; j++) ctx.lineTo(pts[j].x, pts[j].y);
             ctx.closePath();
@@ -1360,7 +1400,28 @@ function _drawFullAssembly2D(canvas, state) {
             ctx.moveTo(pts[0].x, pts[0].y);
             for (let j = 1; j < pts.length; j++) ctx.lineTo(pts[j].x, pts[j].y);
             ctx.closePath();
+
+            // Center bore
+            const boreR = inst.data.cache.di > 0 ? inst.data.cache.di / 2 : (inst.data.cache.da / 2) * 0.20;
+            ctx.moveTo(boreR, 0);
+            ctx.arc(0, 0, boreR, 0, 2 * Math.PI);
         }
+
+        // Add hole pattern
+        const hp = inst.data.cache.holePattern;
+        if (hp && hp.holeCircle > 0 && hp.holeDiameter > 0 && hp.numHoles > 0) {
+            const r_hc = hp.holeCircle / 2;
+            const r_h = hp.holeDiameter / 2;
+            const angleStep = 2 * Math.PI / hp.numHoles;
+            for (let h = 0; h < hp.numHoles; h++) {
+                const angle = h * angleStep;
+                const hx = r_hc * Math.cos(angle);
+                const hy = r_hc * Math.sin(angle);
+                ctx.moveTo(hx + r_h, hy);
+                ctx.arc(hx, hy, r_h, 0, 2 * Math.PI);
+            }
+        }
+
         ctx.fillStyle = inst.col || '#7f8c8d';
         ctx.fill('evenodd');
         ctx.lineWidth = 1.5 / currentScale;
