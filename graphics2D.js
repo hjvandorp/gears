@@ -1261,15 +1261,46 @@ function _drawFullAssembly2D(canvas, state) {
         col: '#3498db'
     });
 
+    const signedAw = (zA, zB, aw) => {
+        return (zA < 0 || zB < 0) ? -aw : aw;
+    };
+
+    const getContactDirs = (xA, yA, zA, xB, yB, zB) => {
+        const gamma = Math.atan2(yB - yA, xB - xA);
+        let contact_dir_A, contact_dir_B;
+        if (zA > 0 && zB > 0) {
+            contact_dir_A = gamma;
+            contact_dir_B = gamma + Math.PI;
+        } else if (zA > 0 && zB < 0) {
+            contact_dir_A = gamma + Math.PI;
+            contact_dir_B = gamma + Math.PI;
+        } else if (zA < 0 && zB > 0) {
+            contact_dir_A = gamma;
+            contact_dir_B = gamma;
+        } else {
+            contact_dir_A = gamma;
+            contact_dir_B = gamma + Math.PI;
+        }
+        return [contact_dir_A, contact_dir_B];
+    };
+
+    const rotAlign = (z_i, contact_dir_i, z_j, contact_dir_j, rot_j_static) => {
+        return contact_dir_i - Math.PI / 2 - Math.PI / z_i + (z_j / z_i) * (contact_dir_j - rot_j_static - Math.PI / 2);
+    };
+
+    let z1_signed = g1.cache.z || 20;
+    let z2_signed = 20, z3_signed = 20, z4_signed = 20;
     let z2 = 20, z3 = 20, z4 = 20;
     const k_rot = [0, 1]; // 1-based indexing for matching gear indices
+    const rot1_static = baseRot;
 
     // Gear 2 (Planet / Driven)
     const g2 = window.assemblyCache[2];
     if (g2 && g2.cache && gearCount >= 2) {
-        z2 = Math.abs(g2.cache.z || 20);
-        const s1 = (g1.cache.z < 0 || g2.cache.z < 0) ? 1 : -1;
-        k_rot[2] = k_rot[1] * s1 * (Math.abs(g1.cache.z) / Math.abs(g2.cache.z));
+        z2_signed = g2.cache.z || 20;
+        z2 = Math.abs(z2_signed);
+        const s1 = (z1_signed < 0 || z2_signed < 0) ? 1 : -1;
+        k_rot[2] = k_rot[1] * s1 * (Math.abs(z1_signed) / z2);
         
         let numPlanets = 1;
         if (config === 'planetary') {
@@ -1281,13 +1312,17 @@ function _drawFullAssembly2D(canvas, state) {
         
         for (let i = 0; i < numPlanets; i++) {
             const theta = i * (2 * Math.PI / numPlanets);
-            // Contact with G1 is at angle π (-x axis) for the first planet. 
-            // For other planets, adjust by theta (coordinate rotation) + theta*(z1/z2) (tooth phase shift).
-            const rot2 = baseRot + Math.PI + Math.PI / z2 + theta * (1 + z1 / z2) + phi * k_rot[2];
+            const g2_x = signedAw(z1_signed, z2_signed, aw1) * Math.cos(theta);
+            const g2_y = signedAw(z1_signed, z2_signed, aw1) * Math.sin(theta);
+
+            const [contact_dir_1, contact_dir_2] = getContactDirs(0, 0, z1_signed, g2_x, g2_y, z2_signed);
+            const rot2_static = rotAlign(z2_signed, contact_dir_2, z1_signed, contact_dir_1, rot1_static);
+            const rot2 = rot2_static + phi * k_rot[2];
+
             gearInstances.push({
                 idx: 2,
-                x: aw1 * Math.cos(theta),
-                y: aw1 * Math.sin(theta),
+                x: g2_x,
+                y: g2_y,
                 rot: rot2,
                 data: g2,
                 col: '#e67e22'
@@ -1296,34 +1331,47 @@ function _drawFullAssembly2D(canvas, state) {
     }
 
     // Gear 3
+    let rot3_static = baseRot;
     const g3 = window.assemblyCache[3];
     if (g3 && g3.cache && gearCount >= 3) {
-        z3 = Math.abs(g3.cache.z || 20);
-        const s2 = ((g2?.cache?.z ?? 1) < 0 || g3.cache.z < 0) ? 1 : -1;
-        k_rot[3] = (k_rot[2] ?? -1) * s2 * (Math.abs(g2?.cache?.z || 20) / Math.abs(g3.cache.z));
+        z3_signed = g3.cache.z || 20;
+        z3 = Math.abs(z3_signed);
+        const s2 = (z2_signed < 0 || z3_signed < 0) ? 1 : -1;
+        k_rot[3] = (k_rot[2] ?? -1) * s2 * (z2 / z3);
+
+        // Reference G2 static rotation at theta = 0
+        const g2_x_0 = signedAw(z1_signed, z2_signed, aw1);
+        const [contact_dir_1_for_g2, contact_dir_2_for_g2] = getContactDirs(0, 0, z1_signed, g2_x_0, 0, z2_signed);
+        const rot2_static_0 = rotAlign(z2_signed, contact_dir_2_for_g2, z1_signed, contact_dir_1_for_g2, rot1_static);
 
         if (config === 'planetary') {
-            // Ring gear centered at (0,0). Contact with Planet is at angle 0 (+x axis).
-            // If z2 is odd, Planet has tip at 0 -> Ring needs space at 0 (add π/z3).
-            // If z2 is even, Planet has space at 0 -> Ring needs tip at 0 (add 0).
-            const rot3 = baseRot + ((z2 % 2 !== 0) ? Math.PI / z3 : 0) + phi * k_rot[3];
+            const x3 = g2_x_0 + signedAw(z2_signed, z3_signed, aw2);
+            const y3 = 0;
+
+            const [contact_dir_2, contact_dir_3] = getContactDirs(g2_x_0, 0, z2_signed, x3, y3, z3_signed);
+            rot3_static = rotAlign(z3_signed, contact_dir_3, z2_signed, contact_dir_2, rot2_static_0);
+            const rot3 = rot3_static + phi * k_rot[3];
             gearInstances.push({
                 idx: 3,
-                x: 0,
-                y: 0,
+                x: x3,
+                y: y3,
                 rot: rot3,
                 data: g3,
                 col: '#9b59b6'
             });
         } else {
-            // Train: G3 at (aw1+aw2, 0). Contact with G2 is at angle π (-x axis).
-            // If z2 is even, G2 has space at 0 -> G3 needs tip at π (rot30 = baseRot + π).
-            // If z2 is odd, G2 has tip at 0 -> G3 needs space at π (rot30 = baseRot + π + π/z3).
-            const rot3 = baseRot + Math.PI + ((z2 % 2 !== 0) ? Math.PI / z3 : 0) + phi * k_rot[3];
+            // Train
+            const g2_x = signedAw(z1_signed, z2_signed, aw1);
+            const x3 = g2_x + signedAw(z2_signed, z3_signed, aw2);
+            const y3 = 0;
+
+            const [contact_dir_2, contact_dir_3] = getContactDirs(g2_x, 0, z2_signed, x3, y3, z3_signed);
+            rot3_static = rotAlign(z3_signed, contact_dir_3, z2_signed, contact_dir_2, rot2_static_0);
+            const rot3 = rot3_static + phi * k_rot[3];
             gearInstances.push({
                 idx: 3,
-                x: aw1 + aw2,
-                y: 0,
+                x: x3,
+                y: y3,
                 rot: rot3,
                 data: g3,
                 col: '#9b59b6'
@@ -1334,17 +1382,23 @@ function _drawFullAssembly2D(canvas, state) {
     // Gear 4
     const g4 = window.assemblyCache[4];
     if (g4 && g4.cache && gearCount >= 4) {
-        z4 = Math.abs(g4.cache.z || 20);
-        const s3 = ((g3?.cache?.z ?? 1) < 0 || g4.cache.z < 0) ? 1 : -1;
-        k_rot[4] = (k_rot[3] ?? -1) * s3 * (Math.abs(g3?.cache?.z || 20) / Math.abs(g4.cache.z));
+        z4_signed = g4.cache.z || 20;
+        z4 = Math.abs(z4_signed);
+        const s3 = (z3_signed < 0 || z4_signed < 0) ? 1 : -1;
+        k_rot[4] = (k_rot[3] ?? -1) * s3 * (z3 / z4);
 
-        // Contact with G3 is at angle π (-x axis).
-        const k3 = z3 + (z2 % 2 === 0 ? 0 : 1);
-        const rot4 = baseRot + Math.PI + ((k3 % 2 === 0) ? Math.PI / z4 : 0) + phi * k_rot[4];
+        const g2_x = signedAw(z1_signed, z2_signed, aw1);
+        const x3 = g2_x + signedAw(z2_signed, z3_signed, aw2);
+        const x4 = x3 + signedAw(z3_signed, z4_signed, aw3);
+        const y4 = 0;
+
+        const [contact_dir_3, contact_dir_4] = getContactDirs(x3, 0, z3_signed, x4, y4, z4_signed);
+        const rot4_static = rotAlign(z4_signed, contact_dir_4, z3_signed, contact_dir_3, rot3_static);
+        const rot4 = rot4_static + phi * k_rot[4];
         gearInstances.push({
             idx: 4,
-            x: aw1 + aw2 + aw3,
-            y: 0,
+            x: x4,
+            y: y4,
             rot: rot4,
             data: g4,
             col: '#2ecc71'
