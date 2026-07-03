@@ -382,7 +382,30 @@ function assembleToothProfile(eqResult, z, mn, alpha_t, d, db, st, dFf, da, rhoa
     const rootPt = refinedRootPt;
     const rDeepest = rootPt ? Math.hypot(rootPt.x, rootPt.y) : 0;
 
-    // -- 7. Tip arc (involute end → tooth centreline at π/2) --
+    // -- 6b. Angular Culling (Gap Midpoint check) --
+    // Cull any points in filletPts that extend past the gap midpoint (spaceCentreAngle)
+    const halfPitch = Math.PI / absZ;
+    const spaceCentreAngle = Math.PI / 2 - halfPitch;
+
+    let wasCulled = false;
+    while (filletPts.length > 0) {
+        const ang = Math.atan2(filletPts[0].y, filletPts[0].x);
+        if (ang < spaceCentreAngle - 1e-7) {
+            filletPts.shift();
+            wasCulled = true;
+        } else {
+            break;
+        }
+    }
+
+    if (wasCulled && filletPts.length > 0) {
+        // Prepend a point exactly on the boundary to keep the contour continuous
+        filletPts.unshift({
+            x: rDeepest * Math.cos(spaceCentreAngle),
+            y: rDeepest * Math.sin(spaceCentreAngle)
+        });
+    }
+
     // -- 7. Tip arc (involute end → tooth centreline at π/2) --
     const pInvEnd = invPts[invPts.length - 1];
     const r_actual_inv_end = Math.hypot(pInvEnd.x, pInvEnd.y);
@@ -395,10 +418,8 @@ function assembleToothProfile(eqResult, z, mn, alpha_t, d, db, st, dFf, da, rhoa
     const tipArc = _arcPoints(r_tip, invTipAngle, Math.PI / 2, 16);
 
     // -- 8. Root arc (gap centre → fillet start) --
-    const halfPitch = Math.PI / absZ;
-    const spaceCentreAngle = Math.PI / 2 - halfPitch;
     let rootArc = [];
-    const filletStartAngle = rootPt ? Math.atan2(rootPt.y, rootPt.x) : spaceCentreAngle;
+    const filletStartAngle = filletPts.length > 0 ? Math.atan2(filletPts[0].y, filletPts[0].x) : spaceCentreAngle;
 
     // The root arc must always sweep *toward* the tooth (increasing angle toward π/2).
     // For internal gears the negative rolling ratio places the trochoid's deepest
@@ -413,7 +434,8 @@ function assembleToothProfile(eqResult, z, mn, alpha_t, d, db, st, dFf, da, rhoa
     } else {
         // Either the root is exactly at the gap centre, or it is on the wrong
         // angular side — in both cases a single anchor point is correct.
-        if (rootPt) {
+        // Avoid duplicate point if filletPts already starts at the gap centre.
+        if (rootPt && !(filletPts.length > 0 && Math.abs(Math.atan2(filletPts[0].y, filletPts[0].x) - spaceCentreAngle) < 1e-4)) {
             rootArc = [{ x: rDeepest * Math.cos(spaceCentreAngle), y: rDeepest * Math.sin(spaceCentreAngle) }];
         }
     }
@@ -1301,7 +1323,7 @@ function _drawFullAssembly2D(canvas, state) {
         z2 = Math.abs(z2_signed);
         const s1 = (z1_signed < 0 || z2_signed < 0) ? 1 : -1;
         k_rot[2] = k_rot[1] * s1 * (Math.abs(z1_signed) / z2);
-        
+
         let numPlanets = 1;
         if (config === 'planetary') {
             const npEl = document.getElementById('num-planets');
@@ -1309,7 +1331,7 @@ function _drawFullAssembly2D(canvas, state) {
                 numPlanets = parseInt(npEl.value);
             }
         }
-        
+
         for (let i = 0; i < numPlanets; i++) {
             const theta = i * (2 * Math.PI / numPlanets);
             const g2_x = signedAw(z1_signed, z2_signed, aw1) * Math.cos(theta);
