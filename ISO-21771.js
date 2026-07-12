@@ -176,23 +176,23 @@ function calculateRootDiameter(d, z, hfP_coeff, xE, mn) {
 
 /**
  * Calculates the tip diameter (da).
- * Formula: da = d + 2 * (abs(z)/z) * (haP_coeff + xE + k) * mn
+ * Formula: da = d + 2 * (abs(z)/z) * (haP_coeff + x + k) * mn
  * @param {number} d - Reference diameter (mm)
  * @param {number} z - Number of teeth
  * @param {number} haP_coeff - Addendum coefficient (haP*)
- * @param {number} xE - Generating profile shift coefficient
+ * @param {number} x - Profile shift coefficient
  * @param {number} k - Tip alteration coefficient
  * @param {number} mn - Normal module (mm)
  * @returns {Object} result - { success: boolean, value: number (mm), error: string }
  */
-function calculateTipDiameter(d, z, haP_coeff, xE, k, mn) {
-    if (isNaN(d) || isNaN(z) || isNaN(haP_coeff) || isNaN(xE) || isNaN(k) || isNaN(mn) || z === 0 || mn <= 0) {
+function calculateTipDiameter(d, z, haP_coeff, x, k, mn) {
+    if (isNaN(d) || isNaN(z) || isNaN(haP_coeff) || isNaN(x) || isNaN(k) || isNaN(mn) || z === 0 || mn <= 0) {
         return { success: false, error: 'Invalid inputs.' };
     }
 
     const sign = z / Math.abs(z);
-    // da = d + 2 * sign * (haP_coeff + xE + k) * mn
-    const da = d + 2 * sign * (haP_coeff + xE + k) * mn;
+    // da = d + 2 * sign * (haP_coeff + x + k) * mn
+    const da = d + 2 * sign * (haP_coeff + x + k) * mn;
 
     return { success: true, value: da };
 }
@@ -469,7 +469,7 @@ function calculateDimensionOverBalls(z, d, beta, alpha_n, st, d_M) {
         MdK = Math.cos((90 / absZ) * (Math.PI / 180)) * dK + d_M;
     }
 
-    return { success: true, value: MdK };
+    return { success: true, value: MdK, dK: dK };
 }
 
 /**
@@ -531,7 +531,7 @@ function calculateDimensionBetweenBalls(z, d, beta, alpha_n, st, d_M) {
         MdK = Math.cos((90 / absZ) * (Math.PI / 180)) * dK - d_M;
     }
 
-    return { success: true, value: MdK };
+    return { success: true, value: MdK, dK: dK };
 }
 
 /**

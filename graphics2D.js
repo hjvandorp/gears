@@ -504,7 +504,11 @@ function calculateGearProfile(cache) {
             dFf: Math.abs(dFf),
             db: Math.abs(db),
             df: cache.df ? Math.abs(cache.df) : (Math.abs(dFf) - mn),
-            d: Math.abs(d)
+            d: Math.abs(d),
+            beta: cache.beta,
+            alphaN: cache.alphaN,
+            dmVal: cache.dmVal,
+            st: st
         }
     };
 }
@@ -807,6 +811,79 @@ function _drawGear2D(canvas, points, geom, di, holePattern) {
         drawCircle(state.geom.db, '#9b59b6');  // Base: Purple
         drawCircle(state.geom.df, '#3498db');  // Root: Blue
         ctx.setLineDash([]); // Reset
+
+        // 5. Draw measuring balls
+        if (state.geom.beta !== undefined && state.geom.alphaN !== undefined && state.geom.dmVal > 0) {
+            const geom = state.geom;
+            const z = geom.z;
+            const d = geom.d;
+            const beta = geom.beta;
+            const alphaN = geom.alphaN;
+            const st = geom.st;
+            const dM = geom.dmVal;
+
+            let dKRes;
+            if (z > 0) {
+                if (typeof calculateDimensionOverBalls === 'function') {
+                    dKRes = calculateDimensionOverBalls(z, d, beta, alphaN, st, dM);
+                }
+            } else {
+                if (typeof calculateDimensionBetweenBalls === 'function') {
+                    dKRes = calculateDimensionBetweenBalls(z, d, beta, alphaN, st, dM);
+                }
+            }
+
+            if (dKRes && dKRes.success && dKRes.dK) {
+                const dK = dKRes.dK;
+                const rK = dK / 2;
+                const rBall = dM / 2;
+
+                const absZ = Math.abs(z);
+                // The first tooth is centered on the +Y axis (angle = pi/2).
+                // Tooth spaces are offset from tooth centers by half of an angular pitch (pi/absZ).
+                const theta1 = Math.PI / 2 + Math.PI / absZ;
+                // For z=even, balls are diametrically opposed (angle difference of pi).
+                // For z=odd, one ball is offset by half a circular pitch, i.e., (pi - pi/absZ) angle difference.
+                const theta2 = (absZ % 2 === 0) ? (theta1 + Math.PI) : (theta1 + Math.PI - Math.PI / absZ);
+
+                ctx.save();
+                ctx.fillStyle = 'rgba(231, 76, 60, 0.45)'; // Semi-transparent red
+                ctx.strokeStyle = '#e74c3c';
+                ctx.lineWidth = 1.5 / currentScale;
+
+                // Draw Ball 1
+                const x1 = rK * Math.cos(theta1);
+                const y1 = rK * Math.sin(theta1);
+                ctx.beginPath();
+                ctx.arc(x1, y1, rBall, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+
+                // Draw Ball 2
+                const x2 = rK * Math.cos(theta2);
+                const y2 = rK * Math.sin(theta2);
+                ctx.beginPath();
+                ctx.arc(x2, y2, rBall, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+
+                // Draw center marks for balls
+                ctx.fillStyle = '#d35400';
+                ctx.beginPath();
+                ctx.arc(x1, y1, 2 / currentScale, 0, 2 * Math.PI);
+                ctx.arc(x2, y2, 2 / currentScale, 0, 2 * Math.PI);
+                ctx.fill();
+
+                // Draw connecting dashed line
+                ctx.beginPath();
+                ctx.setLineDash([4 / currentScale, 4 / currentScale]);
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
     }
 
     ctx.restore();
@@ -1827,8 +1904,10 @@ function resetGearView(canvasId) {
  *   CIRCLE_FORM   – root form circle, dFf   (yellow)
  *   CIRCLE_BASE   – base circle, db         (magenta)
  *   CIRCLE_ROOT   – root circle, df         (blue)
- *   CIRCLE_BORE   – bore / inside diameter and hole pattern  (cyan, only if di is set)
- *
+ *   CIRCLE_LOCATING_DIAMETER – inside diameter for locating  (cyan, only if di is set)
+ *   HOLE_PATTERN  – holes for bolt pattern (cyan, only if holePattern is set)
+ *   MEASUREMENT_BALLS – two balls for measurement (green, only if dmVal > 0)
+ * 
  * @param {string} canvasId  - ID of the 2D canvas whose state holds the profile.
  * @param {string} [filename='gear_profile.dxf'] - Suggested download filename.
  */
@@ -1837,6 +1916,14 @@ function exportGearDXF(canvasId, filename = 'gear_profile.dxf') {
     if (!state || !state.points || state.points.length === 0) {
         alert('No gear profile data available. Please run "Calculate All" first.');
         return;
+    }
+
+    // Prefix with project name if available
+    const projectNameEl = document.getElementById('project-name');
+    let finalFilename = filename;
+    if (projectNameEl && projectNameEl.value.trim() !== '') {
+        const cleanProjectName = projectNameEl.value.trim().replace(/[^a-zA-Z0-9_\-]/g, '_');
+        finalFilename = cleanProjectName + '_' + filename;
     }
 
     const pts = state.points;
@@ -1885,8 +1972,9 @@ function exportGearDXF(canvasId, filename = 'gear_profile.dxf') {
     layerDef('CIRCLE_FORM', COLOR.yellow);
     layerDef('CIRCLE_BASE', COLOR.magenta);
     layerDef('CIRCLE_ROOT', COLOR.blue);
-    layerDef('CIRCLE_BORE', COLOR.cyan);
+    layerDef('CIRCLE_LOCATING_DIAMETER', COLOR.cyan);
     layerDef('HOLE_PATTERN', COLOR.cyan);
+    layerDef('MEASUREMENT_BALLS', COLOR.green);
 
     g(0, 'ENDTAB');
     g(0, 'ENDSEC');
@@ -1930,7 +2018,7 @@ function exportGearDXF(canvasId, filename = 'gear_profile.dxf') {
         addCircle('CIRCLE_BASE', geom.db);
         addCircle('CIRCLE_ROOT', geom.df);
     }
-    if (di > 0) addCircle('CIRCLE_BORE', di);
+    if (di > 0) addCircle('CIRCLE_LOCATING_DIAMETER', di);
 
     if (holePattern) {
         const { holeCircle, holeDiameter, numHoles } = holePattern;
@@ -1951,6 +2039,68 @@ function exportGearDXF(canvasId, filename = 'gear_profile.dxf') {
         }
     }
 
+    // -- Measurement Balls & Connecting Line --
+    if (geom && geom.beta !== undefined && geom.alphaN !== undefined && geom.dmVal > 0) {
+        const z = geom.z;
+        const d = geom.d;
+        const beta = geom.beta;
+        const alphaN = geom.alphaN;
+        const st = geom.st;
+        const dM = geom.dmVal;
+
+        let dKRes;
+        if (z > 0) {
+            if (typeof calculateDimensionOverBalls === 'function') {
+                dKRes = calculateDimensionOverBalls(z, d, beta, alphaN, st, dM);
+            }
+        } else {
+            if (typeof calculateDimensionBetweenBalls === 'function') {
+                dKRes = calculateDimensionBetweenBalls(z, d, beta, alphaN, st, dM);
+            }
+        }
+
+        if (dKRes && dKRes.success && dKRes.dK) {
+            const dK = dKRes.dK;
+            const rK = dK / 2;
+            const rBall = dM / 2;
+
+            const absZ = Math.abs(z);
+            const theta1 = Math.PI / 2 + Math.PI / absZ;
+            const theta2 = (absZ % 2 === 0) ? (theta1 + Math.PI) : (theta1 + Math.PI - Math.PI / absZ);
+
+            const x1 = rK * Math.cos(theta1);
+            const y1 = rK * Math.sin(theta1);
+            const x2 = rK * Math.cos(theta2);
+            const y2 = rK * Math.sin(theta2);
+
+            // Ball 1 circle
+            g(0, 'CIRCLE');
+            g(8, 'MEASUREMENT_BALLS');
+            g(10, x1.toFixed(6));
+            g(20, y1.toFixed(6));
+            g(30, 0.0);
+            g(40, rBall.toFixed(6));
+
+            // Ball 2 circle
+            g(0, 'CIRCLE');
+            g(8, 'MEASUREMENT_BALLS');
+            g(10, x2.toFixed(6));
+            g(20, y2.toFixed(6));
+            g(30, 0.0);
+            g(40, rBall.toFixed(6));
+
+            // Connecting line
+            g(0, 'LINE');
+            g(8, 'MEASUREMENT_BALLS');
+            g(10, x1.toFixed(6));
+            g(20, y1.toFixed(6));
+            g(30, 0.0);
+            g(11, x2.toFixed(6));
+            g(21, y2.toFixed(6));
+            g(31, 0.0);
+        }
+    }
+
     g(0, 'ENDSEC');
     g(0, 'EOF');
 
@@ -1960,7 +2110,7 @@ function exportGearDXF(canvasId, filename = 'gear_profile.dxf') {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = filename;
+    a.download = finalFilename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

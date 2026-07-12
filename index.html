@@ -25,7 +25,8 @@
         <section class="top-controls-card">
             <div class="drop-zone" id="csv-drop-zone">
                 <span class="drop-zone-text">Drag & Drop CSV</span>
-                <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
+                <input type="file" id="csv-file-input" accept=".csv" style="display: none;"
+                    title="placeholder mouseover text for Csv file input">
             </div>
             <div class="controls-actions">
                 <button id="export-csv-btn" class="action-btn">Export</button>
@@ -48,11 +49,12 @@
                 <div class="two-column-grid">
                     <div class="input-group">
                         <label for="project-name">Project Name</label>
-                        <input type="text" id="project-name" placeholder="e.g., Main Gear Assembly">
+                        <input type="text" id="project-name" placeholder="e.g., Main Gear Assembly"
+                            title="placeholder mouseover text for Project Name">
                     </div>
                     <div class="input-group">
                         <label for="gear-config">Gear Configuration</label>
-                        <select id="gear-config">
+                        <select id="gear-config" title="placeholder mouseover text for Gear Configuration">
                             <option value="pair">Gear Pair</option>
                             <option value="3-train">3-Gear Train</option>
                             <option value="4-train">4-Gear Train</option>
@@ -61,17 +63,20 @@
                     </div>
                     <div class="input-group">
                         <label for="module">Normal Module (m<sub>n</sub>, mm)</label>
-                        <input type="number" id="module" min="0.50" step="0.50" placeholder="e.g., 2.5">
+                        <input type="number" id="module" min="0.50" step="0.50" placeholder="e.g., 2.5"
+                            title="placeholder mouseover text for Normal Module (mn, mm)">
                     </div>
                     <div class="input-group">
                         <label for="pressure-angle">Normal Pressure Angle (α<sub>n</sub>, degrees)</label>
-                        <input type="number" id="pressure-angle" min="10" max="45" step="2.5" placeholder="e.g., 20">
+                        <input type="number" id="pressure-angle" min="10" max="45" step="2.5" placeholder="e.g., 20"
+                            title="placeholder mouseover text for Normal Pressure Angle (αn, degrees)">
                     </div>
                     <div class="side-by-side-group">
                         <div class="input-group">
                             <label for="helix-angle">Helix Angle (β, degrees)</label>
                             <input type="number" id="helix-angle" min="-89" max="89" step="any"
-                                placeholder="e.g., 0 for Spur Gear">
+                                placeholder="e.g., 0 for Spur Gear"
+                                title="placeholder mouseover text for Helix Angle (β, degrees)">
                         </div>
                         <div class="input-group">
                             <label>Gear 1 Hand of Helix</label>
@@ -84,7 +89,8 @@
                     <div class="side-by-side-group hidden" id="num-planets-group">
                         <div class="input-group">
                             <label for="num-planets">Number of Planets</label>
-                            <input type="number" id="num-planets" min="3" step="1" placeholder="e.g., 3">
+                            <input type="number" id="num-planets" min="3" step="1" placeholder="e.g., 3"
+                                title="placeholder mouseover text for Number of Planets">
                         </div>
                         <div class="input-group">
                             <label>Options (Equally Spaced)</label>
@@ -103,15 +109,18 @@
                             <h4 class="gear-title" id="gear-title-1">Gear 1</h4>
                             <div class="input-group">
                                 <label for="z1">Number of Teeth (z<sub>1</sub>)</label>
-                                <input type="number" id="z1" min="1" step="1">
+                                <input type="number" id="z1" min="1" step="1"
+                                    title="placeholder mouseover text for Number of Teeth (z1)">
                             </div>
                             <div class="input-group">
                                 <label for="b1">Facewidth (b<sub>1</sub>, mm)</label>
-                                <input type="number" id="b1" min="0" step="any">
+                                <input type="number" id="b1" min="0" step="any"
+                                    title="placeholder mouseover text for Facewidth (b1, mm)">
                             </div>
                             <div class="input-group">
                                 <label for="x1">Profile Shift (x<sub>1</sub>)</label>
-                                <input type="number" id="x1" step="0.1">
+                                <input type="number" id="x1" step="0.1"
+                                    title="placeholder mouseover text for Profile Shift (x1)">
                             </div>
                         </div>
 
@@ -119,11 +128,13 @@
                             <h4 class="gear-title" id="gear-title-2">Gear 2</h4>
                             <div class="input-group">
                                 <label for="z2">Number of Teeth (z<sub>2</sub>)</label>
-                                <input type="number" id="z2" min="1" step="1">
+                                <input type="number" id="z2" min="1" step="1"
+                                    title="placeholder mouseover text for Number of Teeth (z2)">
                             </div>
                             <div class="input-group">
                                 <label for="b2">Facewidth (b<sub>2</sub>, mm)</label>
-                                <input type="number" id="b2" min="0" step="any">
+                                <input type="number" id="b2" min="0" step="any"
+                                    title="placeholder mouseover text for Facewidth (b2, mm)">
                             </div>
                             <div class="input-group">
                                 <label>Profile Shift (x<sub>2</sub>)</label>
@@ -138,11 +149,13 @@
                             <h4 class="gear-title" id="gear-title-3">Gear 3</h4>
                             <div class="input-group">
                                 <label for="z3">Number of Teeth (z<sub>3</sub>)</label>
-                                <input type="number" id="z3" min="1" step="1">
+                                <input type="number" id="z3" min="1" step="1"
+                                    title="placeholder mouseover text for Number of Teeth (z3)">
                             </div>
                             <div class="input-group">
                                 <label for="b3">Facewidth (b<sub>3</sub>, mm)</label>
-                                <input type="number" id="b3" min="0" step="any">
+                                <input type="number" id="b3" min="0" step="any"
+                                    title="placeholder mouseover text for Facewidth (b3, mm)">
                             </div>
                             <div class="input-group">
                                 <label>Profile Shift (x<sub>3</sub>)</label>
@@ -157,11 +170,13 @@
                             <h4 class="gear-title" id="gear-title-4">Gear 4</h4>
                             <div class="input-group">
                                 <label for="z4">Number of Teeth (z<sub>4</sub>)</label>
-                                <input type="number" id="z4" min="1" step="1">
+                                <input type="number" id="z4" min="1" step="1"
+                                    title="placeholder mouseover text for Number of Teeth (z4)">
                             </div>
                             <div class="input-group">
                                 <label for="b4">Facewidth (b<sub>4</sub>, mm)</label>
-                                <input type="number" id="b4" min="0" step="any">
+                                <input type="number" id="b4" min="0" step="any"
+                                    title="placeholder mouseover text for Facewidth (b4, mm)">
                             </div>
                             <div class="input-group">
                                 <label>Profile Shift (x<sub>4</sub>)</label>
@@ -174,110 +189,13 @@
                     </div>
                 </div>
 
-                <div class="gear-properties-section" id="mounting-geometry-section" style="margin-top: 20px;">
-                    <h3 class="section-title">Mounting Geometry</h3>
-                    <div class="gear-grid-container">
-                        <div class="gear-column" id="mounting-col-1">
-                            <h4 class="gear-title" id="mounting-title-1">Gear 1</h4>
-                            <div class="input-group">
-                                <label for="di1">Inside/Outside Diameter (d<sub>i1</sub>, mm)</label>
-                                <input type="number" id="di1" min="0" step="any">
-                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
-                                    Recommended diameter to avoid thin rim: <span id="di-rec-1"
-                                        style="font-weight: 500;">--</span>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="hole-circle-1">Hole Circle Diameter (mm)</label>
-                                <input type="number" id="hole-circle-1" min="0" step="any">
-                            </div>
-                            <div class="input-group">
-                                <label for="hole-diameter-1">Hole Diameter (mm)</label>
-                                <input type="number" id="hole-diameter-1" min="0" step="any">
-                            </div>
-                            <div class="input-group">
-                                <label for="num-holes-1">Number of Holes</label>
-                                <input type="number" id="num-holes-1" min="0" step="1">
-                            </div>
-                        </div>
-                        <div class="gear-column" id="mounting-col-2">
-                            <h4 class="gear-title" id="mounting-title-2">Gear 2</h4>
-                            <div class="input-group">
-                                <label for="di2">Inside/Outside Diameter (d<sub>i2</sub>, mm)</label>
-                                <input type="number" id="di2" min="0" step="any">
-                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
-                                    Recommended diameter to avoid thin rim: <span id="di-rec-2"
-                                        style="font-weight: 500;">--</span>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="hole-circle-2">Hole Circle Diameter (mm)</label>
-                                <input type="number" id="hole-circle-2" min="0" step="any">
-                            </div>
-                            <div class="input-group">
-                                <label for="hole-diameter-2">Hole Diameter (mm)</label>
-                                <input type="number" id="hole-diameter-2" min="0" step="any">
-                            </div>
-                            <div class="input-group">
-                                <label for="num-holes-2">Number of Holes</label>
-                                <input type="number" id="num-holes-2" min="0" step="1">
-                            </div>
-                        </div>
-                        <div class="gear-column hidden" id="mounting-col-3">
-                            <h4 class="gear-title" id="mounting-title-3">Gear 3</h4>
-                            <div class="input-group">
-                                <label for="di3">Inside/Outside Diameter (d<sub>i3</sub>, mm)</label>
-                                <input type="number" id="di3" min="0" step="any">
-                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
-                                    Recommended diameter to avoid thin rim: <span id="di-rec-3"
-                                        style="font-weight: 500;">--</span>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="hole-circle-3">Hole Circle Diameter (mm)</label>
-                                <input type="number" id="hole-circle-3" min="0" step="any">
-                            </div>
-                            <div class="input-group">
-                                <label for="hole-diameter-3">Hole Diameter (mm)</label>
-                                <input type="number" id="hole-diameter-3" min="0" step="any">
-                            </div>
-                            <div class="input-group">
-                                <label for="num-holes-3">Number of Holes</label>
-                                <input type="number" id="num-holes-3" min="0" step="1">
-                            </div>
-                        </div>
-                        <div class="gear-column hidden" id="mounting-col-4">
-                            <h4 class="gear-title" id="mounting-title-4">Gear 4</h4>
-                            <div class="input-group">
-                                <label for="di4">Inside/Outside Diameter (d<sub>i4</sub>, mm)</label>
-                                <input type="number" id="di4" min="0" step="any">
-                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
-                                    Recommended diameter to avoid thin rim: <span id="di-rec-4"
-                                        style="font-weight: 500;">--</span>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="hole-circle-4">Hole Circle Diameter (mm)</label>
-                                <input type="number" id="hole-circle-4" min="0" step="any">
-                            </div>
-                            <div class="input-group">
-                                <label for="hole-diameter-4">Hole Diameter (mm)</label>
-                                <input type="number" id="hole-diameter-4" min="0" step="any">
-                            </div>
-                            <div class="input-group">
-                                <label for="num-holes-4">Number of Holes</label>
-                                <input type="number" id="num-holes-4" min="0" step="1">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="center-distance-section" id="center-distance-section">
                     <h3 class="section-title">Center Distance</h3>
                     <div class="cd-groups-container">
                         <div class="input-group" id="cd-group-1">
                             <label for="aw1" id="cd-label-1">Working Center Distance (a<sub>w,12</sub>, mm)</label>
-                            <input type="number" id="aw1" min="0" step="any" placeholder="e.g., 100.0">
+                            <input type="number" id="aw1" min="0" step="any" placeholder="e.g., 100.0"
+                                title="placeholder mouseover text for Working Center Distance (aw,12, mm)">
                             <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                 Standard: <span id="cd-std-1" style="font-weight: 500;">--</span><br>
                                 Working Transverse PA (&alpha;<sub>wt</sub>): <span id="aw-alpha-1"
@@ -288,7 +206,8 @@
                         </div>
                         <div class="input-group hidden" id="cd-group-2">
                             <label for="aw2">Working Center Distance, Gear 2-3 (a<sub>w,23</sub>, mm)</label>
-                            <input type="number" id="aw2" min="0" step="any" placeholder="e.g., 100.0">
+                            <input type="number" id="aw2" min="0" step="any" placeholder="e.g., 100.0"
+                                title="placeholder mouseover text for Working Center Distance, Gear 2-3 (aw,23, mm)">
                             <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                 Standard: <span id="cd-std-2" style="font-weight: 500;">--</span><br>
                                 Working Transverse PA (&alpha;<sub>wt</sub>): <span id="aw-alpha-2"
@@ -297,11 +216,126 @@
                         </div>
                         <div class="input-group hidden" id="cd-group-3">
                             <label for="aw3">Working Center Distance, Gear 3-4 (a<sub>w,34</sub>, mm)</label>
-                            <input type="number" id="aw3" min="0" step="any" placeholder="e.g., 100.0">
+                            <input type="number" id="aw3" min="0" step="any" placeholder="e.g., 100.0"
+                                title="placeholder mouseover text for Working Center Distance, Gear 3-4 (aw,34, mm)">
                             <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                 Standard: <span id="cd-std-3" style="font-weight: 500;">--</span><br>
                                 Working Transverse PA (&alpha;<sub>wt</sub>): <span id="aw-alpha-3"
                                     style="font-weight: 500;">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gear-properties-section" id="mounting-geometry-section" style="margin-top: 20px;">
+                    <h3 class="section-title">Mounting Geometry</h3>
+                    <div class="gear-grid-container">
+                        <div class="gear-column" id="mounting-col-1">
+                            <h4 class="gear-title" id="mounting-title-1">Gear 1</h4>
+                            <div class="input-group">
+                                <label for="di1">Inside/Outside Diameter (d<sub>i1</sub>, mm)</label>
+                                <input type="number" id="di1" min="0" step="any"
+                                    title="placeholder mouseover text for Inside/Outside Diameter (di1, mm)">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Recommended diameter to avoid thin rim: <span id="di-rec-1"
+                                        style="font-weight: 500;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-circle-1">Hole Circle Diameter (mm)</label>
+                                <input type="number" id="hole-circle-1" min="0" step="any"
+                                    title="placeholder mouseover text for Hole Circle Diameter (mm)">
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-diameter-1">Hole Diameter (mm)</label>
+                                <input type="number" id="hole-diameter-1" min="0" step="any"
+                                    title="placeholder mouseover text for Hole Diameter (mm)">
+                            </div>
+                            <div class="input-group">
+                                <label for="num-holes-1">Number of Holes</label>
+                                <input type="number" id="num-holes-1" min="0" step="1"
+                                    title="placeholder mouseover text for Number of Holes">
+                            </div>
+                        </div>
+                        <div class="gear-column" id="mounting-col-2">
+                            <h4 class="gear-title" id="mounting-title-2">Gear 2</h4>
+                            <div class="input-group">
+                                <label for="di2">Inside/Outside Diameter (d<sub>i2</sub>, mm)</label>
+                                <input type="number" id="di2" min="0" step="any"
+                                    title="placeholder mouseover text for Inside/Outside Diameter (di2, mm)">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Recommended diameter to avoid thin rim: <span id="di-rec-2"
+                                        style="font-weight: 500;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-circle-2">Hole Circle Diameter (mm)</label>
+                                <input type="number" id="hole-circle-2" min="0" step="any"
+                                    title="placeholder mouseover text for Hole Circle Diameter (mm)">
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-diameter-2">Hole Diameter (mm)</label>
+                                <input type="number" id="hole-diameter-2" min="0" step="any"
+                                    title="placeholder mouseover text for Hole Diameter (mm)">
+                            </div>
+                            <div class="input-group">
+                                <label for="num-holes-2">Number of Holes</label>
+                                <input type="number" id="num-holes-2" min="0" step="1"
+                                    title="placeholder mouseover text for Number of Holes">
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="mounting-col-3">
+                            <h4 class="gear-title" id="mounting-title-3">Gear 3</h4>
+                            <div class="input-group">
+                                <label for="di3">Inside/Outside Diameter (d<sub>i3</sub>, mm)</label>
+                                <input type="number" id="di3" min="0" step="any"
+                                    title="placeholder mouseover text for Inside/Outside Diameter (di3, mm)">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Recommended diameter to avoid thin rim: <span id="di-rec-3"
+                                        style="font-weight: 500;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-circle-3">Hole Circle Diameter (mm)</label>
+                                <input type="number" id="hole-circle-3" min="0" step="any"
+                                    title="placeholder mouseover text for Hole Circle Diameter (mm)">
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-diameter-3">Hole Diameter (mm)</label>
+                                <input type="number" id="hole-diameter-3" min="0" step="any"
+                                    title="placeholder mouseover text for Hole Diameter (mm)">
+                            </div>
+                            <div class="input-group">
+                                <label for="num-holes-3">Number of Holes</label>
+                                <input type="number" id="num-holes-3" min="0" step="1"
+                                    title="placeholder mouseover text for Number of Holes">
+                            </div>
+                        </div>
+                        <div class="gear-column hidden" id="mounting-col-4">
+                            <h4 class="gear-title" id="mounting-title-4">Gear 4</h4>
+                            <div class="input-group">
+                                <label for="di4">Inside/Outside Diameter (d<sub>i4</sub>, mm)</label>
+                                <input type="number" id="di4" min="0" step="any"
+                                    title="placeholder mouseover text for Inside/Outside Diameter (di4, mm)">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Recommended diameter to avoid thin rim: <span id="di-rec-4"
+                                        style="font-weight: 500;">--</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-circle-4">Hole Circle Diameter (mm)</label>
+                                <input type="number" id="hole-circle-4" min="0" step="any"
+                                    title="placeholder mouseover text for Hole Circle Diameter (mm)">
+                            </div>
+                            <div class="input-group">
+                                <label for="hole-diameter-4">Hole Diameter (mm)</label>
+                                <input type="number" id="hole-diameter-4" min="0" step="any"
+                                    title="placeholder mouseover text for Hole Diameter (mm)">
+                            </div>
+                            <div class="input-group">
+                                <label for="num-holes-4">Number of Holes</label>
+                                <input type="number" id="num-holes-4" min="0" step="1"
+                                    title="placeholder mouseover text for Number of Holes">
                             </div>
                         </div>
                     </div>
@@ -416,22 +450,24 @@
                         <h4 class="gear-title" id="profile-title-1">Gear 1</h4>
                         <div class="input-group">
                             <label for="tool-type-1">Manufacturing Process</label>
-                            <select id="tool-type-1">
+                            <select id="tool-type-1" title="placeholder mouseover text for Manufacturing Process">
                                 <option value="hob">Hobbing</option>
                                 <option value="shaper">Shaping</option>
                             </select>
                         </div>
                         <div class="input-group">
                             <label for="alpha-p0-1">Gen. Pressure Angle, &alpha;<sub>P0</sub> (&deg;)</label>
-                            <input type="number" id="alpha-p0-1" min="10" step="2.5" placeholder="e.g., 20">
+                            <input type="number" id="alpha-p0-1" min="10" step="2.5" placeholder="e.g., 20"
+                                title="placeholder mouseover text for Gen. Pressure Angle, &alpha;P0 (&deg;)">
                         </div>
                         <div class="input-group">
                             <label for="cutter-teeth-1">Number of Cutter Teeth</label>
-                            <input type="number" id="cutter-teeth-1" min="4" step="1">
+                            <input type="number" id="cutter-teeth-1" min="4" step="1"
+                                title="placeholder mouseover text for Number of Cutter Teeth">
                         </div>
                         <div class="input-group">
                             <label for="reference-profile-1">Reference Profile</label>
-                            <select id="reference-profile-1">
+                            <select id="reference-profile-1" title="placeholder mouseover text for Reference Profile">
                                 <option value="iso-a">ISO 53 Profile A</option>
                                 <option value="iso-b">ISO 53 Profile B</option>
                                 <option value="iso-c">ISO 53 Profile C</option>
@@ -441,18 +477,21 @@
                         </div>
                         <div class="input-group">
                             <label for="dedendum-coeff-1">Dedendum Coefficient</label>
-                            <input type="number" id="dedendum-coeff-1" min="0" step="0.05">
+                            <input type="number" id="dedendum-coeff-1" min="0" step="0.05"
+                                title="placeholder mouseover text for Dedendum Coefficient">
                         </div>
                         <div class="input-group">
                             <label for="root-radius-coeff-1">Root Radius Coefficient</label>
-                            <input type="number" id="root-radius-coeff-1" min="0" step="0.05">
+                            <input type="number" id="root-radius-coeff-1" min="0" step="0.05"
+                                title="placeholder mouseover text for Root Radius Coefficient">
                             <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                 Max: <span id="max-root-radius-coeff-1" style="font-weight: 500;">--</span>
                             </div>
                         </div>
                         <div class="input-group">
                             <label for="addendum-coeff-1">Addendum Coefficient</label>
-                            <input type="number" id="addendum-coeff-1" min="0" step="0.05">
+                            <input type="number" id="addendum-coeff-1" min="0" step="0.05"
+                                title="placeholder mouseover text for Addendum Coefficient">
                         </div>
                     </div>
 
@@ -460,22 +499,24 @@
                         <h4 class="gear-title" id="profile-title-2">Gear 2</h4>
                         <div class="input-group">
                             <label for="tool-type-2">Manufacturing Process</label>
-                            <select id="tool-type-2">
+                            <select id="tool-type-2" title="placeholder mouseover text for Manufacturing Process">
                                 <option value="hob">Hobbing</option>
                                 <option value="shaper">Shaping</option>
                             </select>
                         </div>
                         <div class="input-group">
                             <label for="alpha-p0-2">Gen. Pressure Angle, &alpha;<sub>P0</sub> (&deg;)</label>
-                            <input type="number" id="alpha-p0-2" min="10" step="2.5" placeholder="e.g., 20">
+                            <input type="number" id="alpha-p0-2" min="10" step="2.5" placeholder="e.g., 20"
+                                title="placeholder mouseover text for Gen. Pressure Angle, &alpha;P0 (&deg;)">
                         </div>
                         <div class="input-group">
                             <label for="cutter-teeth-2">Number of Cutter Teeth</label>
-                            <input type="number" id="cutter-teeth-2" min="4" step="1">
+                            <input type="number" id="cutter-teeth-2" min="4" step="1"
+                                title="placeholder mouseover text for Number of Cutter Teeth">
                         </div>
                         <div class="input-group">
                             <label for="reference-profile-2">Reference Profile</label>
-                            <select id="reference-profile-2">
+                            <select id="reference-profile-2" title="placeholder mouseover text for Reference Profile">
                                 <option value="iso-a">ISO 53 Profile A</option>
                                 <option value="iso-b">ISO 53 Profile B</option>
                                 <option value="iso-c">ISO 53 Profile C</option>
@@ -485,18 +526,21 @@
                         </div>
                         <div class="input-group">
                             <label for="dedendum-coeff-2">Dedendum Coefficient</label>
-                            <input type="number" id="dedendum-coeff-2" min="0" step="0.05">
+                            <input type="number" id="dedendum-coeff-2" min="0" step="0.05"
+                                title="placeholder mouseover text for Dedendum Coefficient">
                         </div>
                         <div class="input-group">
                             <label for="root-radius-coeff-2">Root Radius Coefficient</label>
-                            <input type="number" id="root-radius-coeff-2" min="0" step="0.05">
+                            <input type="number" id="root-radius-coeff-2" min="0" step="0.05"
+                                title="placeholder mouseover text for Root Radius Coefficient">
                             <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                 Max: <span id="max-root-radius-coeff-2" style="font-weight: 500;">--</span>
                             </div>
                         </div>
                         <div class="input-group">
                             <label for="addendum-coeff-2">Addendum Coefficient</label>
-                            <input type="number" id="addendum-coeff-2" min="0" step="0.05">
+                            <input type="number" id="addendum-coeff-2" min="0" step="0.05"
+                                title="placeholder mouseover text for Addendum Coefficient">
                         </div>
                     </div>
 
@@ -504,22 +548,24 @@
                         <h4 class="gear-title" id="profile-title-3">Gear 3</h4>
                         <div class="input-group">
                             <label for="tool-type-3">Manufacturing Process</label>
-                            <select id="tool-type-3">
+                            <select id="tool-type-3" title="placeholder mouseover text for Manufacturing Process">
                                 <option value="hob">Hobbing</option>
                                 <option value="shaper">Shaping</option>
                             </select>
                         </div>
                         <div class="input-group">
                             <label for="alpha-p0-3">Gen. Pressure Angle, &alpha;<sub>P0</sub> (&deg;)</label>
-                            <input type="number" id="alpha-p0-3" min="10" step="2.5" placeholder="e.g., 20">
+                            <input type="number" id="alpha-p0-3" min="10" step="2.5" placeholder="e.g., 20"
+                                title="placeholder mouseover text for Gen. Pressure Angle, &alpha;P0 (&deg;)">
                         </div>
                         <div class="input-group">
                             <label for="cutter-teeth-3">Number of Cutter Teeth</label>
-                            <input type="number" id="cutter-teeth-3" min="4" step="1">
+                            <input type="number" id="cutter-teeth-3" min="4" step="1"
+                                title="placeholder mouseover text for Number of Cutter Teeth">
                         </div>
                         <div class="input-group">
                             <label for="reference-profile-3">Reference Profile</label>
-                            <select id="reference-profile-3">
+                            <select id="reference-profile-3" title="placeholder mouseover text for Reference Profile">
                                 <option value="iso-a">ISO 53 Profile A</option>
                                 <option value="iso-b">ISO 53 Profile B</option>
                                 <option value="iso-c">ISO 53 Profile C</option>
@@ -529,18 +575,21 @@
                         </div>
                         <div class="input-group">
                             <label for="dedendum-coeff-3">Dedendum Coefficient</label>
-                            <input type="number" id="dedendum-coeff-3" min="0" step="0.05">
+                            <input type="number" id="dedendum-coeff-3" min="0" step="0.05"
+                                title="placeholder mouseover text for Dedendum Coefficient">
                         </div>
                         <div class="input-group">
                             <label for="root-radius-coeff-3">Root Radius Coefficient</label>
-                            <input type="number" id="root-radius-coeff-3" min="0" step="0.05">
+                            <input type="number" id="root-radius-coeff-3" min="0" step="0.05"
+                                title="placeholder mouseover text for Root Radius Coefficient">
                             <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                 Max: <span id="max-root-radius-coeff-3" style="font-weight: 500;">--</span>
                             </div>
                         </div>
                         <div class="input-group">
                             <label for="addendum-coeff-3">Addendum Coefficient</label>
-                            <input type="number" id="addendum-coeff-3" min="0" step="0.05">
+                            <input type="number" id="addendum-coeff-3" min="0" step="0.05"
+                                title="placeholder mouseover text for Addendum Coefficient">
                         </div>
                     </div>
 
@@ -548,22 +597,24 @@
                         <h4 class="gear-title" id="profile-title-4">Gear 4</h4>
                         <div class="input-group">
                             <label for="tool-type-4">Manufacturing Process</label>
-                            <select id="tool-type-4">
+                            <select id="tool-type-4" title="placeholder mouseover text for Manufacturing Process">
                                 <option value="hob">Hobbing</option>
                                 <option value="shaper">Shaping</option>
                             </select>
                         </div>
                         <div class="input-group">
                             <label for="alpha-p0-4">Gen. Pressure Angle, &alpha;<sub>P0</sub> (&deg;)</label>
-                            <input type="number" id="alpha-p0-4" min="10" step="2.5" placeholder="e.g., 20">
+                            <input type="number" id="alpha-p0-4" min="10" step="2.5" placeholder="e.g., 20"
+                                title="placeholder mouseover text for Gen. Pressure Angle, &alpha;P0 (&deg;)">
                         </div>
                         <div class="input-group">
                             <label for="cutter-teeth-4">Number of Cutter Teeth</label>
-                            <input type="number" id="cutter-teeth-4" min="4" step="1">
+                            <input type="number" id="cutter-teeth-4" min="4" step="1"
+                                title="placeholder mouseover text for Number of Cutter Teeth">
                         </div>
                         <div class="input-group">
                             <label for="reference-profile-4">Reference Profile</label>
-                            <select id="reference-profile-4">
+                            <select id="reference-profile-4" title="placeholder mouseover text for Reference Profile">
                                 <option value="iso-a">ISO 53 Profile A</option>
                                 <option value="iso-b">ISO 53 Profile B</option>
                                 <option value="iso-c">ISO 53 Profile C</option>
@@ -573,18 +624,21 @@
                         </div>
                         <div class="input-group">
                             <label for="dedendum-coeff-4">Dedendum Coefficient</label>
-                            <input type="number" id="dedendum-coeff-4" min="0" step="0.05">
+                            <input type="number" id="dedendum-coeff-4" min="0" step="0.05"
+                                title="placeholder mouseover text for Dedendum Coefficient">
                         </div>
                         <div class="input-group">
                             <label for="root-radius-coeff-4">Root Radius Coefficient</label>
-                            <input type="number" id="root-radius-coeff-4" min="0" step="0.05">
+                            <input type="number" id="root-radius-coeff-4" min="0" step="0.05"
+                                title="placeholder mouseover text for Root Radius Coefficient">
                             <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                 Max: <span id="max-root-radius-coeff-4" style="font-weight: 500;">--</span>
                             </div>
                         </div>
                         <div class="input-group">
                             <label for="addendum-coeff-4">Addendum Coefficient</label>
-                            <input type="number" id="addendum-coeff-4" min="0" step="0.05">
+                            <input type="number" id="addendum-coeff-4" min="0" step="0.05"
+                                title="placeholder mouseover text for Addendum Coefficient">
                         </div>
                     </div>
                 </div>
@@ -600,7 +654,8 @@
                             <h4 class="gear-title" id="aw-tol-title-1">Mesh 1-2</h4>
                             <div class="input-group">
                                 <label for="aw-tol-1">Tol. (&plusmn;) (mm)</label>
-                                <input type="number" id="aw-tol-1" min="0" step="0.01" placeholder="0.000">
+                                <input type="number" id="aw-tol-1" min="0" step="0.01" placeholder="0.000"
+                                    title="placeholder mouseover text for Tol. (&plusmn;) (mm)">
                                 <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                     Max CD: <span id="aw-max-1" style="font-weight: 500;">--</span><br>
                                     Min CD: <span id="aw-min-1" style="font-weight: 500;">--</span>
@@ -611,7 +666,8 @@
                             <h4 class="gear-title" id="aw-tol-title-2">Mesh 2-3</h4>
                             <div class="input-group">
                                 <label for="aw-tol-2">Tol. (&plusmn;) (mm)</label>
-                                <input type="number" id="aw-tol-2" min="0" step="0.01" placeholder="0.000">
+                                <input type="number" id="aw-tol-2" min="0" step="0.01" placeholder="0.000"
+                                    title="placeholder mouseover text for Tol. (&plusmn;) (mm)">
                                 <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                     Max CD: <span id="aw-max-2" style="font-weight: 500;">--</span><br>
                                     Min CD: <span id="aw-min-2" style="font-weight: 500;">--</span>
@@ -622,7 +678,8 @@
                             <h4 class="gear-title" id="aw-tol-title-3">Mesh 3-4</h4>
                             <div class="input-group">
                                 <label for="aw-tol-3">Tol. (&plusmn;) (mm)</label>
-                                <input type="number" id="aw-tol-3" min="0" step="0.01" placeholder="0.000">
+                                <input type="number" id="aw-tol-3" min="0" step="0.01" placeholder="0.000"
+                                    title="placeholder mouseover text for Tol. (&plusmn;) (mm)">
                                 <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                     Max CD: <span id="aw-max-3" style="font-weight: 500;">--</span><br>
                                     Min CD: <span id="aw-min-3" style="font-weight: 500;">--</span>
@@ -640,24 +697,29 @@
                             <div class="input-group">
                                 <label for="quality-grade-1">Gear Tolerance Class (ISO 1328-1:2013)</label>
                                 <input type="number" id="quality-grade-1" min="1" max="11" step="1"
-                                    placeholder="e.g., 6">
+                                    placeholder="e.g., 6"
+                                    title="placeholder mouseover text for Gear Tolerance Class (ISO 1328-1:2013)">
                             </div>
                             <div class="input-group">
                                 <label for="tip-alteration-1">Tip Alteration Coefficient (k)</label>
-                                <input type="number" id="tip-alteration-1" step="any">
+                                <input type="number" id="tip-alteration-1" step="0.01" placeholder="0.00"
+                                    title="placeholder mouseover text for Tip Alteration Coefficient (k)">
                             </div>
                             <div class="input-group" style="margin-bottom: 1.5rem;">
                                 <label for="da-tol-1">Tip Diameter Tolerance (mm)</label>
-                                <input type="number" id="da-tol-1" min="0" step="0.05" placeholder="0.000">
+                                <input type="number" id="da-tol-1" min="0" step="0.05" placeholder="0.000"
+                                    title="placeholder mouseover text for Tip Diameter Tolerance (mm)">
                             </div>
                             <div class="side-by-side-group">
                                 <div class="input-group">
                                     <label for="sn-tol-upper-1">Circ. Tooth Thickness reduction, min (mm)</label>
-                                    <input type="number" id="sn-tol-upper-1" min="0" step="0.01" placeholder="0.000">
+                                    <input type="number" id="sn-tol-upper-1" min="0" step="0.01" placeholder="0.000"
+                                        title="placeholder mouseover text for Circ. Tooth Thickness reduction, min (mm)">
                                 </div>
                                 <div class="input-group">
                                     <label for="sn-tol-lower-1">Circ. Tooth Thickness reduction, max (mm)</label>
-                                    <input type="number" id="sn-tol-lower-1" min="0" step="0.01" placeholder="0.000">
+                                    <input type="number" id="sn-tol-lower-1" min="0" step="0.01" placeholder="0.000"
+                                        title="placeholder mouseover text for Circ. Tooth Thickness reduction, max (mm)">
                                 </div>
                             </div>
                             <div class="result-display"
@@ -672,18 +734,20 @@
                                 (4) &Delta;s<sub>n</sub>: <span id="backlash-dsn-1">--</span>
                             </div>
                             <div class="input-group"
-                                title="The root diameter varies due to the difference in cutting tool infeed when producing the maximum and minimum tooth thickness. Additional root diameter allowance should be given to account for cutting tool tolerances and other factors such as heat treatment distortion. The additional root diameter allowance will be used to calculate the minimum and maximum tip-to-root clearance for each gear in each mesh.">
+                                title="The root diameter varies due to the difference in cutting tool infeed when producing the maximum and minimum tooth thickness. Additional root diameter allowance should be given to account for cutting tool tolerances and other factors such as heat treatment distortion.">
                                 <label for="df-allowance-1">Additional Root Diameter Allowance (mm)</label>
                                 <input type="number" id="df-allowance-1" min="0" step="0.05" placeholder="0.000">
                             </div>
                             <div class="side-by-side-group">
                                 <div class="input-group">
                                     <label for="dm-1">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
-                                    <input type="number" id="dm-1" min="0" step="0.001" placeholder="0.000">
+                                    <input type="number" id="dm-1" min="0" step="0.001" placeholder="0.000"
+                                        title="placeholder mouseover text for Measuring Ball Diameter (dM) (mm)">
                                 </div>
                                 <div class="input-group">
                                     <label for="k-spanned-1">Number of Teeth Spanned (k)</label>
-                                    <input type="number" id="k-spanned-1" min="1" step="1" placeholder="e.g., 3">
+                                    <input type="number" id="k-spanned-1" min="1" step="1" placeholder="e.g., 3"
+                                        title="placeholder mouseover text for Number of Teeth Spanned (k)">
                                 </div>
                             </div>
                         </div>
@@ -692,24 +756,29 @@
                             <div class="input-group">
                                 <label for="quality-grade-2">Gear Tolerance Class (ISO 1328-1:2013)</label>
                                 <input type="number" id="quality-grade-2" min="1" max="11" step="1"
-                                    placeholder="e.g., 6">
+                                    placeholder="e.g., 6"
+                                    title="placeholder mouseover text for Gear Tolerance Class (ISO 1328-1:2013)">
                             </div>
                             <div class="input-group">
                                 <label for="tip-alteration-2">Tip Alteration Coefficient (k)</label>
-                                <input type="number" id="tip-alteration-2" step="any">
+                                <input type="number" id="tip-alteration-2" step="0.01" placeholder="0.00"
+                                    title="placeholder mouseover text for Tip Alteration Coefficient (k)">
                             </div>
                             <div class="input-group" style="margin-bottom: 1.5rem;">
                                 <label for="da-tol-2">Tip Diameter Tolerance (mm)</label>
-                                <input type="number" id="da-tol-2" min="0" step="0.05" placeholder="0.000">
+                                <input type="number" id="da-tol-2" min="0" step="0.05" placeholder="0.000"
+                                    title="placeholder mouseover text for Tip Diameter Tolerance (mm)">
                             </div>
                             <div class="side-by-side-group">
                                 <div class="input-group">
                                     <label for="sn-tol-upper-2">Circ. Tooth Thickness reduction, min (mm)</label>
-                                    <input type="number" id="sn-tol-upper-2" min="0" step="0.01" placeholder="0.000">
+                                    <input type="number" id="sn-tol-upper-2" min="0" step="0.01" placeholder="0.000"
+                                        title="placeholder mouseover text for Circ. Tooth Thickness reduction, min (mm)">
                                 </div>
                                 <div class="input-group">
                                     <label for="sn-tol-lower-2">Circ. Tooth Thickness reduction, max (mm)</label>
-                                    <input type="number" id="sn-tol-lower-2" min="0" step="0.01" placeholder="0.000">
+                                    <input type="number" id="sn-tol-lower-2" min="0" step="0.01" placeholder="0.000"
+                                        title="placeholder mouseover text for Circ. Tooth Thickness reduction, max (mm)">
                                 </div>
                             </div>
                             <div class="result-display"
@@ -731,11 +800,13 @@
                             <div class="side-by-side-group">
                                 <div class="input-group">
                                     <label for="dm-2">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
-                                    <input type="number" id="dm-2" min="0" step="0.001" placeholder="0.000">
+                                    <input type="number" id="dm-2" min="0" step="0.001" placeholder="0.000"
+                                        title="placeholder mouseover text for Measuring Ball Diameter (dM) (mm)">
                                 </div>
                                 <div class="input-group">
                                     <label for="k-spanned-2">Number of Teeth Spanned (k)</label>
-                                    <input type="number" id="k-spanned-2" min="1" step="1" placeholder="e.g., 3">
+                                    <input type="number" id="k-spanned-2" min="1" step="1" placeholder="e.g., 3"
+                                        title="placeholder mouseover text for Number of Teeth Spanned (k)">
                                 </div>
                             </div>
                         </div>
@@ -744,24 +815,29 @@
                             <div class="input-group">
                                 <label for="quality-grade-3">Gear Tolerance Class (ISO 1328-1:2013)</label>
                                 <input type="number" id="quality-grade-3" min="1" max="11" step="1"
-                                    placeholder="e.g., 6">
+                                    placeholder="e.g., 6"
+                                    title="placeholder mouseover text for Gear Tolerance Class (ISO 1328-1:2013)">
                             </div>
                             <div class="input-group">
                                 <label for="tip-alteration-3">Tip Alteration Coefficient (k)</label>
-                                <input type="number" id="tip-alteration-3" step="any">
+                                <input type="number" id="tip-alteration-3" step="0.01" placeholder="0.00"
+                                    title="placeholder mouseover text for Tip Alteration Coefficient (k)">
                             </div>
                             <div class="input-group" style="margin-bottom: 1.5rem;">
                                 <label for="da-tol-3">Tip Diameter Tolerance (mm)</label>
-                                <input type="number" id="da-tol-3" min="0" step="0.05" placeholder="0.000">
+                                <input type="number" id="da-tol-3" min="0" step="0.05" placeholder="0.000"
+                                    title="placeholder mouseover text for Tip Diameter Tolerance (mm)">
                             </div>
                             <div class="side-by-side-group">
                                 <div class="input-group">
                                     <label for="sn-tol-upper-3">Circ. Tooth Thickness reduction, min (mm)</label>
-                                    <input type="number" id="sn-tol-upper-3" min="0" step="0.01" placeholder="0.000">
+                                    <input type="number" id="sn-tol-upper-3" min="0" step="0.01" placeholder="0.000"
+                                        title="placeholder mouseover text for Circ. Tooth Thickness reduction, min (mm)">
                                 </div>
                                 <div class="input-group">
                                     <label for="sn-tol-lower-3">Circ. Tooth Thickness reduction, max (mm)</label>
-                                    <input type="number" id="sn-tol-lower-3" min="0" step="0.01" placeholder="0.000">
+                                    <input type="number" id="sn-tol-lower-3" min="0" step="0.01" placeholder="0.000"
+                                        title="placeholder mouseover text for Circ. Tooth Thickness reduction, max (mm)">
                                 </div>
                             </div>
                             <div class="result-display"
@@ -783,11 +859,13 @@
                             <div class="side-by-side-group">
                                 <div class="input-group">
                                     <label for="dm-3">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
-                                    <input type="number" id="dm-3" min="0" step="0.001" placeholder="0.000">
+                                    <input type="number" id="dm-3" min="0" step="0.001" placeholder="0.000"
+                                        title="placeholder mouseover text for Measuring Ball Diameter (dM) (mm)">
                                 </div>
                                 <div class="input-group">
                                     <label for="k-spanned-3">Number of Teeth Spanned (k)</label>
-                                    <input type="number" id="k-spanned-3" min="1" step="1" placeholder="e.g., 3">
+                                    <input type="number" id="k-spanned-3" min="1" step="1" placeholder="e.g., 3"
+                                        title="placeholder mouseover text for Number of Teeth Spanned (k)">
                                 </div>
                             </div>
                         </div>
@@ -796,24 +874,31 @@
                             <div class="input-group">
                                 <label for="quality-grade-4">Gear Tolerance Class (ISO 1328-1:2013)</label>
                                 <input type="number" id="quality-grade-4" min="1" max="11" step="1"
-                                    placeholder="e.g., 6">
+                                    placeholder="e.g., 6"
+                                    title="placeholder mouseover text for Gear Tolerance Class (ISO 1328-1:2013)">
                             </div>
                             <div class="input-group">
                                 <label for="tip-alteration-4">Tip Alteration Coefficient (k)</label>
-                                <input type="number" id="tip-alteration-4" step="any">
+                                <input type="number" id="tip-alteration-4" step="0.01" placeholder="0.00"
+                                    title="placeholder mouseover text for Tip Alteration Coefficient (k)">
                             </div>
                             <div class="input-group" style="margin-bottom: 1.5rem;">
                                 <label for="da-tol-4">Tip Diameter Tolerance (mm)</label>
-                                <input type="number" id="da-tol-4" min="0" step="0.05" placeholder="0.000">
+                                <input type="number" id="da-tol-4" min="0" step="0.05" placeholder="0.000"
+                                    title="placeholder mouseover text for Tip Diameter Tolerance (mm)">
                             </div>
                             <div class="side-by-side-group">
                                 <div class="input-group">
-                                    <label for="sn-tol-upper-4">Circ. Tooth Thickness reduction, min (mm)</label>
-                                    <input type="number" id="sn-tol-upper-4" min="0" step="0.01" placeholder="0.000">
+                                    <label for="sn-tol-upper-4">Circ. Tooth Thickness reduction, min
+                                        (mm)</label>
+                                    <input type="number" id="sn-tol-upper-4" min="0" step="0.01" placeholder="0.000"
+                                        title="placeholder mouseover text for Circ. Tooth Thickness reduction, min (mm)">
                                 </div>
                                 <div class="input-group">
-                                    <label for="sn-tol-lower-4">Circ. Tooth Thickness reduction, max (mm)</label>
-                                    <input type="number" id="sn-tol-lower-4" min="0" step="0.01" placeholder="0.000">
+                                    <label for="sn-tol-lower-4">Circ. Tooth Thickness reduction, max
+                                        (mm)</label>
+                                    <input type="number" id="sn-tol-lower-4" min="0" step="0.01" placeholder="0.000"
+                                        title="placeholder mouseover text for Circ. Tooth Thickness reduction, max (mm)">
                                 </div>
                             </div>
                             <div class="result-display"
@@ -835,11 +920,13 @@
                             <div class="side-by-side-group">
                                 <div class="input-group">
                                     <label for="dm-4">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
-                                    <input type="number" id="dm-4" min="0" step="0.001" placeholder="0.000">
+                                    <input type="number" id="dm-4" min="0" step="0.001" placeholder="0.000"
+                                        title="placeholder mouseover text for Measuring Ball Diameter (dM) (mm)">
                                 </div>
                                 <div class="input-group">
                                     <label for="k-spanned-4">Number of Teeth Spanned (k)</label>
-                                    <input type="number" id="k-spanned-4" min="1" step="1" placeholder="e.g., 3">
+                                    <input type="number" id="k-spanned-4" min="1" step="1" placeholder="e.g., 3"
+                                        title="placeholder mouseover text for Number of Teeth Spanned (k)">
                                 </div>
                             </div>
                         </div>
@@ -1604,7 +1691,7 @@
                             <h4 class="gear-title" id="rating-title-1">Gear 1</h4>
                             <div class="input-group">
                                 <label for="mat1">Material</label>
-                                <select id="mat1">
+                                <select id="mat1" title="placeholder mouseover text for Material">
                                     <option value="carb-1">Carburized - AGMA Grade 1</option>
                                     <option value="carb-2">Carburized - AGMA Grade 2</option>
                                     <option value="carb-3">Carburized - AGMA Grade 3</option>
@@ -1615,7 +1702,7 @@
                             <h4 class="gear-title" id="rating-title-2">Gear 2</h4>
                             <div class="input-group">
                                 <label for="mat2">Material</label>
-                                <select id="mat2">
+                                <select id="mat2" title="placeholder mouseover text for Material">
                                     <option value="carb-1">Carburized - AGMA Grade 1</option>
                                     <option value="carb-2">Carburized - AGMA Grade 2</option>
                                     <option value="carb-3">Carburized - AGMA Grade 3</option>
@@ -1626,7 +1713,7 @@
                             <h4 class="gear-title" id="rating-title-3">Gear 3</h4>
                             <div class="input-group">
                                 <label for="mat3">Material</label>
-                                <select id="mat3">
+                                <select id="mat3" title="placeholder mouseover text for Material">
                                     <option value="carb-1">Carburized - AGMA Grade 1</option>
                                     <option value="carb-2">Carburized - AGMA Grade 2</option>
                                     <option value="carb-3">Carburized - AGMA Grade 3</option>
@@ -1637,7 +1724,7 @@
                             <h4 class="gear-title" id="rating-title-4">Gear 4</h4>
                             <div class="input-group">
                                 <label for="mat4">Material</label>
-                                <select id="mat4">
+                                <select id="mat4" title="placeholder mouseover text for Material">
                                     <option value="carb-1">Carburized - AGMA Grade 1</option>
                                     <option value="carb-2">Carburized - AGMA Grade 2</option>
                                     <option value="carb-3">Carburized - AGMA Grade 3</option>
@@ -1650,11 +1737,13 @@
                 <div class="two-column-grid">
                     <div class="input-group">
                         <label for="torque">Input Torque (Nm)</label>
-                        <input type="number" id="torque" min="0" step="any" placeholder="e.g., 150">
+                        <input type="number" id="torque" min="0" step="any" placeholder="e.g., 150"
+                            title="placeholder mouseover text for Input Torque (Nm)">
                     </div>
                     <div class="input-group">
                         <label for="speed">Input Speed (RPM)</label>
-                        <input type="number" id="speed" min="0" step="1" placeholder="e.g., 1440">
+                        <input type="number" id="speed" min="0" step="1" placeholder="e.g., 1440"
+                            title="placeholder mouseover text for Input Speed (RPM)">
                     </div>
                 </div>
 
@@ -1817,7 +1906,8 @@
                                     CW</button>
                                 <span style="font-size: 0.85rem; color: #adb5bd;">Speed (teeth/s):</span>
                                 <input type="number" id="rotate-speed-assembly" value="1" min="0.1" step="0.5"
-                                    style="width: 60px; font-size: 0.85rem; padding: 3px 6px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;">
+                                    style="width: 60px; font-size: 0.85rem; padding: 3px 6px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;"
+                                    title="placeholder mouseover text for Rotate speed assembly">
                                 <button class="action-btn" id="reset-assembly"
                                     style="font-size: 0.85rem; padding: 5px 12px;">Reset</button>
                                 <button class="action-btn" id="box-zoom-assembly"
@@ -1849,7 +1939,8 @@
                                         CW</button>
                                     <span style="font-size: 0.8rem; color: #adb5bd;">Speed (teeth/s):</span>
                                     <input type="number" id="rotate-speed-1" value="1" min="0.1" step="0.5"
-                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;">
+                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;"
+                                        title="placeholder mouseover text for Rotate speed 1">
                                     <button class="action-btn" id="reset-inmesh-1"
                                         style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
                                     <button class="action-btn" id="box-zoom-inmesh-1"
@@ -1874,7 +1965,8 @@
                                         CW</button>
                                     <span style="font-size: 0.8rem; color: #adb5bd;">Speed (teeth/s):</span>
                                     <input type="number" id="rotate-speed-2" value="1" min="0.1" step="0.5"
-                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;">
+                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;"
+                                        title="placeholder mouseover text for Rotate speed 2">
                                     <button class="action-btn" id="reset-inmesh-2"
                                         style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
                                     <button class="action-btn" id="box-zoom-inmesh-2"
@@ -1899,7 +1991,8 @@
                                         CW</button>
                                     <span style="font-size: 0.8rem; color: #adb5bd;">Speed (teeth/s):</span>
                                     <input type="number" id="rotate-speed-3" value="1" min="0.1" step="0.5"
-                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;">
+                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;"
+                                        title="placeholder mouseover text for Rotate speed 3">
                                     <button class="action-btn" id="reset-inmesh-3"
                                         style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
                                     <button class="action-btn" id="box-zoom-inmesh-3"
@@ -1924,7 +2017,8 @@
                                         CW</button>
                                     <span style="font-size: 0.8rem; color: #adb5bd;">Speed (teeth/s):</span>
                                     <input type="number" id="rotate-speed-4" value="1" min="0.1" step="0.5"
-                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;">
+                                        style="width: 50px; font-size: 0.8rem; padding: 2px 4px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;"
+                                        title="placeholder mouseover text for Rotate speed 4">
                                     <button class="action-btn" id="reset-inmesh-4"
                                         style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
                                     <button class="action-btn" id="box-zoom-inmesh-4"

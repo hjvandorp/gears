@@ -1114,7 +1114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const cosBeta = Math.cos(Math.abs(beta) * Math.PI / 180);
                             const d = (Math.abs(zVal) * mn) / cosBeta;
 
-                            const daRes = calculateTipDiameter(d, zVal, haPCoeff, resMax.value, kCoeff, mn);
+                            const daRes = calculateTipDiameter(d, zVal, haPCoeff, xNom, kCoeff, mn);
 
                             if (daRes.success) {
                                 const baseTipDia = daRes.value;
@@ -1166,7 +1166,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const d = (Math.abs(zVal) * mn) / cosBeta;
                             const dbRes = calculateBaseDiameter(d, alphaT);
                             const dfMaxRes = calculateRootDiameter(d, zVal, hfPCoeff, resMax.value, mn);
-                            const daRes = calculateTipDiameter(d, zVal, haPCoeff, resMax.value, kCoeff, mn);
+                            const daRes = calculateTipDiameter(d, zVal, haPCoeff, xNom, kCoeff, mn);
                             let dA = NaN;
                             if (daRes.success) {
                                 dA = daRes.value; // For both external (positive zVal where daMax = baseTipDia) and internal (negative zVal where daMin = baseTipDia)
@@ -1240,6 +1240,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         const holePattern = { holeCircle, holeDiameter, numHoles };
 
                                         const stMax = snMax / cosBetaG;
+                                        const dmVal = parseFloat(document.getElementById('dm-' + i)?.value) || 0;
                                         gearGeomCache[i] = {
                                             z: zVal,
                                             mn: mn,
@@ -1253,7 +1254,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                             rhoaP_coeff: rhoFpCoeff,
                                             eqResult: eqResult,
                                             di: diVal,
-                                            holePattern: holePattern
+                                            holePattern: holePattern,
+                                            beta: beta,
+                                            alphaN: alphaN,
+                                            dmVal: dmVal
                                         };
 
                                         if (typeof calculateGearProfile === 'function') {
