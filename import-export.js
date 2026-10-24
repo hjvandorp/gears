@@ -8,10 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fields = [
         'project-name', 'gear-config', 'module', 'pressure-angle', 'helix-angle', 'num-planets', 'aw1', 'aw2', 'aw3',
-        'z1', 'b1', 'x1', 'di1', 'hole-circle-1', 'hole-diameter-1', 'num-holes-1', 'mat1',
-        'z2', 'b2', 'di2', 'hole-circle-2', 'hole-diameter-2', 'num-holes-2', 'mat2',
-        'z3', 'b3', 'di3', 'hole-circle-3', 'hole-diameter-3', 'num-holes-3', 'mat3',
-        'z4', 'b4', 'di4', 'hole-circle-4', 'hole-diameter-4', 'num-holes-4', 'mat4',
+        'z1', 'b1', 'x1', 'di1', 'hole-circle-1', 'hole-diameter-1', 'num-holes-1', 'dsh-1', 'l-span-1', 's-offset-1', 'mount-type-1', 'mat1', 'mat-qual-1', 'mat-hard-1', 'core-hard-1', 'chd-1',
+        'z2', 'b2', 'di2', 'hole-circle-2', 'hole-diameter-2', 'num-holes-2', 'dsh-2', 'l-span-2', 's-offset-2', 'mount-type-2', 'mat2', 'mat-qual-2', 'mat-hard-2', 'core-hard-2', 'chd-2',
+        'z3', 'b3', 'di3', 'hole-circle-3', 'hole-diameter-3', 'num-holes-3', 'dsh-3', 'l-span-3', 's-offset-3', 'mount-type-3', 'mat3', 'mat-qual-3', 'mat-hard-3', 'core-hard-3', 'chd-3',
+        'z4', 'b4', 'di4', 'hole-circle-4', 'hole-diameter-4', 'num-holes-4', 'dsh-4', 'l-span-4', 's-offset-4', 'mount-type-4', 'mat4', 'mat-qual-4', 'mat-hard-4', 'core-hard-4', 'chd-4',
         'tool-type-1', 'alpha-p0-1', 'cutter-teeth-1', 'reference-profile-1', 'dedendum-coeff-1', 'root-radius-coeff-1', 'addendum-coeff-1', 'tip-alteration-1',
         'tool-type-2', 'alpha-p0-2', 'cutter-teeth-2', 'reference-profile-2', 'dedendum-coeff-2', 'root-radius-coeff-2', 'addendum-coeff-2', 'tip-alteration-2',
         'tool-type-3', 'alpha-p0-3', 'cutter-teeth-3', 'reference-profile-3', 'dedendum-coeff-3', 'root-radius-coeff-3', 'addendum-coeff-3', 'tip-alteration-3',
@@ -21,6 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
         'quality-grade-3', 'da-tol-3', 'sn-tol-upper-3', 'sn-tol-lower-3', 'df-allowance-3', 'dm-3', 'k-spanned-3',
         'quality-grade-4', 'da-tol-4', 'sn-tol-upper-4', 'sn-tol-lower-4', 'df-allowance-4', 'dm-4', 'k-spanned-4',
         'aw-tol-1', 'aw-tol-2', 'aw-tol-3',
+        'reference-gear-val', 'calc-operating-mode-val',
+        'speed-1', 'torque-1', 'power-1',
+        'speed-2', 'torque-2', 'power-2',
+        'speed-3', 'torque-3', 'power-3',
+        'speed-4', 'torque-4', 'power-4',
+        'target-life-hours', 'ka-factor', 'k-gamma-factor', 'reversed-bending-check',
+        'lube-type', 'viscosity-grade', 'oil-temp', 'lube-method',
         'torque', 'speed'
     ];
 
@@ -29,13 +36,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const config = gearConfig ? gearConfig.value : 'pair';
 
             const gear3Fields = [
-                'z3', 'b3', 'di3', 'hole-circle-3', 'hole-diameter-3', 'num-holes-3', 'mat3',
+                'z3', 'b3', 'di3', 'hole-circle-3', 'hole-diameter-3', 'num-holes-3', 'dsh-3', 'l-span-3', 's-offset-3', 'mount-type-3', 'mat3', 'mat-qual-3', 'mat-hard-3', 'core-hard-3', 'chd-3',
+                'speed-3', 'torque-3', 'power-3',
                 'tool-type-3', 'alpha-p0-3', 'cutter-teeth-3', 'reference-profile-3', 'dedendum-coeff-3', 'root-radius-coeff-3', 'addendum-coeff-3', 'tip-alteration-3',
                 'quality-grade-3', 'da-tol-3', 'sn-tol-upper-3', 'sn-tol-lower-3', 'df-allowance-3', 'dm-3', 'k-spanned-3'
             ];
 
             const gear4Fields = [
-                'z4', 'b4', 'di4', 'hole-circle-4', 'hole-diameter-4', 'num-holes-4', 'mat4',
+                'z4', 'b4', 'di4', 'hole-circle-4', 'hole-diameter-4', 'num-holes-4', 'dsh-4', 'l-span-4', 's-offset-4', 'mount-type-4', 'mat4', 'mat-qual-4', 'mat-hard-4', 'core-hard-4', 'chd-4',
+                'speed-4', 'torque-4', 'power-4',
                 'tool-type-4', 'alpha-p0-4', 'cutter-teeth-4', 'reference-profile-4', 'dedendum-coeff-4', 'root-radius-coeff-4', 'addendum-coeff-4', 'tip-alteration-4',
                 'quality-grade-4', 'da-tol-4', 'sn-tol-upper-4', 'sn-tol-lower-4', 'df-allowance-4', 'dm-4', 'k-spanned-4'
             ];
@@ -55,7 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let csvContent = "Field,Value\n";
             fields.forEach(f => {
                 const input = document.getElementById(f);
-                const val = input ? input.value : '';
+                let val = '';
+                if (input) {
+                    val = input.type === 'checkbox' ? (input.checked ? 'true' : 'false') : input.value;
+                }
                 csvContent += `${f},${val}\n`;
             });
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -124,7 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const val = cols[1].trim();
                     if (fields.includes(id) && document.getElementById(id)) {
                         const input = document.getElementById(id);
-                        input.value = val;
+                        if (input.type === 'checkbox') {
+                            input.checked = (val === 'true' || val === '1');
+                        } else {
+                            input.value = val;
+                        }
                         input.dispatchEvent(new Event('change'));
                     }
                 }

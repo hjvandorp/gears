@@ -48,6 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const ratingCol4 = document.getElementById('rating-col-4');
         const ratingTitle3 = document.getElementById('rating-title-3');
 
+        const operatingCol3 = document.getElementById('operating-col-3');
+        const operatingCol4 = document.getElementById('operating-col-4');
+        const operatingTitle3 = document.getElementById('operating-title-3');
+
         const tolCol3 = document.getElementById('tolerance-col-3');
         const tolCol4 = document.getElementById('tolerance-col-4');
         const tolTitle3 = document.getElementById('tolerance-title-3');
@@ -97,6 +101,29 @@ document.addEventListener('DOMContentLoaded', () => {
             if (z) z.setAttribute('min', '1');
         });
 
+        // Reset operating parameter titles and labels to default gear names
+        const refGearLabel1Reset = document.getElementById('ref-gear-label-1');
+        if (refGearLabel1Reset) refGearLabel1Reset.textContent = 'Gear 1';
+        const refGearLabel2Reset = document.getElementById('ref-gear-label-2');
+        if (refGearLabel2Reset) refGearLabel2Reset.textContent = 'Gear 2';
+        const refGearLabel3Reset = document.getElementById('ref-gear-label-3');
+        if (refGearLabel3Reset) refGearLabel3Reset.textContent = 'Gear 3';
+
+        const speedLabel2Reset = document.getElementById('speed-label-2');
+        if (speedLabel2Reset) speedLabel2Reset.innerHTML = 'Speed, n<sub>2</sub> (RPM)';
+        const torqueLabel2Reset = document.getElementById('torque-label-2');
+        if (torqueLabel2Reset) torqueLabel2Reset.innerHTML = 'Torque, T<sub>2</sub> (Nm)';
+        const powerLabel2Reset = document.getElementById('power-label-2');
+        if (powerLabel2Reset) powerLabel2Reset.innerHTML = 'Power, P<sub>2</sub> (kW)';
+
+        const refGearRadio3Reset = document.getElementById('ref-gear-radio-3');
+        if (refGearRadio3Reset) refGearRadio3Reset.disabled = false;
+        if (operatingTitle3) {
+            operatingTitle3.style.opacity = '';
+            operatingTitle3.style.cursor = 'pointer';
+            operatingTitle3.title = '';
+        }
+
         if (alphaWt23Container) alphaWt23Container.classList.add('hidden');
         const awAlpha23Cont = document.getElementById('aw-alpha-23-container');
         if (awAlpha23Cont) awAlpha23Cont.classList.add('hidden');
@@ -121,6 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
             profCol4.classList.add('hidden');
             ratingCol3.classList.add('hidden');
             ratingCol4.classList.add('hidden');
+            if (operatingCol3) operatingCol3.classList.add('hidden');
+            if (operatingCol4) operatingCol4.classList.add('hidden');
             if (tolCol3) tolCol3.classList.add('hidden');
             if (tolCol4) tolCol4.classList.add('hidden');
             if (calcCol3) calcCol3.classList.add('hidden');
@@ -145,6 +174,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (awTolGroup2) awTolGroup2.classList.add('hidden');
             if (awTolGroup3) awTolGroup3.classList.add('hidden');
 
+            const drawerMesh2 = document.getElementById('rating-drawer-mesh-2');
+            const drawerMesh3 = document.getElementById('rating-drawer-mesh-3');
+            if (drawerMesh2) drawerMesh2.classList.add('hidden');
+            if (drawerMesh3) drawerMesh3.classList.add('hidden');
+
             if (z2) z2.removeAttribute('min');
         } else if (config === 'planetary') {
             cdLabel1.innerHTML = 'Working Center Distance, Sun-Planet (a<sub>w,12</sub>, mm)';
@@ -167,6 +201,37 @@ document.addEventListener('DOMContentLoaded', () => {
             ratingTitle3.innerHTML = 'Gear 3 (Ring)';
             ratingCol3.classList.remove('hidden');
             ratingCol4.classList.add('hidden');
+            if (operatingCol3) operatingCol3.classList.remove('hidden');
+            if (operatingCol4) operatingCol4.classList.add('hidden');
+            // In planetary config: Gear 1 is Sun, Gear 2 is Carrier, Gear 3 is Ring
+            const refGearLabel1 = document.getElementById('ref-gear-label-1');
+            if (refGearLabel1) refGearLabel1.textContent = 'Gear 1 (Sun)';
+            const refGearLabel2 = document.getElementById('ref-gear-label-2');
+            if (refGearLabel2) refGearLabel2.textContent = 'Carrier';
+            const refGearLabel3 = document.getElementById('ref-gear-label-3');
+            if (refGearLabel3) refGearLabel3.textContent = 'Gear 3 (Ring)';
+
+            const speedLabel2 = document.getElementById('speed-label-2');
+            if (speedLabel2) speedLabel2.innerHTML = 'Speed, n<sub>c</sub> (RPM)';
+            const torqueLabel2 = document.getElementById('torque-label-2');
+            if (torqueLabel2) torqueLabel2.innerHTML = 'Torque, T<sub>c</sub> (Nm)';
+            const powerLabel2 = document.getElementById('power-label-2');
+            if (powerLabel2) powerLabel2.innerHTML = 'Power, P<sub>c</sub> (kW)';
+
+            // Ring gear speed is 0 (fixed/stationary), so ring gear cannot be reference
+            const refGearRadio3 = document.getElementById('ref-gear-radio-3');
+            if (refGearRadio3) {
+                refGearRadio3.disabled = true;
+                if (refGearRadio3.checked) {
+                    const refGearRadio1 = document.getElementById('ref-gear-radio-1');
+                    if (refGearRadio1) refGearRadio1.checked = true;
+                }
+            }
+            if (operatingTitle3) {
+                operatingTitle3.style.opacity = '0.6';
+                operatingTitle3.style.cursor = 'default';
+                operatingTitle3.title = 'Ring gear is fixed / stationary in this planetary configuration';
+            }
             if (tolTitle3) tolTitle3.innerHTML = 'Gear 3 (Ring)';
             if (tolCol3) tolCol3.classList.remove('hidden');
             if (tolCol4) tolCol4.classList.add('hidden');
@@ -206,6 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (awTolGroup3) awTolGroup3.classList.add('hidden');
 
+            const drawerMesh2 = document.getElementById('rating-drawer-mesh-2');
+            const drawerMesh3 = document.getElementById('rating-drawer-mesh-3');
+            const summaryMesh2 = document.getElementById('summary-mesh-2');
+            if (drawerMesh2) drawerMesh2.classList.remove('hidden');
+            if (summaryMesh2) summaryMesh2.textContent = 'Intermediate ISO Factors: Planet-Ring Mesh (2-3)';
+            if (drawerMesh3) drawerMesh3.classList.add('hidden');
+
             if (z3) z3.removeAttribute('min');
         } else if (config === '3-train') {
             cdLabel1.innerHTML = 'Working Center Distance, Gear 1-2 (a<sub>w,12</sub>, mm)';
@@ -228,6 +300,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ratingTitle3.innerHTML = 'Gear 3';
             ratingCol3.classList.remove('hidden');
             ratingCol4.classList.add('hidden');
+            const refGearLabel3_train = document.getElementById('ref-gear-label-3');
+            if (refGearLabel3_train) refGearLabel3_train.textContent = 'Gear 3';
+            if (operatingCol3) operatingCol3.classList.remove('hidden');
+            if (operatingCol4) operatingCol4.classList.add('hidden');
             if (tolTitle3) tolTitle3.innerHTML = 'Gear 3';
             if (tolCol3) tolCol3.classList.remove('hidden');
             if (tolCol4) tolCol4.classList.add('hidden');
@@ -267,6 +343,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (awTolGroup3) awTolGroup3.classList.add('hidden');
 
+            const drawerMesh2_3 = document.getElementById('rating-drawer-mesh-2');
+            const drawerMesh3_3 = document.getElementById('rating-drawer-mesh-3');
+            const summaryMesh2_3 = document.getElementById('summary-mesh-2');
+            if (drawerMesh2_3) drawerMesh2_3.classList.remove('hidden');
+            if (summaryMesh2_3) summaryMesh2_3.textContent = 'Intermediate ISO Factors: Mesh 2-3';
+            if (drawerMesh3_3) drawerMesh3_3.classList.add('hidden');
+
             if (z3) z3.removeAttribute('min');
         } else if (config === '4-train') {
             cdLabel1.innerHTML = 'Working Center Distance, Gear 1-2 (a<sub>w,12</sub>, mm)';
@@ -289,6 +372,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ratingTitle3.innerHTML = 'Gear 3';
             ratingCol3.classList.remove('hidden');
             ratingCol4.classList.remove('hidden');
+            const refGearLabel3_4train = document.getElementById('ref-gear-label-3');
+            if (refGearLabel3_4train) refGearLabel3_4train.textContent = 'Gear 3';
+            if (operatingCol3) operatingCol3.classList.remove('hidden');
+            if (operatingCol4) operatingCol4.classList.remove('hidden');
             if (tolTitle3) tolTitle3.innerHTML = 'Gear 3';
             if (tolCol3) tolCol3.classList.remove('hidden');
             if (tolCol4) tolCol4.classList.remove('hidden');
@@ -327,6 +414,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (awTol2Input) awTol2Input.disabled = false;
             }
             if (awTolGroup3) awTolGroup3.classList.remove('hidden');
+
+            const drawerMesh2_4 = document.getElementById('rating-drawer-mesh-2');
+            const drawerMesh3_4 = document.getElementById('rating-drawer-mesh-3');
+            const summaryMesh2_4 = document.getElementById('summary-mesh-2');
+            if (drawerMesh2_4) drawerMesh2_4.classList.remove('hidden');
+            if (summaryMesh2_4) summaryMesh2_4.textContent = 'Intermediate ISO Factors: Mesh 2-3';
+            if (drawerMesh3_4) drawerMesh3_4.classList.remove('hidden');
 
             if (z4) z4.removeAttribute('min');
         }
@@ -384,6 +478,313 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCutter();
         }
     }
+
+    // ISO 6336-5 Material Configuration and Logic
+    const ISO_MATERIALS = [
+        { key: 'Eh', label: 'Eh - Case hardened wrought steels', defaultHardness: 730 },
+        { key: 'V_alloy', label: 'V (alloy) - Through hardened wrought alloy steels', defaultHardness: 300 },
+        { key: 'V_carbon', label: 'V (carbon) - Through hardened wrought carbon steels', defaultHardness: 175 },
+        { key: 'St_wrought', label: 'St - Wrought normalized low carbon steels', defaultHardness: 160 },
+        { key: 'St_cast', label: 'St (cast) - Cast normalized low carbon steels', defaultHardness: 175 },
+        { key: 'V_cast_alloy', label: 'V (cast alloy) - Through hardened cast alloy steels', defaultHardness: 280 },
+        { key: 'V_cast_carbon', label: 'V (cast carbon) - Through hardened cast carbon steels', defaultHardness: 170 },
+        { key: 'IF', label: 'IF - Flame- or induction-hardened wrought/cast steels', defaultHardness: 550 },
+        { key: 'NT_nitr', label: 'NT (nitr.) - Nitrided wrought nitriding steels', defaultHardness: 775 },
+        { key: 'NV_nitr', label: 'NV (nitr.) - Through hardening steels, nitrided', defaultHardness: 550 },
+        { key: 'NV_nitrocar', label: 'NV (nitrocar.) - Wrought steels nitrocarburized', defaultHardness: 475 },
+        { key: 'GGG', label: 'GGG - Nodular cast iron', defaultHardness: 240 },
+        { key: 'GTS_perl', label: 'GTS (perl.) - Black malleable cast iron (perlitic)', defaultHardness: 190 },
+        { key: 'GG', label: 'GG - Grey cast iron', defaultHardness: 200 }
+    ];
+
+    function getQualityOptionsForMaterial(matKey) {
+        if (matKey === 'Eh') {
+            return [
+                { value: 'ML', label: 'ML' },
+                { value: 'MQ_lower', label: 'MQ (core \u2265 25 HRC, J12 < 28 HRC)' },
+                { value: 'MQ', label: 'MQ (core \u2265 25 HRC, J12 \u2265 28 HRC)' },
+                { value: 'MQ_high', label: 'MQ (core \u2265 30 HRC)' },
+                { value: 'ME', label: 'ME' }
+            ];
+        }
+        if (['St_wrought', 'St_cast', 'GTS_perl', 'GGG', 'GG', 'V_cast_carbon', 'V_cast_alloy'].includes(matKey)) {
+            return [
+                { value: 'ML_MQ', label: 'ML / MQ' },
+                { value: 'ME', label: 'ME' }
+            ];
+        }
+        return [
+            { value: 'ML', label: 'ML' },
+            { value: 'MQ', label: 'MQ' },
+            { value: 'ME', label: 'ME' }
+        ];
+    }
+
+    function updateMaterialStressLimits(gearIndex) {
+        const matSelect = document.getElementById('mat' + gearIndex);
+        const qualSelect = document.getElementById('mat-qual-' + gearIndex);
+        const hardInput = document.getElementById('mat-hard-' + gearIndex);
+        const sigHOut = document.getElementById('sigma-H-lim-' + gearIndex + '-out');
+        const sigFOut = document.getElementById('sigma-F-lim-' + gearIndex + '-out');
+
+        if (!matSelect || !qualSelect || !hardInput || !sigHOut || !sigFOut) return;
+
+        const matKey = matSelect.value;
+        const qualVal = qualSelect.value;
+        const hardVal = parseFloat(hardInput.value);
+
+        let actualQual = 'MQ';
+        let coreCondition = undefined;
+
+        if (matKey === 'Eh') {
+            if (qualVal === 'ML') actualQual = 'ML';
+            else if (qualVal === 'ME') actualQual = 'ME';
+            else if (qualVal === 'MQ_lower') {
+                actualQual = 'MQ';
+                coreCondition = 'core_25HRC_lower';
+            } else if (qualVal === 'MQ_high') {
+                actualQual = 'MQ';
+                coreCondition = 'core_30HRC';
+            } else {
+                actualQual = 'MQ';
+                coreCondition = 'core_25HRC_upper';
+            }
+        } else if (qualVal === 'ML_MQ') {
+            actualQual = 'MQ';
+        } else {
+            actualQual = qualVal || 'MQ';
+        }
+
+        const options = coreCondition ? { coreHardnessCondition: coreCondition } : {};
+
+        if (typeof calculateAllowableContactStress_sigmaHlim === 'function' &&
+            typeof calculateNominalBendingStress_sigmaFlim === 'function') {
+            const resContact = calculateAllowableContactStress_sigmaHlim(matKey, actualQual, isNaN(hardVal) ? undefined : hardVal, options);
+            const resBending = calculateNominalBendingStress_sigmaFlim(matKey, actualQual, isNaN(hardVal) ? undefined : hardVal, options);
+
+            if (resContact && resContact.success) {
+                sigHOut.innerHTML = `${resContact.value.toFixed(1)} <span style="font-size: 0.85rem; color: #6c757d;">N/mm\u00b2</span>`;
+                sigHOut.style.color = '#0056b3';
+            } else {
+                sigHOut.textContent = '--';
+                sigHOut.style.color = '#6c757d';
+            }
+
+            if (resBending && resBending.success) {
+                sigFOut.innerHTML = `${resBending.value.toFixed(1)} <span style="font-size: 0.85rem; color: #6c757d;">N/mm\u00b2</span>`;
+                sigFOut.style.color = '#0056b3';
+            } else {
+                sigFOut.textContent = '--';
+                sigFOut.style.color = '#6c757d';
+            }
+        }
+    }
+
+    function initMaterialControls(gearIndex) {
+        const matSelect = document.getElementById('mat' + gearIndex);
+        const qualSelect = document.getElementById('mat-qual-' + gearIndex);
+        const hardInput = document.getElementById('mat-hard-' + gearIndex);
+        const hardLabel = document.getElementById('mat-hard-label-' + gearIndex);
+
+        if (!matSelect || !qualSelect || !hardInput || !hardLabel) return;
+
+        // Populate Material Types
+        matSelect.innerHTML = '';
+        ISO_MATERIALS.forEach(mat => {
+            const opt = document.createElement('option');
+            opt.value = mat.key;
+            opt.textContent = mat.label;
+            matSelect.appendChild(opt);
+        });
+
+        const updateQualAndHardness = (preserveHardness = false) => {
+            const currentMatKey = matSelect.value;
+            const matMeta = ISO_MATERIALS.find(m => m.key === currentMatKey) || ISO_MATERIALS[0];
+            const matTableData = (typeof ISO_6336_5_TABLE_1 !== 'undefined') ? ISO_6336_5_TABLE_1[currentMatKey] : null;
+            const unit = matTableData ? matTableData.hardnessUnit : 'HV';
+
+            hardLabel.innerHTML = `Surface Hardness (${unit})`;
+
+            const prevQual = qualSelect.value;
+            const qualOpts = getQualityOptionsForMaterial(currentMatKey);
+            qualSelect.innerHTML = '';
+            qualOpts.forEach(q => {
+                const opt = document.createElement('option');
+                opt.value = q.value;
+                opt.textContent = q.label;
+                qualSelect.appendChild(opt);
+            });
+
+            // Restore previous quality if compatible, or select MQ / ML_MQ by default
+            if (qualOpts.some(q => q.value === prevQual)) {
+                qualSelect.value = prevQual;
+            } else {
+                const defaultQual = qualOpts.find(q => q.value === 'MQ' || q.value === 'ML_MQ') || qualOpts[0];
+                qualSelect.value = defaultQual.value;
+            }
+
+            if (!preserveHardness || !hardInput.value) {
+                hardInput.value = matMeta.defaultHardness;
+            }
+
+            updateMaterialStressLimits(gearIndex);
+        };
+
+        matSelect.addEventListener('change', () => {
+            // If the user changed the material, update options and set default hardness for that material
+            updateQualAndHardness(false);
+        });
+        qualSelect.addEventListener('change', () => updateMaterialStressLimits(gearIndex));
+        hardInput.addEventListener('input', () => updateMaterialStressLimits(gearIndex));
+        hardInput.addEventListener('change', () => updateMaterialStressLimits(gearIndex));
+
+        // Default to Case hardened wrought steels (Eh)
+        matSelect.value = 'Eh';
+        updateQualAndHardness(false);
+    }
+
+    // Initialize Material controls for all 4 gears
+    for (let i = 1; i <= 4; i++) {
+        initMaterialControls(i);
+    }
+
+    // Kgamma tooltip hover
+    const kgammaInfoTrigger = document.getElementById('kgamma-info-trigger');
+    const kgammaTooltip = document.getElementById('kgamma-agma-tooltip');
+    if (kgammaInfoTrigger && kgammaTooltip) {
+        kgammaInfoTrigger.addEventListener('mouseenter', () => { kgammaTooltip.style.display = 'block'; });
+        kgammaInfoTrigger.addEventListener('mouseleave', () => { kgammaTooltip.style.display = 'none'; });
+    }
+
+    // KA tooltip hover
+    const kaInfoTrigger = document.getElementById('ka-info-trigger');
+    const kaTooltip = document.getElementById('ka-agma-tooltip');
+    if (kaInfoTrigger && kaTooltip) {
+        kaInfoTrigger.addEventListener('mouseenter', () => { kaTooltip.style.display = 'block'; });
+        kaInfoTrigger.addEventListener('mouseleave', () => { kaTooltip.style.display = 'none'; });
+    }
+
+    // Operating Parameters Controller
+    function getSelectedReferenceGear() {
+        const checked = document.querySelector('input[name="reference-gear"]:checked');
+        return checked ? parseInt(checked.value, 10) : 1;
+    }
+
+    function getSelectedOperatingCalcMode() {
+        // Read calc-mode from the reference gear's radio group
+        const refGear = getSelectedReferenceGear();
+        const checked = document.querySelector(`input[name="calc-mode-${refGear}"]:checked`);
+        return checked ? checked.value : 'power';
+    }
+
+    function updateOperatingParametersEditability() {
+        const config = document.getElementById('gear-config')?.value || 'pair';
+        if (config === 'planetary') {
+            const radio3 = document.getElementById('ref-gear-radio-3');
+            if (radio3) {
+                radio3.disabled = true;
+                if (radio3.checked) {
+                    const radio1 = document.getElementById('ref-gear-radio-1');
+                    if (radio1) radio1.checked = true;
+                }
+            }
+        }
+
+        const refGear = getSelectedReferenceGear();
+        const calcMode = getSelectedOperatingCalcMode();
+
+        // Update hidden inputs for CSV export compatibility
+        const refValInput = document.getElementById('reference-gear-val');
+        if (refValInput) refValInput.value = refGear;
+        const modeValInput = document.getElementById('calc-operating-mode-val');
+        if (modeValInput) modeValInput.value = calcMode;
+
+        for (let i = 1; i <= 4; i++) {
+            const speedInput = document.getElementById('speed-' + i);
+            const torqueInput = document.getElementById('torque-' + i);
+            const powerInput = document.getElementById('power-' + i);
+
+            // Enable/disable calc-mode radios for this gear (radio input has .calc-mode-label class)
+            const calcModeRadios = document.querySelectorAll(`#operating-col-${i} input.calc-mode-label`);
+            calcModeRadios.forEach(radio => {
+                const parentLabel = radio.closest('label');
+                if (i === refGear) {
+                    radio.disabled = false;
+                    if (parentLabel) {
+                        parentLabel.style.opacity = '';
+                        parentLabel.style.pointerEvents = '';
+                        parentLabel.style.cursor = 'pointer';
+                    }
+                } else {
+                    radio.disabled = true;
+                    if (parentLabel) {
+                        parentLabel.style.opacity = '0.35';
+                        parentLabel.style.pointerEvents = 'none';
+                        parentLabel.style.cursor = 'default';
+                    }
+                }
+            });
+
+            if (!speedInput || !torqueInput || !powerInput) continue;
+
+            if (i === refGear) {
+                // Reference gear: editable except the 1 chosen to be calculated
+                speedInput.readOnly = (calcMode === 'speed');
+                torqueInput.readOnly = (calcMode === 'torque');
+                powerInput.readOnly = (calcMode === 'power');
+
+                speedInput.style.backgroundColor = (calcMode === 'speed') ? 'rgba(255, 255, 255, 0.05)' : '';
+                torqueInput.style.backgroundColor = (calcMode === 'torque') ? 'rgba(255, 255, 255, 0.05)' : '';
+                powerInput.style.backgroundColor = (calcMode === 'power') ? 'rgba(255, 255, 255, 0.05)' : '';
+
+                speedInput.style.color = (calcMode === 'speed') ? '#0056b3' : '';
+                torqueInput.style.color = (calcMode === 'torque') ? '#0056b3' : '';
+                powerInput.style.color = (calcMode === 'power') ? '#0056b3' : '';
+            } else {
+                // Non-reference gears: filled by calculation, non-editable
+                speedInput.readOnly = true;
+                torqueInput.readOnly = true;
+                powerInput.readOnly = true;
+
+                speedInput.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                torqueInput.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                powerInput.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+
+                speedInput.style.color = '#0056b3';
+                torqueInput.style.color = '#0056b3';
+                powerInput.style.color = '#0056b3';
+            }
+        }
+    }
+
+    function initOperatingParametersControls() {
+        const refRadios = document.querySelectorAll('input[name="reference-gear"]');
+        refRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                updateOperatingParametersEditability();
+            });
+        });
+
+        // Listen to all per-gear calc-mode radio groups
+        for (let i = 1; i <= 4; i++) {
+            const modeRadios = document.querySelectorAll(`input[name="calc-mode-${i}"]`);
+            modeRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    updateOperatingParametersEditability();
+                });
+            });
+        }
+
+        // Set default values if empty
+        const speed1 = document.getElementById('speed-1');
+        const torque1 = document.getElementById('torque-1');
+        if (speed1 && !speed1.value) speed1.value = 1440;
+        if (torque1 && !torque1.value) torque1.value = 150;
+
+        updateOperatingParametersEditability();
+    }
+
+    initOperatingParametersControls();
 
     // Result Helper
     function showResult(container, valueElement, defaultLabel, text, isError = false) {
@@ -675,8 +1076,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const haPCoeff2 = parseFloat(haPCoeff2El ? haPCoeff2El.value : NaN);
 
                     if (!isNaN(haPCoeff2)) {
-                        const kCoeff2El = document.getElementById('tip-alteration-2');
-                        const kCoeff2 = parseFloat(kCoeff2El ? kCoeff2El.value : 0) || 0;
+                        const tipAlteration2El = document.getElementById('tip-alteration-2');
+                        const tipAlteration2Mm = parseFloat(tipAlteration2El ? tipAlteration2El.value : 0) || 0;
+                        const kCoeff2 = (mn > 0) ? (tipAlteration2Mm / mn) : 0;
                         const daTol2El = document.getElementById('da-tol-2');
                         const daTol2 = daTol2El ? Math.abs(parseFloat(daTol2El.value) || 0) : 0;
 
@@ -726,17 +1128,181 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 3. Rating Data (Power)
-        const torque = parseFloat(document.getElementById('torque').value);
-        const speed = parseFloat(document.getElementById('speed').value);
+        // 3. Rating Data (Operating Parameters, Power & Material Strengths)
+        const refGear = getSelectedReferenceGear();
+        const calcMode = getSelectedOperatingCalcMode();
 
-        const powerResult = calculatePower(torque, speed);
-        if (powerResult.success) {
-            currentPower = `${powerResult.value.toFixed(3)} kW`;
-            showResult(ratingResultContainer, ratingResultValue, 'Power (kW)', currentPower);
+        const speedRefInput = document.getElementById('speed-' + refGear);
+        const torqueRefInput = document.getElementById('torque-' + refGear);
+        const powerRefInput = document.getElementById('power-' + refGear);
+
+        let nRef = parseFloat(speedRefInput ? speedRefInput.value : NaN);
+        let tRef = parseFloat(torqueRefInput ? torqueRefInput.value : NaN);
+        let pRef = parseFloat(powerRefInput ? powerRefInput.value : NaN);
+
+        let opError = null;
+
+        // Calculate missing reference gear parameter
+        if (calcMode === 'power') {
+            if (isNaN(nRef) || isNaN(tRef)) {
+                opError = 'Please enter valid speed and torque for reference gear.';
+            } else {
+                pRef = (tRef * nRef * 2 * Math.PI) / 60000;
+                if (powerRefInput) powerRefInput.value = pRef.toFixed(3);
+            }
+        } else if (calcMode === 'torque') {
+            if (isNaN(nRef) || isNaN(pRef)) {
+                opError = 'Please enter valid speed and power for reference gear.';
+            } else if (nRef === 0) {
+                opError = 'Speed cannot be 0 to calculate torque.';
+            } else {
+                tRef = (pRef * 60000) / (nRef * 2 * Math.PI);
+                if (torqueRefInput) torqueRefInput.value = tRef.toFixed(3);
+            }
+        } else if (calcMode === 'speed') {
+            if (isNaN(tRef) || isNaN(pRef)) {
+                opError = 'Please enter valid torque and power for reference gear.';
+            } else if (tRef === 0) {
+                opError = 'Torque cannot be 0 to calculate speed.';
+            } else {
+                nRef = (pRef * 60000) / (tRef * 2 * Math.PI);
+                if (speedRefInput) speedRefInput.value = nRef.toFixed(3);
+            }
+        }
+
+        // Calculate and propagate speed, torque, and power to other gears
+        const activeGearCount = (config === 'pair') ? 2 : (config === '4-train' ? 4 : 3);
+        const zArr = [z1, z2, z3, z4];
+
+        if (!opError && !isNaN(nRef) && !isNaN(tRef) && !isNaN(pRef)) {
+            if (config === 'planetary') {
+                const zS = Math.abs(z1);
+                const zR = Math.abs(z3);
+
+                if (!isNaN(zS) && !isNaN(zR) && zS > 0 && zR > 0) {
+                    const uSR = zR / zS; // z3 / z1
+                    const uCarrier = uSR + 1; // z3 / z1 + 1
+
+                    let n1_val, t1_val, p1_val;
+                    let nc_val, tc_val, pc_val;
+                    let n3_val, t3_val, p3_val;
+
+                    if (refGear === 2) {
+                        // Carrier is reference
+                        nc_val = nRef;
+                        tc_val = tRef;
+                        pc_val = pRef;
+
+                        n1_val = nc_val * uCarrier;
+                        t1_val = tc_val / uCarrier;
+                        p1_val = pc_val;
+
+                        n3_val = 0;
+                        t3_val = t1_val * uSR;
+                        p3_val = 0;
+                    } else {
+                        // Sun is reference (refGear === 1 or fallback)
+                        n1_val = nRef;
+                        t1_val = tRef;
+                        p1_val = pRef;
+
+                        nc_val = n1_val / uCarrier;
+                        tc_val = t1_val * uCarrier;
+                        pc_val = p1_val;
+
+                        n3_val = 0;
+                        t3_val = t1_val * uSR;
+                        p3_val = 0;
+                    }
+
+                    const speedInputs = [
+                        document.getElementById('speed-1'),
+                        document.getElementById('speed-2'),
+                        document.getElementById('speed-3')
+                    ];
+                    const torqueInputs = [
+                        document.getElementById('torque-1'),
+                        document.getElementById('torque-2'),
+                        document.getElementById('torque-3')
+                    ];
+                    const powerInputs = [
+                        document.getElementById('power-1'),
+                        document.getElementById('power-2'),
+                        document.getElementById('power-3')
+                    ];
+
+                    const speeds = [n1_val, nc_val, n3_val];
+                    const torques = [t1_val, tc_val, t3_val];
+                    const powers = [p1_val, pc_val, p3_val];
+
+                    for (let i = 1; i <= 3; i++) {
+                        if (i !== refGear) {
+                            if (speedInputs[i - 1]) speedInputs[i - 1].value = Math.abs(speeds[i - 1]).toFixed(2);
+                            if (torqueInputs[i - 1]) torqueInputs[i - 1].value = Math.abs(torques[i - 1]).toFixed(2);
+                            if (powerInputs[i - 1]) powerInputs[i - 1].value = powers[i - 1].toFixed(3);
+                        }
+                    }
+
+                    currentPower = `${pRef.toFixed(3)} kW`;
+                    showResult(ratingResultContainer, ratingResultValue, 'Operating Power', currentPower);
+
+                    // Backward compatibility for hidden torque & speed
+                    const tHidden = document.getElementById('torque');
+                    const sHidden = document.getElementById('speed');
+                    if (tHidden) tHidden.value = Math.abs(tRef);
+                    if (sHidden) sHidden.value = Math.abs(nRef);
+                } else {
+                    currentPower = null;
+                    showResult(ratingResultContainer, ratingResultValue, 'Operating Power', 'Invalid tooth numbers for planetary gear train.', true);
+                }
+            } else {
+                // Standard sequential external meshes
+                const ratioToG1 = [1];
+                for (let k = 1; k < 4; k++) {
+                    const zPrev = Math.abs(zArr[k - 1]);
+                    const zCurr = Math.abs(zArr[k]);
+                    if (!isNaN(zPrev) && !isNaN(zCurr) && zCurr > 0) {
+                        ratioToG1[k] = ratioToG1[k - 1] * (-zPrev / zCurr);
+                    } else {
+                        ratioToG1[k] = 1;
+                    }
+                }
+
+                const refRatio = ratioToG1[refGear - 1] || 1;
+
+                for (let i = 1; i <= activeGearCount; i++) {
+                    const sInput = document.getElementById('speed-' + i);
+                    const tInput = document.getElementById('torque-' + i);
+                    const pInput = document.getElementById('power-' + i);
+
+                    const gearRatioFromRef = (ratioToG1[i - 1] || 1) / refRatio;
+                    const ni = nRef * gearRatioFromRef;
+                    const ti = gearRatioFromRef !== 0 ? (tRef / gearRatioFromRef) : 0;
+                    const pi = pRef; // Transmitted power conserved across stages
+
+                    if (i !== refGear) {
+                        if (sInput) sInput.value = Math.abs(ni).toFixed(2);
+                        if (tInput) tInput.value = Math.abs(ti).toFixed(2);
+                        if (pInput) pInput.value = pi.toFixed(3);
+                    }
+                }
+
+                currentPower = `${pRef.toFixed(3)} kW`;
+                showResult(ratingResultContainer, ratingResultValue, 'Operating Power', currentPower);
+
+                // Backward compatibility for hidden torque & speed
+                const tHidden = document.getElementById('torque');
+                const sHidden = document.getElementById('speed');
+                if (tHidden) tHidden.value = Math.abs(tRef);
+                if (sHidden) sHidden.value = Math.abs(nRef);
+            }
         } else {
             currentPower = null;
-            showResult(ratingResultContainer, ratingResultValue, 'Power (kW)', powerResult.error, true);
+            showResult(ratingResultContainer, ratingResultValue, 'Operating Power', opError || 'Invalid operating data.', true);
+        }
+
+        for (let i = 1; i <= 4; i++) {
+            updateMaterialStressLimits(i);
         }
 
         // 4. Tolerances Data (Single Pitch Tolerance)
@@ -1105,7 +1671,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     const daMaxDisplay = document.getElementById('da-max-' + i + '-out');
                     const daMinDisplay = document.getElementById('da-min-' + i + '-out');
                     const haPCoeff = parseFloat(document.getElementById('addendum-coeff-' + i).value);
-                    const kCoeff = parseFloat(document.getElementById('tip-alteration-' + i).value) || 0;
+                    const tipAlterationInputEl = document.getElementById('tip-alteration-' + i);
+                    const tipAlterationVal = parseFloat(tipAlterationInputEl ? tipAlterationInputEl.value : NaN);
+                    const tipAlterationMm = !isNaN(tipAlterationVal) ? tipAlterationVal : 0;
+                    const kCoeff = (mn > 0) ? (tipAlterationMm / mn) : 0;
+
+                    const tipAlterationCoeffDisplay = document.getElementById('tip-alteration-coeff-' + i);
+                    if (tipAlterationCoeffDisplay) {
+                        if (!isNaN(tipAlterationVal) && mn > 0) {
+                            tipAlterationCoeffDisplay.textContent = kCoeff.toFixed(4);
+                        } else {
+                            tipAlterationCoeffDisplay.textContent = (0).toFixed(4);
+                        }
+                    }
+
                     const daTolEl = document.getElementById('da-tol-' + i);
                     const daTol = daTolEl ? Math.abs(parseFloat(daTolEl.value) || 0) : 0;
 
@@ -1573,6 +2152,733 @@ document.addEventListener('DOMContentLoaded', () => {
             const stateA = window.canvasStates['canvas-assembly'];
             if (typeof _drawFullAssembly2D === 'function') {
                 _drawFullAssembly2D(canvasAssembly, stateA);
+            }
+        }
+
+        // ==========================================
+        // 8. ISO 6336 RATING CALCULATION PIPELINE
+        // ==========================================
+        window.isoRatingResults = [];
+        const ratingSummaryCardsEl = document.getElementById('rating-summary-cards');
+
+        try {
+            // Read Operating Parameters
+            const targetLifeHours = parseFloat(document.getElementById('target-life-hours')?.value) || 20000;
+            const KA_user = Math.max(1.0, parseFloat(document.getElementById('ka-factor')?.value) || 1.25);
+            const Kgamma_user = Math.max(1.0, parseFloat(document.getElementById('k-gamma-factor')?.value) || 1.0);
+            const isReversedBendingGlobal = Boolean(document.getElementById('reversed-bending-check')?.checked);
+
+            // Read Lubrication Parameters
+            const lubeType = document.getElementById('lube-type')?.value || 'mineral';
+            const v40 = parseFloat(document.getElementById('viscosity-grade')?.value) || 220;
+            const oilTemp = parseFloat(document.getElementById('oil-temp')?.value) || 70;
+            const lubeMethod = document.getElementById('lube-method')?.value || 'splash';
+
+            // Active mesh definitions based on gear configuration
+            const ratingMeshDefs = [];
+            if (config === 'pair') {
+                ratingMeshDefs.push({
+                    id: 1,
+                    meshTitle: 'Mesh 1-2 (Pinion–Wheel)',
+                    g1: 1,
+                    g2: 2,
+                    isInternal: false,
+                    isPlanetary: false,
+                    drawerId: 'rating-drawer-mesh-1',
+                    contentId: 'drawer-content-mesh-1'
+                });
+            } else if (config === '3-train') {
+                ratingMeshDefs.push({
+                    id: 1,
+                    meshTitle: 'Mesh 1-2 (Input–Idler)',
+                    g1: 1,
+                    g2: 2,
+                    isInternal: false,
+                    isPlanetary: false,
+                    drawerId: 'rating-drawer-mesh-1',
+                    contentId: 'drawer-content-mesh-1'
+                });
+                ratingMeshDefs.push({
+                    id: 2,
+                    meshTitle: 'Mesh 2-3 (Idler–Output)',
+                    g1: 2,
+                    g2: 3,
+                    isInternal: false,
+                    isPlanetary: false,
+                    drawerId: 'rating-drawer-mesh-2',
+                    contentId: 'drawer-content-mesh-2'
+                });
+            } else if (config === '4-train') {
+                ratingMeshDefs.push({
+                    id: 1,
+                    meshTitle: 'Mesh 1-2 (Input–Idler 1)',
+                    g1: 1,
+                    g2: 2,
+                    isInternal: false,
+                    isPlanetary: false,
+                    drawerId: 'rating-drawer-mesh-1',
+                    contentId: 'drawer-content-mesh-1'
+                });
+                ratingMeshDefs.push({
+                    id: 2,
+                    meshTitle: 'Mesh 2-3 (Idler 1–Idler 2)',
+                    g1: 2,
+                    g2: 3,
+                    isInternal: false,
+                    isPlanetary: false,
+                    drawerId: 'rating-drawer-mesh-2',
+                    contentId: 'drawer-content-mesh-2'
+                });
+                ratingMeshDefs.push({
+                    id: 3,
+                    meshTitle: 'Mesh 3-4 (Idler 2–Output)',
+                    g1: 3,
+                    g2: 4,
+                    isInternal: false,
+                    isPlanetary: false,
+                    drawerId: 'rating-drawer-mesh-3',
+                    contentId: 'drawer-content-mesh-3'
+                });
+            } else if (config === 'planetary') {
+                ratingMeshDefs.push({
+                    id: 1,
+                    meshTitle: 'Sun–Planet Mesh (1-2)',
+                    g1: 1,
+                    g2: 2,
+                    isInternal: false,
+                    isPlanetary: true,
+                    isSunPlanet: true,
+                    drawerId: 'rating-drawer-mesh-1',
+                    contentId: 'drawer-content-mesh-1'
+                });
+                ratingMeshDefs.push({
+                    id: 2,
+                    meshTitle: 'Planet–Ring Mesh (2-3)',
+                    g1: 2,
+                    g2: 3,
+                    isInternal: true,
+                    isPlanetary: true,
+                    isPlanetRing: true,
+                    drawerId: 'rating-drawer-mesh-2',
+                    contentId: 'drawer-content-mesh-2'
+                });
+            }
+
+            let summaryCardsHTML = '';
+
+            // Calculate each mesh
+            ratingMeshDefs.forEach(mesh => {
+                const gA = mesh.g1;
+                const gB = mesh.g2;
+
+                const zA_raw = parseFloat(document.getElementById('z' + gA)?.value);
+                const zB_raw = parseFloat(document.getElementById('z' + gB)?.value);
+                const bA = parseFloat(document.getElementById('b' + gA)?.value) || 30;
+                const bB = parseFloat(document.getElementById('b' + gB)?.value) || 30;
+                const bMesh = Math.min(bA, bB);
+
+                const speedA = Math.abs(parseFloat(document.getElementById('speed-' + gA)?.value) || 0);
+                const torqueA = Math.abs(parseFloat(document.getElementById('torque-' + gA)?.value) || 0);
+                const speedB = Math.abs(parseFloat(document.getElementById('speed-' + gB)?.value) || 0);
+
+                const zA = Math.abs(zA_raw);
+                const zB = Math.abs(zB_raw);
+
+                if (isNaN(zA) || isNaN(zB) || zA <= 0 || zB <= 0 || isNaN(mn) || mn <= 0) {
+                    const drawerContentEl = document.getElementById(mesh.contentId);
+                    if (drawerContentEl) {
+                        drawerContentEl.innerHTML = '<span style="color:#6c757d; font-style: italic;">Enter module (m<sub>n</sub>) and teeth numbers (z) in Basic Data, then click Calculate All to compute ISO rating factors.</span>';
+                    }
+                    return;
+                }
+
+                // Base & reference pitch diameters
+                const cosBetaRef = Math.cos(Math.abs(beta) * Math.PI / 180);
+                const d1 = (zA * mn) / cosBetaRef;
+                const d2 = (zB * mn) / cosBetaRef;
+                const alphaTRad = alphaT * (Math.PI / 180);
+                const db1 = d1 * Math.cos(alphaTRad);
+                const db2 = d2 * Math.cos(alphaTRad);
+
+                // Tip diameters
+                const da1 = parseFloat(document.getElementById('da-max-' + gA + '-out')?.textContent) || (d1 + 2 * mn);
+                const da2 = parseFloat(document.getElementById('da-max-' + gB + '-out')?.textContent) || (d2 + (mesh.isInternal ? -2 * mn : 2 * mn));
+
+                // Working transverse pressure angle & center distance
+                let alpha_wt = alphaT;
+                let awMesh = (mesh.isInternal ? Math.abs(d2 - d1) : (d1 + d2)) / 2;
+                if (mesh.id === 1) {
+                    const awVal = parseFloat(document.getElementById('aw1')?.value);
+                    if (!isNaN(awVal) && awVal > 0) awMesh = awVal;
+                    if (awRes1 && awRes1.success) alpha_wt = awRes1.value;
+                } else if (mesh.id === 2) {
+                    const awVal = parseFloat(document.getElementById('aw2')?.value);
+                    if (!isNaN(awVal) && awVal > 0) awMesh = awVal;
+                    if (awRes2 && awRes2.success) alpha_wt = awRes2.value;
+                } else if (mesh.id === 3) {
+                    const awVal = parseFloat(document.getElementById('aw3')?.value);
+                    if (!isNaN(awVal) && awVal > 0) awMesh = awVal;
+                    if (awRes3 && awRes3.success) alpha_wt = awRes3.value;
+                }
+
+                // Transverse contact ratio eps_alpha
+                let eps_alpha = 1.5;
+                const pbt = Math.PI * mn * Math.cos(alphaN * Math.PI / 180) / cosBetaRef;
+                const awtRad = alpha_wt * (Math.PI / 180);
+                try {
+                    const gB_sign = zB_raw / Math.abs(zB_raw);
+                    const t1Term = Math.max(0, Math.pow(da1, 2) - Math.pow(db1, 2));
+                    const t2Term = Math.max(0, Math.pow(da2, 2) - Math.pow(db2, 2));
+                    // ISO 6336-2: For external pair: 0.5*(sqrt(t1)+sqrt(t2)) - a_w*sin(awt)
+                    // For internal pair (gB_sign = -1): 0.5*(sqrt(t1)-sqrt(t2)) + a_w*sin(awt)
+                    const gAction = 0.5 * Math.sqrt(t1Term) + 0.5 * gB_sign * Math.sqrt(t2Term) - gB_sign * awMesh * Math.sin(awtRad);
+                    if (pbt > 0 && gAction > 0) {
+                        eps_alpha = Math.max(1.05, gAction / pbt);
+                    }
+                } catch (e) {
+                    eps_alpha = 1.5;
+                }
+
+                // Overlap ratio eps_beta = b * sin(|beta|) / (pi * mn)
+                const eps_beta = (Math.abs(beta) > 0) ? (bMesh * Math.sin(Math.abs(beta) * Math.PI / 180)) / (Math.PI * mn) : 0;
+
+                // Tangential load Ft (N) at reference diameter d1
+                // For planetary meshes with N_p planets, load splits across planets:
+                const numPlanetsVal = (config === 'planetary') ? (parseInt(document.getElementById('num-planets')?.value, 10) || 3) : 1;
+                let FtMesh;
+                let vPitch;
+                let effSpeedA = speedA;
+                let effSpeedB = speedB;
+
+                if (mesh.isPlanetary) {
+                    const zS = Math.abs(parseFloat(document.getElementById('z1')?.value) || 1);
+                    const zP = Math.abs(parseFloat(document.getElementById('z2')?.value) || 1);
+                    const zR = Math.abs(parseFloat(document.getElementById('z3')?.value) || 1);
+                    const nSun = Math.abs(parseFloat(document.getElementById('speed-1')?.value) || 0);
+                    const tSun = Math.abs(parseFloat(document.getElementById('torque-1')?.value) || 0);
+                    const nCarrier = Math.abs(parseFloat(document.getElementById('speed-2')?.value) || 0);
+                    const dSun = (zS * mn) / cosBetaRef;
+
+                    // Tangential force transmitted per planet mesh:
+                    FtMesh = (tSun > 0 && dSun > 0) ? (2000.0 * tSun) / (dSun * numPlanetsVal) : 1000.0;
+
+                    // Pitch line velocity relative to carrier:
+                    const nRelSun = Math.abs(nSun - nCarrier);
+                    vPitch = (Math.PI * dSun * nRelSun) / 60000.0;
+
+                    const nPlanetRel = zP > 0 ? (nRelSun * zS / zP) : 0;
+
+                    if (mesh.isSunPlanet) {
+                        effSpeedA = nRelSun;
+                        effSpeedB = nPlanetRel;
+                    } else if (mesh.isPlanetRing) {
+                        effSpeedA = nPlanetRel;
+                        effSpeedB = nCarrier;
+                    }
+                } else {
+                    FtMesh = (torqueA > 0 && d1 > 0) ? (2000.0 * torqueA) / d1 : 1000.0;
+                    vPitch = (Math.PI * d1 * speedA) / 60000.0;
+                }
+
+                // Flank tolerance class
+                const qClassA = parseInt(document.getElementById('quality-grade-' + gA)?.value, 10) || 6;
+                const qClassB = parseInt(document.getElementById('quality-grade-' + gB)?.value, 10) || 6;
+                const tolClass = Math.round((qClassA + qClassB) / 2);
+
+                // Material limits from ISO-6336-5 outputs
+                const matA = document.getElementById('mat' + gA)?.value || 'Eh';
+                const matB = document.getElementById('mat' + gB)?.value || 'Eh';
+                const sigHlimA = parseFloat(document.getElementById('sigma-H-lim-' + gA + '-out')?.textContent) || 1500;
+                const sigHlimB = parseFloat(document.getElementById('sigma-H-lim-' + gB + '-out')?.textContent) || 1500;
+                const sigFlimA = parseFloat(document.getElementById('sigma-F-lim-' + gA + '-out')?.textContent) || 430;
+                const sigFlimB = parseFloat(document.getElementById('sigma-F-lim-' + gB + '-out')?.textContent) || 430;
+
+                // Shaft and mounting defaults / inputs
+                const dshInputA = parseFloat(document.getElementById('dsh-' + gA)?.value);
+                const lSpanInputA = parseFloat(document.getElementById('l-span-' + gA)?.value);
+                const sOffsetInputA = parseFloat(document.getElementById('s-offset-' + gA)?.value);
+                const mountTypeA = document.getElementById('mount-type-' + gA)?.value || 'symmetric';
+
+                const dshA = (!isNaN(dshInputA) && dshInputA > 0) ? dshInputA : (0.85 * d1);
+                const lSpanA = (!isNaN(lSpanInputA) && lSpanInputA > 0) ? lSpanInputA : (2.0 * bA + 40.0);
+                const sOffsetA = (!isNaN(sOffsetInputA)) ? sOffsetInputA : (0.1 * lSpanA);
+                const KprimeA = (mountTypeA === 'cantilever') ? 0.95 : 0.48;
+
+                // Tooth root tool profile parameters for Gear A and Gear B
+                const hfpCoeffA = parseFloat(document.getElementById('dedendum-coeff-' + gA)?.value) || 1.25;
+                const hfpCoeffB = parseFloat(document.getElementById('dedendum-coeff-' + gB)?.value) || 1.25;
+                const rhofpCoeffA = parseFloat(document.getElementById('root-radius-coeff-' + gA)?.value) || 0.38;
+                const rhofpCoeffB = parseFloat(document.getElementById('root-radius-coeff-' + gB)?.value) || 0.38;
+
+                // ISO 6336-1: Mesh stiffness
+                const resStiff = calculateToothStiffness_B({
+                    z1: zA,
+                    z2: zB,
+                    beta: Math.abs(beta),
+                    x1: parseFloat(document.getElementById('x' + gA)?.value) || 0,
+                    x2: parseFloat(document.getElementById('x' + gB)?.value) || 0,
+                    eps_alpha: eps_alpha,
+                    b: bMesh,
+                    Ft: FtMesh,
+                    KA: KA_user,
+                    Kgamma: Kgamma_user,
+                    hfp_mn: hfpCoeffA,
+                    alpha_Pn: alphaN
+                });
+                const c_gamma_alpha = resStiff.success ? resStiff.c_gamma_alpha : 20.0;
+                const c_gamma_beta = resStiff.success ? resStiff.c_gamma_beta : 17.0;
+
+                // ISO 6336-1: Dynamic factor Kv
+                const resKv = calculateDynamicFactor_C({
+                    v: Math.max(0.1, vPitch),
+                    z1: zA,
+                    u: Math.max(1.0, zB / zA),
+                    toleranceClass: tolClass,
+                    Ft: FtMesh,
+                    b: bMesh,
+                    KA: KA_user,
+                    Kgamma: Kgamma_user,
+                    beta: Math.abs(beta),
+                    eps_beta: eps_beta
+                });
+                const Kv = resKv.success ? resKv.value : 1.15;
+
+                // ISO 6336-1: Face load factors KHbeta and KFbeta
+                const resFace = calculateFaceLoadFactors_C({
+                    Ft: FtMesh,
+                    b: bMesh,
+                    d1: d1,
+                    dsh: dshA,
+                    l: lSpanA,
+                    s: sOffsetA,
+                    h: 2.25 * mn,
+                    c_gamma_beta: c_gamma_beta,
+                    KA: KA_user,
+                    Kgamma: Kgamma_user,
+                    Kv: Kv,
+                    toleranceClass: tolClass,
+                    material: matA,
+                    sigmaHlim: Math.min(sigHlimA, sigHlimB),
+                    v: Math.max(0.1, vPitch),
+                    K_prime: KprimeA
+                });
+                const KHbeta = resFace.success ? resFace.K_Hbeta : 1.15;
+                const KFbeta = resFace.success ? resFace.K_Fbeta : 1.12;
+
+                // ISO 6336-1: Transverse load factors KHalpha and KFalpha
+                const resTrans = calculateTransverseLoadFactors_B({
+                    d1: d1,
+                    mn: mn,
+                    alpha_t: alphaT,
+                    eps_alpha: eps_alpha,
+                    eps_beta: eps_beta,
+                    b: bMesh,
+                    Ft: FtMesh,
+                    c_gamma_alpha: c_gamma_alpha,
+                    KA: KA_user,
+                    Kgamma: Kgamma_user,
+                    Kv: Kv,
+                    KHbeta: KHbeta,
+                    toleranceClass: tolClass,
+                    material: matA,
+                    sigmaHlim: Math.min(sigHlimA, sigHlimB),
+                    v: Math.max(0.1, vPitch)
+                });
+                const KHalpha = resTrans.success ? resTrans.K_Halpha : 1.05;
+                const KFalpha = resTrans.success ? resTrans.K_Falpha : 1.05;
+
+                // Contacts per rev: planets contact both sun and ring => 1 per mesh
+                // For sun or ring in planetary with N_p planets: contacts per rev = numPlanetsVal
+                const contactsPerRevA = (mesh.isPlanetary && !mesh.isPlanetRing && gA === 1) ? numPlanetsVal : 1;
+                const contactsPerRevB = (mesh.isPlanetary && mesh.isPlanetRing && gB === 3) ? numPlanetsVal : 1;
+
+                // Number of load cycles NL1 & NL2 based on target life hours
+                const NL1 = Math.max(1e4, effSpeedA * contactsPerRevA * 60.0 * targetLifeHours);
+                const NL2 = Math.max(1e4, effSpeedB * contactsPerRevB * 60.0 * targetLifeHours);
+
+                // Reversed Bending Factor YM determination:
+                // Rule: If idler (gear 2 for 3-gear train, gear 2 & 3 for 4-gear train, or planet), derate once with YM = 0.7.
+                // If global reversed-bending is checked, all gears get YM = 0.7. Do not double-derate (0.7^2).
+                const isIdlerA = (config === '3-train' && gA === 2) ||
+                    (config === '4-train' && (gA === 2 || gA === 3)) ||
+                    (config === 'planetary' && gA === 2);
+                const isIdlerB = (config === '3-train' && gB === 2) ||
+                    (config === '4-train' && (gB === 2 || gB === 3)) ||
+                    (config === 'planetary' && gB === 2);
+
+                const YM1 = (isReversedBendingGlobal || isIdlerA) ? 0.7 : 1.0;
+                const YM2 = (isReversedBendingGlobal || isIdlerB) ? 0.7 : 1.0;
+
+                // ISO 6336-2: Surface Durability / Pitting (SH)
+                const resPitting = calculateSurfaceDurability({
+                    z1: zA,
+                    z2: zB,
+                    mn: mn,
+                    b: bMesh,
+                    beta: Math.abs(beta),
+                    alpha_n: alphaN,
+                    alpha_t: alphaT,
+                    alpha_wt: alpha_wt,
+                    beta_b: Math.asin(Math.sin(Math.abs(beta) * Math.PI / 180) * Math.cos(alphaN * Math.PI / 180)) * (180 / Math.PI),
+                    d1: d1,
+                    d2: d2,
+                    db1: db1,
+                    db2: db2,
+                    da1: da1,
+                    da2: da2,
+                    eps_alpha: eps_alpha,
+                    eps_beta: eps_beta,
+                    Ft: FtMesh,
+                    v: Math.max(0.1, vPitch),
+                    NL1: NL1,
+                    NL2: NL2,
+                    material1: matA,
+                    material2: matB,
+                    sigmaHlim1: sigHlimA,
+                    sigmaHlim2: sigHlimB,
+                    KA: KA_user,
+                    Kgamma: Kgamma_user,
+                    Kv: Kv,
+                    KHbeta: KHbeta,
+                    KHalpha: KHalpha,
+                    v40: v40,
+                    Rz1: 4.0,
+                    Rz2: 4.0,
+                    isInternal: mesh.isInternal
+                });
+
+                // Rim thickness sR and tooth height ht from Mounting Geometry (di)
+                const diInputA = parseFloat(document.getElementById('di' + gA)?.value);
+                const diInputB = parseFloat(document.getElementById('di' + gB)?.value);
+                const dfA = parseFloat(document.getElementById('df-max-' + gA + '-out')?.textContent) || (d1 - 2.5 * mn);
+                const dfB = parseFloat(document.getElementById('df-max-' + gB + '-out')?.textContent) || (d2 + (mesh.isInternal ? 2.5 * mn : -2.5 * mn));
+
+                const ht1 = Math.abs(da1 - dfA) / 2.0;
+                const ht2 = Math.abs(da2 - dfB) / 2.0;
+
+                // For external gears (z > 0), sR = (df - di) / 2
+                // For internal gears (z < 0), sR = (di - df) / 2
+                let sR1 = undefined;
+                if (!isNaN(diInputA) && diInputA > 0) {
+                    sR1 = (zA_raw > 0) ? (dfA - diInputA) / 2.0 : (diInputA - dfA) / 2.0;
+                }
+                let sR2 = undefined;
+                if (!isNaN(diInputB) && diInputB > 0) {
+                    sR2 = (zB_raw > 0) ? (dfB - diInputB) / 2.0 : (diInputB - dfB) / 2.0;
+                }
+
+                // ISO 6336-3: Tooth Root Bending Strength (SF)
+                const resBending = calculateToothBendingStrength({
+                    z1: zA,
+                    z2: zB,
+                    mn: mn,
+                    b: bMesh,
+                    beta: Math.abs(beta),
+                    alpha_n: alphaN,
+                    x1: parseFloat(document.getElementById('x' + gA)?.value) || 0,
+                    x2: parseFloat(document.getElementById('x' + gB)?.value) || 0,
+                    eps_alpha: eps_alpha,
+                    eps_beta: eps_beta,
+                    Ft: FtMesh,
+                    KA: KA_user,
+                    Kgamma: Kgamma_user,
+                    Kv: Kv,
+                    KFbeta: KFbeta,
+                    KFalpha: KFalpha,
+                    material1: matA,
+                    material2: matB,
+                    sigmaFlim1: sigFlimA,
+                    sigmaFlim2: sigFlimB,
+                    NL1: NL1,
+                    NL2: NL2,
+                    hfp_mn1: hfpCoeffA,
+                    hfp_mn2: hfpCoeffB,
+                    rhofp_mn1: rhofpCoeffA,
+                    rhofp_mn2: rhofpCoeffB,
+                    sR1: sR1,
+                    sR2: sR2,
+                    ht1: ht1,
+                    ht2: ht2,
+                    toleranceClass: tolClass,
+                    isInternal: mesh.isInternal,
+                    YM1: YM1,
+                    YM2: YM2
+                });
+
+                // ISO 6336-4: Tooth Flank Fracture Load Capacity (SFF1 and SFF2)
+                const hardA = parseFloat(document.getElementById('mat-hard-' + gA)?.value) || 700;
+                const hardB = parseFloat(document.getElementById('mat-hard-' + gB)?.value) || 700;
+                const coreHardInputA = parseFloat(document.getElementById('core-hard-' + gA)?.value);
+                const coreHardInputB = parseFloat(document.getElementById('core-hard-' + gB)?.value);
+                const coreHardA = (!isNaN(coreHardInputA) && coreHardInputA > 0) ? coreHardInputA : 350;
+                const coreHardB = (!isNaN(coreHardInputB) && coreHardInputB > 0) ? coreHardInputB : 350;
+
+                const chdInputA = parseFloat(document.getElementById('chd-' + gA)?.value);
+                const chdInputB = parseFloat(document.getElementById('chd-' + gB)?.value);
+                const chdA = (!isNaN(chdInputA) && chdInputA > 0) ? chdInputA : (0.2 * mn);
+                const chdB = (!isNaN(chdInputB) && chdInputB > 0) ? chdInputB : (0.2 * mn);
+
+                const tffFunc = (typeof calculateToothFlankFracture === 'function')
+                    ? calculateToothFlankFracture
+                    : (typeof calculateFlankFractureLoad === 'function'
+                        ? calculateFlankFractureLoad
+                        : (typeof window !== 'undefined' ? (window.calculateToothFlankFracture || window.calculateFlankFractureLoad) : null));
+
+                const resTFF1 = (typeof tffFunc === 'function') ? tffFunc({
+                    z1: zA,
+                    z2: zB,
+                    mn: mn,
+                    b: bMesh,
+                    alpha_t: alphaT,
+                    beta: Math.abs(beta),
+                    Ft: FtMesh,
+                    KA: KA_user,
+                    Kgamma: Kgamma_user,
+                    Kv: Kv,
+                    KHalpha: KHalpha,
+                    KHbeta: KHbeta,
+                    HVsurface: hardA,
+                    HVcore: coreHardA,
+                    CHD: chdA
+                }) : { success: false, S_FF: 1.5 };
+
+                const resTFF2 = (typeof tffFunc === 'function') ? tffFunc({
+                    z1: zA,
+                    z2: zB,
+                    mn: mn,
+                    b: bMesh,
+                    alpha_t: alphaT,
+                    beta: Math.abs(beta),
+                    Ft: FtMesh,
+                    KA: KA_user,
+                    Kgamma: Kgamma_user,
+                    Kv: Kv,
+                    KHalpha: KHalpha,
+                    KHbeta: KHbeta,
+                    HVsurface: hardB,
+                    HVcore: coreHardB,
+                    CHD: chdB
+                }) : { success: false, S_FF: 1.5 };
+
+                // Extract final safety factors
+                const SH1 = resPitting.success ? resPitting.SH1 : 1.0;
+                const SH2 = resPitting.success ? resPitting.SH2 : 1.0;
+                const SF1 = resBending.success ? resBending.SF1 : 1.4;
+                const SF2 = resBending.success ? resBending.SF2 : 1.4;
+                const SFF1 = resTFF1.success ? resTFF1.S_FF : 1.5;
+                const SFF2 = resTFF2.success ? resTFF2.S_FF : 1.5;
+
+                // Expected lifetimes before failure (ISO 6336-6 / S-N curve inversion)
+                const fpFactors = resPitting.factors || {};
+                const fbFactors = resBending.factors || {};
+
+                // Contact reference permissible stress at ZNT = 1.0
+                const znt1_val = fpFactors.ZNT1 || 1.0;
+                const znt2_val = fpFactors.ZNT2 || 1.0;
+                const sigHP1_ref = znt1_val > 0 ? (resPitting.sigma_HP1 / znt1_val) : (resPitting.sigma_HP1 || 1000);
+                const sigHP2_ref = znt2_val > 0 ? (resPitting.sigma_HP2 / znt2_val) : (resPitting.sigma_HP2 || 1000);
+
+                const lifePittingA = (typeof calculateExpectedLifetimePitting === 'function')
+                    ? calculateExpectedLifetimePitting({
+                        sigma_H: resPitting.sigma_H1,
+                        sigma_HP_ref: sigHP1_ref,
+                        material: matA,
+                        speedRpm: effSpeedA,
+                        meshCyclesPerRev: contactsPerRevA
+                    })
+                    : { formatted: '--' };
+
+                const lifePittingB = (typeof calculateExpectedLifetimePitting === 'function')
+                    ? calculateExpectedLifetimePitting({
+                        sigma_H: resPitting.sigma_H2,
+                        sigma_HP_ref: sigHP2_ref,
+                        material: matB,
+                        speedRpm: effSpeedB,
+                        meshCyclesPerRev: contactsPerRevB
+                    })
+                    : { formatted: '--' };
+
+                // Bending reference permissible stress at YNT = 1.0
+                const ynt1_val = fbFactors.YNT1 || 1.0;
+                const ynt2_val = fbFactors.YNT2 || 1.0;
+                const sigFP1_ref = ynt1_val > 0 ? (resBending.sigma_FP1 / ynt1_val) : (resBending.sigma_FP1 || 400);
+                const sigFP2_ref = ynt2_val > 0 ? (resBending.sigma_FP2 / ynt2_val) : (resBending.sigma_FP2 || 400);
+
+                const lifeBendingA = (typeof calculateExpectedLifetimeBending === 'function')
+                    ? calculateExpectedLifetimeBending({
+                        sigma_F: resBending.sigma_F1,
+                        sigma_FP_ref: sigFP1_ref,
+                        material: matA,
+                        speedRpm: effSpeedA,
+                        meshCyclesPerRev: contactsPerRevA
+                    })
+                    : { formatted: '--' };
+
+                const lifeBendingB = (typeof calculateExpectedLifetimeBending === 'function')
+                    ? calculateExpectedLifetimeBending({
+                        sigma_F: resBending.sigma_F2,
+                        sigma_FP_ref: sigFP2_ref,
+                        material: matB,
+                        speedRpm: effSpeedB,
+                        meshCyclesPerRev: contactsPerRevB
+                    })
+                    : { formatted: '--' };
+
+                // Save result for report generation
+                window.isoRatingResults.push({
+                    meshTitle: mesh.meshTitle,
+                    SH1, SH2, SF1, SF2, SFF1, SFF2,
+                    Kv, KHbeta, KFbeta, KHalpha, KFalpha,
+                    sigma_H1: resPitting.sigma_H1,
+                    sigma_H2: resPitting.sigma_H2,
+                    sigma_HP1: resPitting.sigma_HP1,
+                    sigma_HP2: resPitting.sigma_HP2,
+                    sigma_F1: resBending.sigma_F1,
+                    sigma_F2: resBending.sigma_F2,
+                    sigma_FP1: resBending.sigma_FP1,
+                    sigma_FP2: resBending.sigma_FP2,
+                    factorsPitting: fpFactors,
+                    factorsBending: fbFactors,
+                    lifePitting1: lifePittingA.formatted,
+                    lifePitting2: lifePittingB.formatted,
+                    lifeBending1: lifeBendingA.formatted,
+                    lifeBending2: lifeBendingB.formatted
+                });
+
+                // Format summary cards
+                const shPass = (SH1 >= 1.0 && SH2 >= 1.0);
+                const sfPass = (SF1 >= 1.4 && SF2 >= 1.4);
+                const sffPass = (SFF1 >= 1.2 && SFF2 >= 1.2);
+
+                summaryCardsHTML += `
+                    <div style="background: rgba(1, 4, 9, 0.4); border: 1px solid var(--card-border); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="font-weight: 600; font-size: 1.05rem; color: var(--primary-color); border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px;">
+                            ${mesh.meshTitle}
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
+                            <span style="color: #8b949e;">Pitting Safety S<sub>H</sub> (G${gA}/G${gB}):</span>
+                            <span style="font-weight: 600; color: ${shPass ? '#3fb950' : '#f85149'};">
+                                ${SH1.toFixed(2)} / ${SH2.toFixed(2)}
+                            </span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
+                            <span style="color: #8b949e;">Tooth Bending S<sub>F</sub> (G${gA}/G${gB}):</span>
+                            <span style="font-weight: 600; color: ${sfPass ? '#3fb950' : '#f85149'};">
+                                ${SF1.toFixed(2)} / ${SF2.toFixed(2)}
+                            </span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
+                            <span style="color: #8b949e;">Flank Fracture S<sub>FF</sub> (G${gA}/G${gB}):</span>
+                            <span style="font-weight: 600; color: ${sffPass ? '#3fb950' : '#f85149'};">
+                                ${SFF1.toFixed(2)} / ${SFF2.toFixed(2)}
+                            </span>
+                        </div>
+                        <div style="border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 6px; font-size: 0.85rem; display: flex; flex-direction: column; gap: 3px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #8b949e;">Pitting Life (G${gA}/G${gB}):</span>
+                                <span style="font-weight: 500; color: var(--text-main);">${lifePittingA.formatted} / ${lifePittingB.formatted}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #8b949e;">Bending Life (G${gA}/G${gB}):</span>
+                                <span style="font-weight: 500; color: var(--text-main);">${lifeBendingA.formatted} / ${lifeBendingB.formatted}</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.8rem; color: #6c757d; margin-top: 2px; display: flex; justify-content: space-between;">
+                            <span>K<sub>v</sub> = ${Kv.toFixed(3)}</span>
+                            <span>K<sub>H&beta;</sub> = ${KHbeta.toFixed(3)}</span>
+                            <span>K<sub>H&alpha;</sub> = ${KHalpha.toFixed(3)}</span>
+                        </div>
+                    </div>
+                `;
+
+                // Populate Factor Drawer
+                const drawerContentEl = document.getElementById(mesh.contentId);
+                if (drawerContentEl) {
+                    const fp = fpFactors;
+                    const fb = fbFactors;
+                    drawerContentEl.innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-main); margin-bottom: 6px; border-bottom: 1px dotted rgba(255,255,255,0.1);">
+                                    Load Factors (ISO 6336-1)
+                                </div>
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Application Factor (K<sub>A</sub>):</td><td style="font-weight:500; text-align:right;">${KA_user.toFixed(3)}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Mesh Load Factor (K<sub>&gamma;</sub>):</td><td style="font-weight:500; text-align:right; ${Kgamma_user > 1.0 ? 'color:#e3b341;' : ''}">${Kgamma_user.toFixed(3)}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Dynamic Factor (K<sub>v</sub>):</td><td style="font-weight:500; text-align:right;">${Kv.toFixed(3)}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Face Load Factor Contact (K<sub>H&beta;</sub>):</td><td style="font-weight:500; text-align:right;">${KHbeta.toFixed(3)}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Face Load Factor Bending (K<sub>F&beta;</sub>):</td><td style="font-weight:500; text-align:right;">${KFbeta.toFixed(3)}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Transverse Factor Contact (K<sub>H&alpha;</sub>):</td><td style="font-weight:500; text-align:right;">${KHalpha.toFixed(3)}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Transverse Factor Bending (K<sub>F&alpha;</sub>):</td><td style="font-weight:500; text-align:right;">${KFalpha.toFixed(3)}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Mesh Stiffness c<sub>&gamma;&alpha;</sub> / c<sub>&gamma;&beta;</sub>:</td><td style="font-weight:500; text-align:right;">${c_gamma_alpha.toFixed(2)} / ${c_gamma_beta.toFixed(2)} N/(&mu;m&middot;mm)</td></tr>
+                                </table>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-main); margin-bottom: 6px; border-bottom: 1px dotted rgba(255,255,255,0.1);">
+                                    Contact Stress &amp; Expected Life (ISO 6336-2)
+                                </div>
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Zone Factor (Z<sub>H</sub>):</td><td style="font-weight:500; text-align:right;">${fp.ZH ? fp.ZH.toFixed(3) : '-'}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Elasticity Factor (Z<sub>E</sub>):</td><td style="font-weight:500; text-align:right;">${fp.ZE ? fp.ZE.toFixed(1) : '-'} &radic;MPa</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Contact Ratio Factor (Z<sub>&epsilon;</sub>):</td><td style="font-weight:500; text-align:right;">${fp.Zeps ? fp.Zeps.toFixed(3) : '-'}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Helix Angle Factor (Z<sub>&beta;</sub>):</td><td style="font-weight:500; text-align:right;">${fp.Zbeta ? fp.Zbeta.toFixed(3) : '-'}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Lubricant Influence Z<sub>L</sub> &middot; Z<sub>v</sub> &middot; Z<sub>R</sub>:</td><td style="font-weight:500; text-align:right;">${(fp.ZL1 && fp.ZV1 && fp.ZR1) ? (fp.ZL1 * fp.ZV1 * fp.ZR1).toFixed(3) : '-'}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Life Factor (Z<sub>NT1</sub> / Z<sub>NT2</sub>):</td><td style="font-weight:500; text-align:right;">${fp.ZNT1 ? fp.ZNT1.toFixed(3) : '-'} / ${fp.ZNT2 ? fp.ZNT2.toFixed(3) : '-'}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Contact Stress &sigma;<sub>H1</sub> / &sigma;<sub>H2</sub>:</td><td style="font-weight:500; text-align:right;">${resPitting.sigma_H1 ? resPitting.sigma_H1.toFixed(1) : '-'} / ${resPitting.sigma_H2 ? resPitting.sigma_H2.toFixed(1) : '-'} MPa</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Permissible Stress &sigma;<sub>HP1</sub> / &sigma;<sub>HP2</sub>:</td><td style="font-weight:500; text-align:right;">${resPitting.sigma_HP1 ? resPitting.sigma_HP1.toFixed(1) : '-'} / ${resPitting.sigma_HP2 ? resPitting.sigma_HP2.toFixed(1) : '-'} MPa</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Expected Pitting Life (G${gA}/G${gB}):</td><td style="font-weight:600; text-align:right; color:#58a6ff;">${lifePittingA.formatted} / ${lifePittingB.formatted}</td></tr>
+                                </table>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-main); margin-bottom: 6px; border-bottom: 1px dotted rgba(255,255,255,0.1);">
+                                    Tooth Root Bending &amp; Life (ISO 6336-3)
+                                </div>
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Form Factor (Y<sub>F1</sub> / Y<sub>F2</sub>):</td><td style="font-weight:500; text-align:right;">${fb.YF1 ? fb.YF1.toFixed(3) : '-'} / ${fb.YF2 ? fb.YF2.toFixed(3) : '-'}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Stress Correction (Y<sub>S1</sub> / Y<sub>S2</sub>):</td><td style="font-weight:500; text-align:right;">${fb.YS1 ? fb.YS1.toFixed(3) : '-'} / ${fb.YS2 ? fb.YS2.toFixed(3) : '-'}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Helix Angle Factor (Y<sub>&beta;</sub>):</td><td style="font-weight:500; text-align:right;">${fb.Ybeta ? fb.Ybeta.toFixed(3) : '-'}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Rim Thickness Factor (Y<sub>B1</sub> / Y<sub>B2</sub>):</td><td style="font-weight:500; text-align:right;">${fb.YB1 ? fb.YB1.toFixed(3) : '-'} / ${fb.YB2 ? fb.YB2.toFixed(3) : '-'}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Reversed Bending Factor (Y<sub>M1</sub> / Y<sub>M2</sub>):</td><td style="font-weight:500; text-align:right; color: ${(YM1 < 1.0 || YM2 < 1.0) ? '#e3b341' : 'inherit'};">${YM1.toFixed(2)} / ${YM2.toFixed(2)}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Life Factor (Y<sub>NT1</sub> / Y<sub>NT2</sub>):</td><td style="font-weight:500; text-align:right;">${fb.YNT1 ? fb.YNT1.toFixed(3) : '-'} / ${fb.YNT2 ? fb.YNT2.toFixed(3) : '-'}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Bending Stress &sigma;<sub>F1</sub> / &sigma;<sub>F2</sub>:</td><td style="font-weight:500; text-align:right;">${resBending.sigma_F1 ? resBending.sigma_F1.toFixed(1) : '-'} / ${resBending.sigma_F2 ? resBending.sigma_F2.toFixed(1) : '-'} MPa</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Permissible Stress &sigma;<sub>FP1</sub> / &sigma;<sub>FP2</sub>:</td><td style="font-weight:500; text-align:right;">${resBending.sigma_FP1 ? resBending.sigma_FP1.toFixed(1) : '-'} / ${resBending.sigma_FP2 ? resBending.sigma_FP2.toFixed(1) : '-'} MPa</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Expected Bending Life (G${gA}/G${gB}):</td><td style="font-weight:600; text-align:right; color:#58a6ff;">${lifeBendingA.formatted} / ${lifeBendingB.formatted}</td></tr>
+                                </table>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-main); margin-bottom: 6px; border-bottom: 1px dotted rgba(255,255,255,0.1);">
+                                    Flank Fracture (ISO/TS 6336-4)
+                                </div>
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Case Depth CHD<sub>550</sub> (G${gA}/G${gB}):</td><td style="font-weight:500; text-align:right;">${chdA.toFixed(2)} / ${chdB.toFixed(2)} mm</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Surface Hardness (G${gA}/G${gB}):</td><td style="font-weight:500; text-align:right;">${hardA.toFixed(0)} / ${hardB.toFixed(0)} HV</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Core Hardness (G${gA}/G${gB}):</td><td style="font-weight:500; text-align:right;">${coreHardA.toFixed(0)} / ${coreHardB.toFixed(0)} HV</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Hertzian Half-Width b<sub>H</sub>:</td><td style="font-weight:500; text-align:right;">${resTFF1.bH ? resTFF1.bH.toFixed(3) : '-'} mm</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Dynamic Contact Stress p<sub>dyn</sub>:</td><td style="font-weight:500; text-align:right;">${resTFF1.pdyn_CP ? resTFF1.pdyn_CP.toFixed(1) : '-'} MPa</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Max Exposure A<sub>FF,max</sub> (G${gA}/G${gB}):</td><td style="font-weight:500; text-align:right;">${resTFF1.AFF_max ? resTFF1.AFF_max.toFixed(3) : '-'} / ${resTFF2.AFF_max ? resTFF2.AFF_max.toFixed(3) : '-'}</td></tr>
+                                    <tr><td style="color:#8b949e; padding: 2px 0;">Safety Factor S<sub>FF</sub> (G${gA}/G${gB}):</td><td style="font-weight:600; text-align:right; color: ${sffPass ? '#3fb950' : '#f85149'};">${SFF1.toFixed(2)} / ${SFF2.toFixed(2)}</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            if (ratingSummaryCardsEl) {
+                if (summaryCardsHTML) {
+                    ratingSummaryCardsEl.innerHTML = summaryCardsHTML;
+                } else {
+                    ratingSummaryCardsEl.innerHTML = `
+                        <div style="grid-column: 1 / -1; padding: 20px; text-align: center; color: #8b949e; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.15); border-radius: 8px;">
+                            Enter gear parameters (module and teeth numbers) on the Basic Data tab and click <strong>Calculate All</strong> to generate rating safety factors.
+                        </div>
+                    `;
+                }
+            }
+        } catch (err) {
+            console.error('Rating calculation error:', err);
+            if (ratingSummaryCardsEl) {
+                ratingSummaryCardsEl.innerHTML = `<div style="color: #f85149; padding: 10px;">Error calculating ISO 6336 rating: ${err.message}</div>`;
             }
         }
     });

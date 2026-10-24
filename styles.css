@@ -315,7 +315,7 @@ header p {
     color: var(--text-main);
 }
 
-.input-group input,
+.input-group input:not([type="radio"]):not([type="checkbox"]),
 .input-group select {
     width: 100%;
     background-color: var(--input-bg);
@@ -344,7 +344,7 @@ header p {
     color: var(--text-main);
 }
 
-.input-group input:focus,
+.input-group input:not([type="radio"]):not([type="checkbox"]):focus,
 .input-group select:focus {
     border-color: var(--input-focus);
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
@@ -531,4 +531,22 @@ button:active:not(.tab-btn) {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Rating Drawers */
+details.rating-drawer {
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+details.rating-drawer:hover {
+    border-color: var(--primary-color) !important;
+}
+
+details.rating-drawer summary {
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+details.rating-drawer summary:hover {
+    color: var(--primary-hover) !important;
 }

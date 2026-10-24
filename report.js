@@ -117,6 +117,7 @@ function generateReport(currentPower) {
                 <h2>3. Profile Parameters</h2>
                 ${(() => {
             const config = document.getElementById('gear-config').value;
+            const mn = parseFloat(document.getElementById('module')?.value) || 0;
             let gearsCount = 2;
             if (config === 'planetary' || config === '3-train') gearsCount = 3;
             if (config === '4-train') gearsCount = 4;
@@ -134,7 +135,9 @@ function generateReport(currentPower) {
                 const addC = document.getElementById('addendum-coeff-' + i).value || '-';
                 const dedC = document.getElementById('dedendum-coeff-' + i).value || '-';
                 const rtC = document.getElementById('root-radius-coeff-' + i).value || '-';
-                const tipA = document.getElementById('tip-alteration-' + i).value || '-';
+                const tipAVal = parseFloat(document.getElementById('tip-alteration-' + i).value);
+                const tipAMm = !isNaN(tipAVal) ? tipAVal.toFixed(3) + ' mm' : '-';
+                const tipK = document.getElementById('tip-alteration-coeff-' + i)?.textContent || (!isNaN(tipAVal) && mn > 0 ? (tipAVal / mn).toFixed(4) : '-');
                 const cutterTeeth = document.getElementById('cutter-teeth-' + i).value || '-';
 
                 profHTML += `
@@ -146,7 +149,8 @@ function generateReport(currentPower) {
                                 <div class="data-row" style="border:none; padding: 2px 0;"><span class="data-label">Addendum Coeff:</span> <span class="data-val">${addC}</span></div>
                                 <div class="data-row" style="border:none; padding: 2px 0;"><span class="data-label">Dedendum Coeff:</span> <span class="data-val">${dedC}</span></div>
                                 <div class="data-row" style="border:none; padding: 2px 0;"><span class="data-label">Root Radius Coeff.:</span> <span class="data-val">${rtC}</span></div>
-                                <div class="data-row" style="border:none; padding: 2px 0;"><span class="data-label">Tip Alteration Coefficient (k):</span> <span class="data-val">${tipA}</span></div>
+                                <div class="data-row" style="border:none; padding: 2px 0;"><span class="data-label">Tip Alteration (k&middot;m<sub>n</sub>):</span> <span class="data-val">${tipAMm}</span></div>
+                                <div class="data-row" style="border:none; padding: 2px 0;"><span class="data-label">Tip Alteration Coefficient (k):</span> <span class="data-val">${tipK}</span></div>
                             </div>
                         `;
             }
@@ -164,15 +168,101 @@ function generateReport(currentPower) {
             for (let i = 1; i <= gearsCount; i++) {
                 const title = (config === 'planetary' && i === 3) ? 'Gear 3 (Ring)' : `Gear ${i}`;
                 const matSelect = document.getElementById('mat' + i);
-                const mat = matSelect ? matSelect.options[matSelect.selectedIndex].text : '-';
-                matHTML += `<div class="data-row" style="padding: 5px 0; border: none;"><span class="data-label">${title} Material:</span><span class="data-val">${mat}</span></div>`;
+                const qualSelect = document.getElementById('mat-qual-' + i);
+                const hardInput = document.getElementById('mat-hard-' + i);
+                const hardLabel = document.getElementById('mat-hard-label-' + i);
+                const sigHOut = document.getElementById('sigma-H-lim-' + i + '-out');
+                const sigFOut = document.getElementById('sigma-F-lim-' + i + '-out');
+
+                const mat = (matSelect && matSelect.selectedIndex >= 0) ? matSelect.options[matSelect.selectedIndex].text : '-';
+                const qual = (qualSelect && qualSelect.selectedIndex >= 0) ? qualSelect.options[qualSelect.selectedIndex].text : '-';
+                const hard = (hardInput && hardInput.value !== '') ? hardInput.value : '-';
+                const unit = hardLabel ? (hardLabel.textContent.includes('HBW') ? 'HBW' : 'HV') : '';
+                const sigH = sigHOut ? sigHOut.textContent : '--';
+                const sigF = sigFOut ? sigFOut.textContent : '--';
+
+                const chdInput = document.getElementById('chd-' + i);
+                const chdVal = (chdInput && chdInput.value !== '') ? `${chdInput.value} mm` : 'Auto (0.2 × mn)';
+
+                const coreHardInput = document.getElementById('core-hard-' + i);
+                const coreHardVal = (coreHardInput && coreHardInput.value !== '') ? `${coreHardInput.value} HV` : '350 HV (Default)';
+
+                matHTML += `<div style="margin-bottom: 8px;">
+                    <div class="data-row" style="padding: 2px 0; border: none; font-weight: 600;"><span class="data-label">${title}:</span><span class="data-val">${mat}</span></div>
+                    <div class="data-row" style="padding: 2px 0; border: none; padding-left: 15px;"><span class="data-label">Quality:</span><span class="data-val">${qual}</span></div>
+                    <div class="data-row" style="padding: 2px 0; border: none; padding-left: 15px;"><span class="data-label">Surface Hardness:</span><span class="data-val">${hard} ${unit}</span></div>
+                    <div class="data-row" style="padding: 2px 0; border: none; padding-left: 15px;"><span class="data-label">Core Hardness:</span><span class="data-val">${coreHardVal}</span></div>
+                    <div class="data-row" style="padding: 2px 0; border: none; padding-left: 15px;"><span class="data-label">Case Depth (CHD<sub>550HV</sub>):</span><span class="data-val">${chdVal}</span></div>
+                    <div class="data-row" style="padding: 2px 0; border: none; padding-left: 15px;"><span class="data-label">&sigma;<sub>H lim</sub>:</span><span class="data-val">${sigH}</span></div>
+                    <div class="data-row" style="padding: 2px 0; border: none; padding-left: 15px;"><span class="data-label">&sigma;<sub>F lim</sub>:</span><span class="data-val">${sigF}</span></div>
+                </div>`;
             }
             return matHTML;
         })()}
-                <div class="data-row" style="margin-top: 10px; border-top: 1px dotted #ccc;">
-                    <span class="data-label">Power Output:</span>
+                <div class="data-row" style="margin-top: 10px; margin-bottom: 6px; border-top: 1px dotted #ccc; padding-top: 8px;">
+                    <span class="data-label" style="font-weight: 600;">Operating Parameters:</span>
+                </div>
+                ${(() => {
+            const config = document.getElementById('gear-config').value;
+            let gearsCount = 2;
+            if (config === 'planetary' || config === '3-train') gearsCount = 3;
+            if (config === '4-train') gearsCount = 4;
+            const refGearVal = (document.querySelector('input[name="reference-gear"]:checked') || {}).value || '1';
+            let opHTML = '<table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 0.95rem;">';
+            opHTML += '<thead><tr style="border-bottom: 1px solid #ccc; text-align: left;"><th style="padding: 4px;">Gear</th><th style="padding: 4px;">Speed (RPM)</th><th style="padding: 4px;">Torque (Nm)</th><th style="padding: 4px;">Power (kW)</th><th style="padding: 4px;">Role</th></tr></thead><tbody>';
+            for (let i = 1; i <= gearsCount; i++) {
+                const isRef = String(i) === String(refGearVal);
+                let title = `Gear ${i}`;
+                let role = isRef ? 'Reference' : 'Output';
+                if (config === 'planetary') {
+                    if (i === 1) {
+                        title = 'Gear 1 (Sun)';
+                        role = isRef ? 'Reference (Input)' : 'Input';
+                    } else if (i === 2) {
+                        title = 'Carrier';
+                        role = isRef ? 'Reference (Output)' : 'Output';
+                    } else if (i === 3) {
+                        title = 'Gear 3 (Ring)';
+                        role = 'Fixed (Reaction)';
+                    }
+                }
+                const speedVal = document.getElementById('speed-' + i)?.value || '-';
+                const torqueVal = document.getElementById('torque-' + i)?.value || '-';
+                const powerVal = document.getElementById('power-' + i)?.value || '-';
+                opHTML += `<tr style="border-bottom: 1px dotted #eee;"><td style="padding: 4px; font-weight: 500;">${title}</td><td style="padding: 4px;">${speedVal}</td><td style="padding: 4px;">${torqueVal}</td><td style="padding: 4px;">${powerVal}</td><td style="padding: 4px; color: ${isRef ? '#0056b3' : (config === 'planetary' && i === 3 ? '#6c757d' : '#28a745')}; font-weight: ${isRef ? '600' : 'normal'};">${role}</td></tr>`;
+            }
+            opHTML += '</tbody></table>';
+            return opHTML;
+        })()}
+                <div class="data-row" style="margin-top: 6px; border-top: 1px dotted #ccc;">
+                    <span class="data-label">Transmitted Power:</span>
                     <span class="data-val ${!currentPower ? 'error' : ''}">${currentPower || 'Calculation Failed / Missing Data'}</span>
                 </div>
+                <div class="data-row" style="padding: 2px 0; border: none;"><span class="data-label">Target Design Life:</span><span class="data-val">${document.getElementById('target-life-hours')?.value || '20000'} Hours</span></div>
+                <div class="data-row" style="padding: 2px 0; border: none;"><span class="data-label">Application Factor (K<sub>A</sub>):</span><span class="data-val">${document.getElementById('ka-factor')?.value || '1.25'}</span></div>
+                <div class="data-row" style="padding: 2px 0; border: none;"><span class="data-label">Mesh Load Factor (K<sub>&gamma;</sub>):</span><span class="data-val" style="${parseFloat(document.getElementById('k-gamma-factor')?.value||1)>1?'color:#e3b341;font-weight:600;':''}">${document.getElementById('k-gamma-factor')?.value || '1.0'}</span></div>
+                <div class="data-row" style="padding: 2px 0; border: none;"><span class="data-label">Reversed Bending Checkbox:</span><span class="data-val">${document.getElementById('reversed-bending-check')?.checked ? 'Yes (Y<sub>M</sub> = 0.7 applied)' : 'No (Idlers/Planets auto-derated)'}</span></div>
+                <div class="data-row" style="padding: 2px 0; border: none;"><span class="data-label">Lubricant:</span><span class="data-val">${document.getElementById('lube-type')?.options[document.getElementById('lube-type').selectedIndex]?.text || '-'}, ISO VG ${document.getElementById('viscosity-grade')?.value || '220'} @ ${document.getElementById('oil-temp')?.value || '70'}&deg;C (${document.getElementById('lube-method')?.options[document.getElementById('lube-method').selectedIndex]?.text || '-'})</span></div>
+
+                <h2>4. ISO 6336 Rating Results &amp; Safety Factors</h2>
+                ${(() => {
+            if (!window.isoRatingResults || window.isoRatingResults.length === 0) {
+                return '<div style="color: #6c757d; font-style: italic;">No rating results calculated.</div>';
+            }
+            let rateHTML = '<table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.88rem;">';
+            rateHTML += '<thead><tr style="border-bottom: 2px solid #0056b3; text-align: left;"><th style="padding: 6px;">Mesh</th><th style="padding: 6px;">S<sub>H1</sub> / S<sub>H2</sub></th><th style="padding: 6px;">S<sub>F1</sub> / S<sub>F2</sub></th><th style="padding: 6px;">S<sub>FF1</sub> / S<sub>FF2</sub></th><th style="padding: 6px;">Pitting Life</th><th style="padding: 6px;">Bending Life</th></tr></thead><tbody>';
+            window.isoRatingResults.forEach(r => {
+                const shText = `${r.SH1.toFixed(2)} / ${r.SH2.toFixed(2)}`;
+                const sfText = `${r.SF1.toFixed(2)} / ${r.SF2.toFixed(2)}`;
+                const sffText = (r.SFF1 !== undefined && r.SFF2 !== undefined) ? `${r.SFF1.toFixed(2)} / ${r.SFF2.toFixed(2)}` : (r.SFF !== undefined ? r.SFF.toFixed(2) : '-');
+                const sffPass = (r.SFF1 >= 1.2 && r.SFF2 >= 1.2);
+                const pitLife = (r.lifePitting1 && r.lifePitting2) ? `${r.lifePitting1} / ${r.lifePitting2}` : '-';
+                const bendLife = (r.lifeBending1 && r.lifeBending2) ? `${r.lifeBending1} / ${r.lifeBending2}` : '-';
+                rateHTML += `<tr style="border-bottom: 1px dotted #ccc;"><td style="padding: 6px; font-weight: 600;">${r.meshTitle}</td><td style="padding: 6px; color: ${r.SH1 < 1.0 || r.SH2 < 1.0 ? '#dc3545' : '#28a745'}; font-weight: 600;">${shText}</td><td style="padding: 6px; color: ${r.SF1 < 1.4 || r.SF2 < 1.4 ? '#dc3545' : '#28a745'}; font-weight: 600;">${sfText}</td><td style="padding: 6px; color: ${sffPass ? '#28a745' : '#dc3545'}; font-weight: 600;">${sffText}</td><td style="padding: 6px; font-size: 0.82rem;">${pitLife}</td><td style="padding: 6px; font-size: 0.82rem;">${bendLife}</td></tr>`;
+            });
+            rateHTML += '</tbody></table>';
+            return rateHTML;
+        })()}
 
                 <h2>5. Tolerances Data</h2>
                 ${(() => {
