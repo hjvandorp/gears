@@ -1324,6 +1324,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const allOuts = [fpTOut, bigFpTOut, bigFrtOut, fHalphaOut, ffalphaOut, FalphaOut, fHbetaOut, ffbetaOut, FbetaOut];
 
+            // Update suggested tip diameter tolerance hint (only needs z and mn, not quality grade)
+            const daTolSuggestedSpan = document.getElementById('da-tol-suggested-' + i);
+            if (daTolSuggestedSpan) {
+                if (!isNaN(zVal) && !isNaN(mn)) {
+                    const pdResForHint = calculateReferenceDiameter(zVal, mn, Math.abs(beta));
+                    if (pdResForHint.success) {
+                        const suggestedTol = 0.05 + 0.001 * pdResForHint.value;
+                        daTolSuggestedSpan.textContent = `${suggestedTol.toFixed(3)} mm`;
+                    } else {
+                        daTolSuggestedSpan.textContent = '--';
+                    }
+                } else {
+                    daTolSuggestedSpan.textContent = '--';
+                }
+            }
+
             if (allOuts.some(out => out !== null)) {
                 if (isNaN(zVal) || isNaN(mn) || isNaN(aVal)) {
                     allOuts.forEach(out => {
@@ -1333,6 +1349,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const pdRes = calculateReferenceDiameter(zVal, mn, Math.abs(beta));
                     if (pdRes.success) {
                         const d = pdRes.value;
+
                         let FpTVal = NaN;
                         let fHalphaT_unrounded = NaN;
                         let ffalphaT_unrounded = NaN;

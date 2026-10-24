@@ -50,11 +50,12 @@
                     <div class="input-group">
                         <label for="project-name">Project Name</label>
                         <input type="text" id="project-name" placeholder="e.g., Main Gear Assembly"
-                            title="placeholder mouseover text for Project Name">
+                            title="The project name will be used for naming CSV, DXF, and STL exports.">
                     </div>
                     <div class="input-group">
                         <label for="gear-config">Gear Configuration</label>
-                        <select id="gear-config" title="placeholder mouseover text for Gear Configuration">
+                        <select id="gear-config"
+                            title="Choose the gear configuration via the dropdown menu. The interface dynamically updates for each configuration.">
                             <option value="pair">Gear Pair</option>
                             <option value="3-train">3-Gear Train</option>
                             <option value="4-train">4-Gear Train</option>
@@ -64,19 +65,19 @@
                     <div class="input-group">
                         <label for="module">Normal Module (m<sub>n</sub>, mm)</label>
                         <input type="number" id="module" min="0.50" step="0.50" placeholder="e.g., 2.5"
-                            title="placeholder mouseover text for Normal Module (mn, mm)">
+                            title="Normal module is a measure of the size of the teeth. The module is related to the size of the gear by the number of teeth.">
                     </div>
                     <div class="input-group">
                         <label for="pressure-angle">Normal Pressure Angle (α<sub>n</sub>, degrees)</label>
                         <input type="number" id="pressure-angle" min="10" max="45" step="2.5" placeholder="e.g., 20"
-                            title="placeholder mouseover text for Normal Pressure Angle (αn, degrees)">
+                            title="The pressure angle affects the separating forces between meshing teeth and the tendency to undercut for gears with low tooth counts.">
                     </div>
                     <div class="side-by-side-group">
                         <div class="input-group">
                             <label for="helix-angle">Helix Angle (β, degrees)</label>
                             <input type="number" id="helix-angle" min="-89" max="89" step="any"
                                 placeholder="e.g., 0 for Spur Gear"
-                                title="placeholder mouseover text for Helix Angle (β, degrees)">
+                                title="The helix angle is the angle between the tooth trace and the gear width. Larger helix angles result in smoother and quieter gear operation due to increased contact ratios, but also result in higher axial thrust loads.">
                         </div>
                         <div class="input-group">
                             <label>Gear 1 Hand of Helix</label>
@@ -90,7 +91,7 @@
                         <div class="input-group">
                             <label for="num-planets">Number of Planets</label>
                             <input type="number" id="num-planets" min="3" step="1" placeholder="e.g., 3"
-                                title="placeholder mouseover text for Number of Planets">
+                                title="Choose a number that results in evenly spaced planets. Note that there are diminishing returns on load capacity beyond 3 planets. See the table given for the mesh load factor in the rating tab.">
                         </div>
                         <div class="input-group">
                             <label>Options (Equally Spaced)</label>
@@ -110,17 +111,17 @@
                             <div class="input-group">
                                 <label for="z1">Number of Teeth (z<sub>1</sub>)</label>
                                 <input type="number" id="z1" min="1" step="1"
-                                    title="placeholder mouseover text for Number of Teeth (z1)">
+                                    title="Number of teeth is typically between 12 and 300. Tooth counts below 12 are possible but result in pointy teeth and low profile contact ratios. For extremely low tooth counts, helical gears may be used to increase the total contact ratio.">
                             </div>
                             <div class="input-group">
                                 <label for="b1">Facewidth (b<sub>1</sub>, mm)</label>
                                 <input type="number" id="b1" min="0" step="any"
-                                    title="placeholder mouseover text for Facewidth (b1, mm)">
+                                    title="Facewidth is typically within the range of 7*m to 16*m">
                             </div>
                             <div class="input-group">
                                 <label for="x1">Profile Shift (x<sub>1</sub>)</label>
                                 <input type="number" id="x1" step="0.1"
-                                    title="placeholder mouseover text for Profile Shift (x1)">
+                                    title="Profile shift can be used to prevent undercut for gears with low tooth counts. It can also be used to balance the strength or other parameters such as specific sliding.">
                             </div>
                         </div>
 
@@ -129,12 +130,12 @@
                             <div class="input-group">
                                 <label for="z2">Number of Teeth (z<sub>2</sub>)</label>
                                 <input type="number" id="z2" min="1" step="1"
-                                    title="placeholder mouseover text for Number of Teeth (z2)">
+                                    title="Number of teeth is typically between 12 and 300. Tooth counts below 12 are possible but result in pointy teeth and low profile contact ratios. For extremely low tooth counts, helical gears may be used to increase the total contact ratio.">
                             </div>
                             <div class="input-group">
                                 <label for="b2">Facewidth (b<sub>2</sub>, mm)</label>
                                 <input type="number" id="b2" min="0" step="any"
-                                    title="placeholder mouseover text for Facewidth (b2, mm)">
+                                    title="Facewidth is typically within the range of 7*m to 16*m">
                             </div>
                             <div class="input-group">
                                 <label>Profile Shift (x<sub>2</sub>)</label>
@@ -150,12 +151,12 @@
                             <div class="input-group">
                                 <label for="z3">Number of Teeth (z<sub>3</sub>)</label>
                                 <input type="number" id="z3" min="1" step="1"
-                                    title="placeholder mouseover text for Number of Teeth (z3)">
+                                    title="Number of teeth is typically between 12 and 300. Tooth counts below 12 are possible but result in pointy teeth and low profile contact ratios. For extremely low tooth counts, helical gears may be used to increase the total contact ratio.">
                             </div>
                             <div class="input-group">
                                 <label for="b3">Facewidth (b<sub>3</sub>, mm)</label>
                                 <input type="number" id="b3" min="0" step="any"
-                                    title="placeholder mouseover text for Facewidth (b3, mm)">
+                                    title="Facewidth is typically within the range of 7*m to 16*m">
                             </div>
                             <div class="input-group">
                                 <label>Profile Shift (x<sub>3</sub>)</label>
@@ -171,12 +172,12 @@
                             <div class="input-group">
                                 <label for="z4">Number of Teeth (z<sub>4</sub>)</label>
                                 <input type="number" id="z4" min="1" step="1"
-                                    title="placeholder mouseover text for Number of Teeth (z4)">
+                                    title="Number of teeth is typically between 12 and 300. Tooth counts below 12 are possible but result in pointy teeth and low profile contact ratios. For extremely low tooth counts, helical gears may be used to increase the total contact ratio.">
                             </div>
                             <div class="input-group">
                                 <label for="b4">Facewidth (b<sub>4</sub>, mm)</label>
                                 <input type="number" id="b4" min="0" step="any"
-                                    title="placeholder mouseover text for Facewidth (b4, mm)">
+                                    title="Facewidth is typically within the range of 7*m to 16*m">
                             </div>
                             <div class="input-group">
                                 <label>Profile Shift (x<sub>4</sub>)</label>
@@ -195,7 +196,7 @@
                         <div class="input-group" id="cd-group-1">
                             <label for="aw1" id="cd-label-1">Working Center Distance (a<sub>w,12</sub>, mm)</label>
                             <input type="number" id="aw1" min="0" step="any" placeholder="e.g., 100.0"
-                                title="placeholder mouseover text for Working Center Distance (aw,12, mm)">
+                                title="The working center distance does not need to equal the standard center distance. Positive or negative profile shifts can make up the difference to achieve the desired working center distance.">
                             <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                 Standard: <span id="cd-std-1" style="font-weight: 500;">--</span><br>
                                 Working Transverse PA (&alpha;<sub>wt</sub>): <span id="aw-alpha-1"
@@ -207,7 +208,7 @@
                         <div class="input-group hidden" id="cd-group-2">
                             <label for="aw2">Working Center Distance, Gear 2-3 (a<sub>w,23</sub>, mm)</label>
                             <input type="number" id="aw2" min="0" step="any" placeholder="e.g., 100.0"
-                                title="placeholder mouseover text for Working Center Distance, Gear 2-3 (aw,23, mm)">
+                                title="The working center distance does not need to equal the standard center distance. Positive or negative profile shifts can make up the difference to achieve the desired working center distance.">
                             <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                 Standard: <span id="cd-std-2" style="font-weight: 500;">--</span><br>
                                 Working Transverse PA (&alpha;<sub>wt</sub>): <span id="aw-alpha-2"
@@ -217,7 +218,7 @@
                         <div class="input-group hidden" id="cd-group-3">
                             <label for="aw3">Working Center Distance, Gear 3-4 (a<sub>w,34</sub>, mm)</label>
                             <input type="number" id="aw3" min="0" step="any" placeholder="e.g., 100.0"
-                                title="placeholder mouseover text for Working Center Distance, Gear 3-4 (aw,34, mm)">
+                                title="The working center distance does not need to equal the standard center distance. Positive or negative profile shifts can make up the difference to achieve the desired working center distance.">
                             <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                 Standard: <span id="cd-std-3" style="font-weight: 500;">--</span><br>
                                 Working Transverse PA (&alpha;<sub>wt</sub>): <span id="aw-alpha-3"
@@ -235,7 +236,7 @@
                             <div class="input-group">
                                 <label for="di1">Inside/Outside Diameter (d<sub>i1</sub>, mm)</label>
                                 <input type="number" id="di1" min="0" step="any"
-                                    title="placeholder mouseover text for Inside/Outside Diameter (di1, mm)">
+                                    title="This is used for the rim thickness calculation. It is also visualized in the graphics tab.">
                                 <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                     Recommended diameter to avoid thin rim: <span id="di-rec-1"
                                         style="font-weight: 500;">--</span>
@@ -244,17 +245,17 @@
                             <div class="input-group">
                                 <label for="hole-circle-1">Hole Circle Diameter (mm)</label>
                                 <input type="number" id="hole-circle-1" min="0" step="any"
-                                    title="placeholder mouseover text for Hole Circle Diameter (mm)">
+                                    title="Optional input: Defines the diameter of the mounting hole pattern.">
                             </div>
                             <div class="input-group">
                                 <label for="hole-diameter-1">Hole Diameter (mm)</label>
                                 <input type="number" id="hole-diameter-1" min="0" step="any"
-                                    title="placeholder mouseover text for Hole Diameter (mm)">
+                                    title="Optional input: Defines the diameter of the mounting holes.">
                             </div>
                             <div class="input-group">
                                 <label for="num-holes-1">Number of Holes</label>
                                 <input type="number" id="num-holes-1" min="0" step="1"
-                                    title="placeholder mouseover text for Number of Holes">
+                                    title="Optional input: Number of mounting holes (equally spaced).">
                             </div>
                             <div class="input-group">
                                 <label for="dsh-1">Shaft Diameter (d<sub>sh1</sub>, mm)</label>
@@ -286,7 +287,7 @@
                             <div class="input-group">
                                 <label for="di2">Inside/Outside Diameter (d<sub>i2</sub>, mm)</label>
                                 <input type="number" id="di2" min="0" step="any"
-                                    title="placeholder mouseover text for Inside/Outside Diameter (di2, mm)">
+                                    title="This is used for the rim thickness calculation. It is also visualized in the graphics tab.">
                                 <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                     Recommended diameter to avoid thin rim: <span id="di-rec-2"
                                         style="font-weight: 500;">--</span>
@@ -295,17 +296,17 @@
                             <div class="input-group">
                                 <label for="hole-circle-2">Hole Circle Diameter (mm)</label>
                                 <input type="number" id="hole-circle-2" min="0" step="any"
-                                    title="placeholder mouseover text for Hole Circle Diameter (mm)">
+                                    title="Optional input: Defines the diameter of the mounting hole pattern.">
                             </div>
                             <div class="input-group">
                                 <label for="hole-diameter-2">Hole Diameter (mm)</label>
                                 <input type="number" id="hole-diameter-2" min="0" step="any"
-                                    title="placeholder mouseover text for Hole Diameter (mm)">
+                                    title="Optional input: Defines the diameter of the mounting holes.">
                             </div>
                             <div class="input-group">
                                 <label for="num-holes-2">Number of Holes</label>
                                 <input type="number" id="num-holes-2" min="0" step="1"
-                                    title="placeholder mouseover text for Number of Holes">
+                                    title="Optional input: Number of mounting holes (equally spaced).">
                             </div>
                             <div class="input-group">
                                 <label for="dsh-2">Shaft Diameter (d<sub>sh2</sub>, mm)</label>
@@ -337,7 +338,7 @@
                             <div class="input-group">
                                 <label for="di3">Inside/Outside Diameter (d<sub>i3</sub>, mm)</label>
                                 <input type="number" id="di3" min="0" step="any"
-                                    title="placeholder mouseover text for Inside/Outside Diameter (di3, mm)">
+                                    title="This is used for the rim thickness calculation. It is also visualized in the graphics tab.">
                                 <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                     Recommended diameter to avoid thin rim: <span id="di-rec-3"
                                         style="font-weight: 500;">--</span>
@@ -346,17 +347,17 @@
                             <div class="input-group">
                                 <label for="hole-circle-3">Hole Circle Diameter (mm)</label>
                                 <input type="number" id="hole-circle-3" min="0" step="any"
-                                    title="placeholder mouseover text for Hole Circle Diameter (mm)">
+                                    title="Optional input: Defines the diameter of the mounting hole pattern.">
                             </div>
                             <div class="input-group">
                                 <label for="hole-diameter-3">Hole Diameter (mm)</label>
                                 <input type="number" id="hole-diameter-3" min="0" step="any"
-                                    title="placeholder mouseover text for Hole Diameter (mm)">
+                                    title="Optional input: Defines the diameter of the mounting holes.">
                             </div>
                             <div class="input-group">
                                 <label for="num-holes-3">Number of Holes</label>
                                 <input type="number" id="num-holes-3" min="0" step="1"
-                                    title="placeholder mouseover text for Number of Holes">
+                                    title="Optional input: Number of mounting holes (equally spaced).">
                             </div>
                             <div class="input-group">
                                 <label for="dsh-3">Shaft Diameter (d<sub>sh3</sub>, mm)</label>
@@ -388,7 +389,7 @@
                             <div class="input-group">
                                 <label for="di4">Inside/Outside Diameter (d<sub>i4</sub>, mm)</label>
                                 <input type="number" id="di4" min="0" step="any"
-                                    title="placeholder mouseover text for Inside/Outside Diameter (di4, mm)">
+                                    title="This is used for the rim thickness calculation. It is also visualized in the graphics tab.">
                                 <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
                                     Recommended diameter to avoid thin rim: <span id="di-rec-4"
                                         style="font-weight: 500;">--</span>
@@ -397,17 +398,17 @@
                             <div class="input-group">
                                 <label for="hole-circle-4">Hole Circle Diameter (mm)</label>
                                 <input type="number" id="hole-circle-4" min="0" step="any"
-                                    title="placeholder mouseover text for Hole Circle Diameter (mm)">
+                                    title="Optional input: Defines the diameter of the mounting hole pattern.">
                             </div>
                             <div class="input-group">
                                 <label for="hole-diameter-4">Hole Diameter (mm)</label>
                                 <input type="number" id="hole-diameter-4" min="0" step="any"
-                                    title="placeholder mouseover text for Hole Diameter (mm)">
+                                    title="Optional input: Defines the diameter of the mounting holes.">
                             </div>
                             <div class="input-group">
                                 <label for="num-holes-4">Number of Holes</label>
                                 <input type="number" id="num-holes-4" min="0" step="1"
-                                    title="placeholder mouseover text for Number of Holes">
+                                    title="Optional input: Number of mounting holes (equally spaced).">
                             </div>
                             <div class="input-group">
                                 <label for="dsh-4">Shaft Diameter (d<sub>sh4</sub>, mm)</label>
@@ -797,8 +798,8 @@
                             <div class="input-group">
                                 <label for="quality-grade-1">Gear Tolerance Class (ISO 1328-1:2013)</label>
                                 <input type="number" id="quality-grade-1" min="1" max="11" step="1"
-                                    placeholder="e.g., 6"
-                                    title="placeholder mouseover text for Gear Tolerance Class (ISO 1328-1:2013)">
+                                    placeholder="e.g., 7"
+                                    title="Class 1-4: Ultra-high precision gearing that requires extra care during manufacturing and finishing after hardening. Class 5-7: High Precision gearing that typically requires finishing after hardening. Class 8: General precision gearing that may require finishing after hardening. Class 9-11: Lower precision gearing that usually does not require finishing after hardening.">
                             </div>
                             <div class="input-group">
                                 <label for="tip-alteration-1">Tip Alteration (k&middot;m<sub>n</sub>, mm)</label>
@@ -812,7 +813,10 @@
                             <div class="input-group" style="margin-bottom: 1.5rem;">
                                 <label for="da-tol-1">Tip Diameter Tolerance (mm)</label>
                                 <input type="number" id="da-tol-1" min="0" step="0.05" placeholder="0.000"
-                                    title="placeholder mouseover text for Tip Diameter Tolerance (mm)">
+                                    title="The tip diameter tolerance is treated as +0, -tol, where tol is the value you input.">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Suggested: <span id="da-tol-suggested-1" style="font-weight: 500;">--</span>
+                                </div>
                             </div>
                             <div class="side-by-side-group">
                                 <div class="input-group">
@@ -846,12 +850,12 @@
                                 <div class="input-group">
                                     <label for="dm-1">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
                                     <input type="number" id="dm-1" min="0" step="0.001" placeholder="0.000"
-                                        title="placeholder mouseover text for Measuring Ball Diameter (dM) (mm)">
+                                        title="The ideal ball diameter contacts the flanks close to the mid-height of the teeth. For external gears, a good starting guess is 1.728*mn. For internal gears, a good starting guess is 1.92*mn. The measuring ball should be large enough to avoid contact with the root before it contacts the flanks, but it should be small enough that the point of tangency is below the tip diameter. The ball should extend beyond the tip diameter to make it easier to measure the size with a micrometer.">
                                 </div>
                                 <div class="input-group">
                                     <label for="k-spanned-1">Number of Teeth Spanned (k)</label>
                                     <input type="number" id="k-spanned-1" min="1" step="1" placeholder="e.g., 3"
-                                        title="placeholder mouseover text for Number of Teeth Spanned (k)">
+                                        title="The number of teeth spanned should be chosen such that the point of tangency is close to the mid-height of the teeth.">
                                 </div>
                             </div>
                         </div>
@@ -860,8 +864,8 @@
                             <div class="input-group">
                                 <label for="quality-grade-2">Gear Tolerance Class (ISO 1328-1:2013)</label>
                                 <input type="number" id="quality-grade-2" min="1" max="11" step="1"
-                                    placeholder="e.g., 6"
-                                    title="placeholder mouseover text for Gear Tolerance Class (ISO 1328-1:2013)">
+                                    placeholder="e.g., 7"
+                                    title="Class 1-4: Ultra-high precision gearing that requires extra care during manufacturing and finishing after hardening. Class 5-7: High Precision gearing that typically requires finishing after hardening. Class 8: General precision gearing that may require finishing after hardening. Class 9-11: Lower precision gearing that usually does not require finishing after hardening.">
                             </div>
                             <div class="input-group">
                                 <label for="tip-alteration-2">Tip Alteration (k&middot;m<sub>n</sub>, mm)</label>
@@ -875,7 +879,10 @@
                             <div class="input-group" style="margin-bottom: 1.5rem;">
                                 <label for="da-tol-2">Tip Diameter Tolerance (mm)</label>
                                 <input type="number" id="da-tol-2" min="0" step="0.05" placeholder="0.000"
-                                    title="placeholder mouseover text for Tip Diameter Tolerance (mm)">
+                                    title="The tip diameter tolerance is treated as +0, -tol, where tol is the value you input.">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Suggested: <span id="da-tol-suggested-2" style="font-weight: 500;">--</span>
+                                </div>
                             </div>
                             <div class="side-by-side-group">
                                 <div class="input-group">
@@ -909,12 +916,12 @@
                                 <div class="input-group">
                                     <label for="dm-2">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
                                     <input type="number" id="dm-2" min="0" step="0.001" placeholder="0.000"
-                                        title="placeholder mouseover text for Measuring Ball Diameter (dM) (mm)">
+                                        title="The ideal ball diameter contacts the flanks close to the mid-height of the teeth. For external gears, a good starting guess is 1.728*mn. For internal gears, a good starting guess is 1.92*mn. The measuring ball should be large enough to avoid contact with the root before it contacts the flanks, but it should be small enough that the point of tangency is below the tip diameter. The ball should extend beyond the tip diameter to make it easier to measure the size with a micrometer.">
                                 </div>
                                 <div class="input-group">
                                     <label for="k-spanned-2">Number of Teeth Spanned (k)</label>
                                     <input type="number" id="k-spanned-2" min="1" step="1" placeholder="e.g., 3"
-                                        title="placeholder mouseover text for Number of Teeth Spanned (k)">
+                                        title="The number of teeth spanned should be chosen such that the point of tangency is close to the mid-height of the teeth.">
                                 </div>
                             </div>
                         </div>
@@ -923,8 +930,8 @@
                             <div class="input-group">
                                 <label for="quality-grade-3">Gear Tolerance Class (ISO 1328-1:2013)</label>
                                 <input type="number" id="quality-grade-3" min="1" max="11" step="1"
-                                    placeholder="e.g., 6"
-                                    title="placeholder mouseover text for Gear Tolerance Class (ISO 1328-1:2013)">
+                                    placeholder="e.g., 7"
+                                    title="Class 1-4: Ultra-high precision gearing that requires extra care during manufacturing and finishing after hardening. Class 5-7: High Precision gearing that typically requires finishing after hardening. Class 8: General precision gearing that may require finishing after hardening. Class 9-11: Lower precision gearing that usually does not require finishing after hardening.">
                             </div>
                             <div class="input-group">
                                 <label for="tip-alteration-3">Tip Alteration (k&middot;m<sub>n</sub>, mm)</label>
@@ -938,7 +945,10 @@
                             <div class="input-group" style="margin-bottom: 1.5rem;">
                                 <label for="da-tol-3">Tip Diameter Tolerance (mm)</label>
                                 <input type="number" id="da-tol-3" min="0" step="0.05" placeholder="0.000"
-                                    title="placeholder mouseover text for Tip Diameter Tolerance (mm)">
+                                    title="The tip diameter tolerance is treated as +0, -tol, where tol is the value you input.">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Suggested: <span id="da-tol-suggested-3" style="font-weight: 500;">--</span>
+                                </div>
                             </div>
                             <div class="side-by-side-group">
                                 <div class="input-group">
@@ -972,12 +982,12 @@
                                 <div class="input-group">
                                     <label for="dm-3">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
                                     <input type="number" id="dm-3" min="0" step="0.001" placeholder="0.000"
-                                        title="placeholder mouseover text for Measuring Ball Diameter (dM) (mm)">
+                                        title="The ideal ball diameter contacts the flanks close to the mid-height of the teeth. For external gears, a good starting guess is 1.728*mn. For internal gears, a good starting guess is 1.92*mn. The measuring ball should be large enough to avoid contact with the root before it contacts the flanks, but it should be small enough that the point of tangency is below the tip diameter. The ball should extend beyond the tip diameter to make it easier to measure the size with a micrometer.">
                                 </div>
                                 <div class="input-group">
                                     <label for="k-spanned-3">Number of Teeth Spanned (k)</label>
                                     <input type="number" id="k-spanned-3" min="1" step="1" placeholder="e.g., 3"
-                                        title="placeholder mouseover text for Number of Teeth Spanned (k)">
+                                        title="The number of teeth spanned should be chosen such that the point of tangency is close to the mid-height of the teeth.">
                                 </div>
                             </div>
                         </div>
@@ -986,8 +996,8 @@
                             <div class="input-group">
                                 <label for="quality-grade-4">Gear Tolerance Class (ISO 1328-1:2013)</label>
                                 <input type="number" id="quality-grade-4" min="1" max="11" step="1"
-                                    placeholder="e.g., 6"
-                                    title="placeholder mouseover text for Gear Tolerance Class (ISO 1328-1:2013)">
+                                    placeholder="e.g., 7"
+                                    title="Class 1-4: Ultra-high precision gearing that requires extra care during manufacturing and finishing after hardening. Class 5-7: High Precision gearing that typically requires finishing after hardening. Class 8: General precision gearing that may require finishing after hardening. Class 9-11: Lower precision gearing that usually does not require finishing after hardening.">
                             </div>
                             <div class="input-group">
                                 <label for="tip-alteration-4">Tip Alteration (k&middot;m<sub>n</sub>, mm)</label>
@@ -1001,7 +1011,10 @@
                             <div class="input-group" style="margin-bottom: 1.5rem;">
                                 <label for="da-tol-4">Tip Diameter Tolerance (mm)</label>
                                 <input type="number" id="da-tol-4" min="0" step="0.05" placeholder="0.000"
-                                    title="placeholder mouseover text for Tip Diameter Tolerance (mm)">
+                                    title="The tip diameter tolerance is treated as +0, -tol, where tol is the value you input.">
+                                <div class="result-display" style="font-size: 0.85em; margin-top: 4px; color: #6c757d;">
+                                    Suggested: <span id="da-tol-suggested-4" style="font-weight: 500;">--</span>
+                                </div>
                             </div>
                             <div class="side-by-side-group">
                                 <div class="input-group">
@@ -1037,12 +1050,12 @@
                                 <div class="input-group">
                                     <label for="dm-4">Measuring Ball Diameter (d<sub>M</sub>) (mm)</label>
                                     <input type="number" id="dm-4" min="0" step="0.001" placeholder="0.000"
-                                        title="placeholder mouseover text for Measuring Ball Diameter (dM) (mm)">
+                                        title="The ideal ball diameter contacts the flanks close to the mid-height of the teeth. For external gears, a good starting guess is 1.728*mn. For internal gears, a good starting guess is 1.92*mn. The measuring ball should be large enough to avoid contact with the root before it contacts the flanks, but it should be small enough that the point of tangency is below the tip diameter. The ball should extend beyond the tip diameter to make it easier to measure the size with a micrometer.">
                                 </div>
                                 <div class="input-group">
                                     <label for="k-spanned-4">Number of Teeth Spanned (k)</label>
                                     <input type="number" id="k-spanned-4" min="1" step="1" placeholder="e.g., 3"
-                                        title="placeholder mouseover text for Number of Teeth Spanned (k)">
+                                        title="The number of teeth spanned should be chosen such that the point of tangency is close to the mid-height of the teeth.">
                                 </div>
                             </div>
                         </div>
