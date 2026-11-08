@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ISO 21771:2007 Calculations
  * Basic Data and Profile Calculations
  */
@@ -359,7 +359,12 @@ function calculateRootFormDiameterPinionCutter(z, mn, alpha_n, beta, d, db, sn, 
     const gen_aw0 = 0.5 * Math.abs(z0 + z) * gen_mt;
     const term1 = 2 * gen_aw0 * Math.sin(gen_alpha_t)
         - sign * Math.sqrt(Math.max(0, Math.pow(gen_dFa0_act, 2) - Math.pow(db0, 2)));
-    const dFf = Math.sqrt(Math.pow(term1, 2) + Math.pow(db, 2));
+    // When term1 < 0 the gear is undercut: the generating cutter tip sweeps past the
+    // base circle, so dFf lies below db.  Squaring a negative term1 would give a false
+    // result above db, so we handle the two cases separately.
+    const dFf = (term1 < 0)
+        ? Math.max(0, db - Math.abs(term1))
+        : Math.sqrt(Math.pow(term1, 2) + Math.pow(db, 2));
 
 
     return {

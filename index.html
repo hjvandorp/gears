@@ -2625,6 +2625,8 @@
                                         style="font-size: 0.8rem; padding: 4px 10px;">Box Zoom</button>
                                     <button class="action-btn" id="export-dxf-1"
                                         style="font-size: 0.8rem; padding: 4px 10px;">Export DXF</button>
+                                    <button class="action-btn" id="popout-2d-1"
+                                        style="font-size: 0.8rem; padding: 4px 10px;" title="Open in a separate window" onclick="openPopout('canvas-2d-1')">&#x29C9; Pop Out</button>
                                 </div>
                             </div>
                         </div>
@@ -2642,6 +2644,8 @@
                                         style="font-size: 0.8rem; padding: 4px 10px;">Box Zoom</button>
                                     <button class="action-btn" id="export-dxf-2"
                                         style="font-size: 0.8rem; padding: 4px 10px;">Export DXF</button>
+                                    <button class="action-btn" id="popout-2d-2"
+                                        style="font-size: 0.8rem; padding: 4px 10px;" title="Open in a separate window" onclick="openPopout('canvas-2d-2')">&#x29C9; Pop Out</button>
                                 </div>
                             </div>
                         </div>
@@ -2659,6 +2663,8 @@
                                         style="font-size: 0.8rem; padding: 4px 10px;">Box Zoom</button>
                                     <button class="action-btn" id="export-dxf-3"
                                         style="font-size: 0.8rem; padding: 4px 10px;">Export DXF</button>
+                                    <button class="action-btn" id="popout-2d-3"
+                                        style="font-size: 0.8rem; padding: 4px 10px;" title="Open in a separate window" onclick="openPopout('canvas-2d-3')">&#x29C9; Pop Out</button>
                                 </div>
                             </div>
                         </div>
@@ -2676,6 +2682,8 @@
                                         style="font-size: 0.8rem; padding: 4px 10px;">Box Zoom</button>
                                     <button class="action-btn" id="export-dxf-4"
                                         style="font-size: 0.8rem; padding: 4px 10px;">Export DXF</button>
+                                    <button class="action-btn" id="popout-2d-4"
+                                        style="font-size: 0.8rem; padding: 4px 10px;" title="Open in a separate window" onclick="openPopout('canvas-2d-4')">&#x29C9; Pop Out</button>
                                 </div>
                             </div>
                         </div>
@@ -2765,6 +2773,38 @@
                                     style="font-size: 0.85rem; padding: 5px 12px;">Reset</button>
                                 <button class="action-btn" id="box-zoom-assembly"
                                     style="font-size: 0.85rem; padding: 5px 12px;">Box Zoom</button>
+                                <button class="action-btn" id="popout-assembly"
+                                    style="font-size: 0.85rem; padding: 5px 12px;" title="Open in a separate window" onclick="openPopout('canvas-assembly')">&#x29C9; Pop Out</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gear-properties-section" style="margin-top: 20px;">
+                    <h3 class="section-title">3D Full Assembly Meshing View</h3>
+                    <div class="gear-column">
+                        <div class="result-display"
+                            style="min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <canvas id="canvas-assembly-3d" width="1600" height="700"
+                                style="max-width: 100%; height: auto; max-height: 700px;"></canvas>
+                            <div
+                                style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin-top: 15px;">
+                                <input type="range" id="roll-slider-assembly-3d" min="-1" max="1" step="0.01" value="0"
+                                    style="width: 150px;" title="Manual Roll Phase">
+                                <button class="action-btn" id="rotate-ccw-assembly-3d"
+                                    style="font-size: 0.85rem; padding: 5px 12px;"
+                                    title="Hold to rotate counter-clockwise">↺ CCW</button>
+                                <button class="action-btn" id="rotate-cw-assembly-3d"
+                                    style="font-size: 0.85rem; padding: 5px 12px;" title="Hold to rotate clockwise">↻
+                                    CW</button>
+                                <span style="font-size: 0.85rem; color: #adb5bd;">Speed (teeth/s):</span>
+                                <input type="number" id="rotate-speed-assembly-3d" value="1" min="0.1" step="0.5"
+                                    style="width: 60px; font-size: 0.85rem; padding: 3px 6px; text-align: center; background: #2b3035; border: 1px solid #495057; color: #fff; border-radius: 4px;"
+                                    title="Rotation speed in teeth per second">
+                                <button class="action-btn" id="reset-assembly-3d"
+                                    style="font-size: 0.85rem; padding: 5px 12px;">Reset View</button>
+                                <button class="action-btn" id="export-stl-assembly"
+                                    style="font-size: 0.85rem; padding: 5px 12px;">Export STL</button>
                             </div>
                         </div>
                     </div>
@@ -2798,6 +2838,8 @@
                                         style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
                                     <button class="action-btn" id="box-zoom-inmesh-1"
                                         style="font-size: 0.8rem; padding: 4px 8px;">Box Zoom</button>
+                                    <button class="action-btn" id="popout-inmesh-1"
+                                        style="font-size: 0.8rem; padding: 4px 8px;" title="Open in a separate window" onclick="openPopout('canvas-inmesh-1')">&#x29C9; Pop Out</button>
                                 </div>
                             </div>
                         </div>
@@ -2824,6 +2866,8 @@
                                         style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
                                     <button class="action-btn" id="box-zoom-inmesh-2"
                                         style="font-size: 0.8rem; padding: 4px 8px;">Box Zoom</button>
+                                    <button class="action-btn" id="popout-inmesh-2"
+                                        style="font-size: 0.8rem; padding: 4px 8px;" title="Open in a separate window" onclick="openPopout('canvas-inmesh-2')">&#x29C9; Pop Out</button>
                                 </div>
                             </div>
                         </div>
@@ -2850,6 +2894,8 @@
                                         style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
                                     <button class="action-btn" id="box-zoom-inmesh-3"
                                         style="font-size: 0.8rem; padding: 4px 8px;">Box Zoom</button>
+                                    <button class="action-btn" id="popout-inmesh-3"
+                                        style="font-size: 0.8rem; padding: 4px 8px;" title="Open in a separate window" onclick="openPopout('canvas-inmesh-3')">&#x29C9; Pop Out</button>
                                 </div>
                             </div>
                         </div>
@@ -2876,6 +2922,8 @@
                                         style="font-size: 0.8rem; padding: 4px 8px;">Reset</button>
                                     <button class="action-btn" id="box-zoom-inmesh-4"
                                         style="font-size: 0.8rem; padding: 4px 8px;">Box Zoom</button>
+                                    <button class="action-btn" id="popout-inmesh-4"
+                                        style="font-size: 0.8rem; padding: 4px 8px;" title="Open in a separate window" onclick="openPopout('canvas-inmesh-4')">&#x29C9; Pop Out</button>
                                 </div>
                             </div>
                         </div>
@@ -2897,6 +2945,7 @@
     <script src="import-export.js"></script>
     <script src="three.min.js"></script>
     <script src="OrbitControls.js"></script>
+    <script src="popout.js"></script>
     <script src="graphics2D.js"></script>
     <script src="graphics3D.js"></script>
     <script src="main.js"></script>

@@ -106,7 +106,26 @@ function calculateRootTrochoid(eqResult, mn, rhoaP_coeff, z, nPts = 200) {
 
     const phi_gap = Math.PI / 2 - Math.PI / absZ;
     const z0 = Math.abs(p.gen_d0 / p.gen_mt);
-    const phi_range = Math.max(3 * Math.PI / z0, 3 * Math.PI / absZ);
+
+    // Compute angular sweep range needed to ensure the fillet envelope naturally
+    // traverses past the root form diameter (dFf) without being truncated prematurely.
+    let phi_range;
+    if (z0 > 1000) {
+        // Rack cutter: required roll distance from space centre up to the form diameter
+        const r_pitch = Math.abs(p.gen_d) / 2;
+        const ha_c = p.gen_haP0_coeff * p.gen_mn;
+        const alpha_n = p.gen_alpha_t || (20 * Math.PI / 180);
+        const tanA = Math.tan(alpha_n) || 0.364;
+        const s_max = (ha_c / tanA + (p.gen_st0 || 0) / 2 + rho) * 1.4;
+        const phi_rack = (2 * s_max) / r_pitch;
+        phi_range = Math.max(6 * Math.PI / absZ, phi_rack);
+    } else {
+        // Pinion cutter: ensure generous angular sweep to allow full tip disengagement
+        phi_range = Math.max(6 * Math.PI / z0, 6 * Math.PI / absZ);
+    }
+
+    // Scale sample points with range so resolution remains fine (~0.015 mm)
+    const sweepPts = Math.max(nPts, Math.min(500, Math.round(phi_range * absZ * 40)));
 
     const points = [];
 
@@ -120,8 +139,8 @@ function calculateRootTrochoid(eqResult, mn, rhoaP_coeff, z, nPts = 200) {
         const alpha_n = p.gen_alpha_t; // for a rack, alpha_t = alpha_n
         const Xc = p.gen_st0 / 2 - (ha_c - rho) * Math.tan(alpha_n) - rho / Math.cos(alpha_n);
 
-        for (let i = 0; i <= nPts; i++) {
-            const phi_g = phi_gap - phi_range / 2 + (i / nPts) * phi_range;
+        for (let i = 0; i <= sweepPts; i++) {
+            const phi_g = phi_gap - phi_range / 2 + (i / sweepPts) * phi_range;
             const d = phi_g - phi_gap;
 
             const x_traj = (v_c - r) * Math.sin(d) + r * d * Math.cos(d) - Xc * Math.cos(d);
@@ -136,11 +155,12 @@ function calculateRootTrochoid(eqResult, mn, rhoaP_coeff, z, nPts = 200) {
             const nx = Ty / T_mag;
             const ny = -Tx / T_mag;
 
-            const x1 = x_traj + rho * nx, y1 = y_traj + rho * ny;
-            const x2 = x_traj - rho * nx, y2 = y_traj - rho * ny;
-
-            let xp = isInternal ? (x1 * x1 + y1 * y1 > x2 * x2 + y2 * y2 ? x1 : x2) : (x1 * x1 + y1 * y1 < x2 * x2 + y2 * y2 ? x1 : x2);
-            let yp = isInternal ? (x1 * x1 + y1 * y1 > x2 * x2 + y2 * y2 ? y1 : y2) : (x1 * x1 + y1 * y1 < x2 * x2 + y2 * y2 ? y1 : y2);
+            // For external gears, (x_traj + rho*n) is always the active outward cutting surface.
+            // For internal gears, (x_traj - rho*n) is the active inward cutting surface.
+            // The old radius-comparison heuristic flips when the backside of the cutter tip arc
+            // becomes radially closer to the gear centre than the active edge (e.g. low tooth counts).
+            const xp = isInternal ? (x_traj - rho * nx) : (x_traj + rho * nx);
+            const yp = isInternal ? (y_traj - rho * ny) : (y_traj + rho * ny);
 
             const rot = -Math.PI / absZ;
             points.push({
@@ -173,8 +193,8 @@ function calculateRootTrochoid(eqResult, mn, rhoaP_coeff, z, nPts = 200) {
         // Correct epicyclic rolling ratio: positive for external, negative for internal
         const rollingRatio = isInternal ? -(a / r2) : (a / r2);
 
-        for (let i = 0; i <= nPts; i++) {
-            const phi_g = phi_gap - phi_range / 2 + (i / nPts) * phi_range;
+        for (let i = 0; i <= sweepPts; i++) {
+            const phi_g = phi_gap - phi_range / 2 + (i / sweepPts) * phi_range;
             const theta = (phi_g - phi_gap) * rollingRatio + (phi_gap - Math.PI / 2);
 
             const x_traj = Xc * Math.cos(theta) - Yc * Math.sin(theta) + a * Math.cos(phi_g);
@@ -192,8 +212,12 @@ function calculateRootTrochoid(eqResult, mn, rhoaP_coeff, z, nPts = 200) {
             const x1 = x_traj + rho * nx, y1 = y_traj + rho * ny;
             const x2 = x_traj - rho * nx, y2 = y_traj - rho * ny;
 
-            let xp = isInternal ? (x1 * x1 + y1 * y1 > x2 * x2 + y2 * y2 ? x1 : x2) : (x1 * x1 + y1 * y1 < x2 * x2 + y2 * y2 ? x1 : x2);
-            let yp = isInternal ? (x1 * x1 + y1 * y1 > x2 * x2 + y2 * y2 ? y1 : y2) : (x1 * x1 + y1 * y1 < x2 * x2 + y2 * y2 ? y1 : y2);
+            // For external gears, (x_traj + rho*n) is always the active outward cutting surface.
+            // For internal gears, (x_traj - rho*n) is the active inward cutting surface.
+            // The old radius-comparison heuristic flips when the backside of the cutter tip arc
+            // becomes radially closer to the gear centre than the active edge (e.g. low tooth counts).
+            const xp = isInternal ? x2 : x1;
+            const yp = isInternal ? y2 : y1;
 
             points.push({ x: xp, y: yp });
         }
@@ -244,17 +268,17 @@ function assembleToothProfile(eqResult, z, mn, alpha_t, d, db, st, dFf, da, rhoa
     const trochRes = calculateRootTrochoid(eqResult, mn, rhoaP_coeff, z);
     if (!trochRes.success) return trochRes;
 
+    const r_b = Math.abs(db) / 2;
     const invRes = calculateInvoluteFlank(db, d, st, alpha_t, dFf, da);
     if (!invRes.success) return invRes;
     const invPts = invRes.points;
 
-    // Extend involute to dFf if it was clipped by db (undercut)
-    const pInvStart = invPts[0];
-    const r_actual_inv_start = Math.hypot(pInvStart.x, pInvStart.y);
-    if (Math.abs(r_actual_inv_start - r_Ff) > 1e-4) {
-        const ang = Math.atan2(pInvStart.y, pInvStart.x);
-        invPts.unshift({ x: r_Ff * Math.cos(ang), y: r_Ff * Math.sin(ang) });
-    }
+    // The involute start is clamped to max(r_Ff, r_b) inside calculateInvoluteFlank.
+    // In the undercut case (dFf < db) the join between trochoid and involute occurs at
+    // r_b, not r_Ff.  Do NOT prepend a fake radial extension from r_b to r_Ff — that
+    // point lies on neither curve and produces the straight-line artefact.
+    // r_stitch is the actual radius at which the two curves meet.
+    const r_stitch = Math.max(r_Ff, r_b);
 
     // -- 2. Robust Stitching: Find Root and Connection Point --
     // phi_range covers ~4× the half-pitch, so the raw trochoid extends well into
@@ -298,28 +322,47 @@ function assembleToothProfile(eqResult, z, mn, alpha_t, d, db, st, dFf, da, rhoa
     }
 
     // -- 3. Extract the Fillet Segment --
-    // We take the continuous path between the root and the stitch point
+    // We take the continuous path between the root and slightly past the stitch point
+    // so the exact crossing at r_stitch can be cleanly interpolated
     let filletPts = [];
     if (stitchIdx !== -1) {
         if (rootIdx <= stitchIdx) {
-            filletPts = trochRes.points.slice(rootIdx, stitchIdx + 1).map(p => ({ ...p }));
+            const endIdx = Math.min(trochRes.points.length - 1, stitchIdx + 10);
+            filletPts = trochRes.points.slice(rootIdx, endIdx + 1).map(p => ({ ...p }));
         } else {
-            filletPts = trochRes.points.slice(stitchIdx, rootIdx + 1).reverse().map(p => ({ ...p }));
+            const startIdx = Math.max(0, stitchIdx - 10);
+            filletPts = trochRes.points.slice(startIdx, rootIdx + 1).reverse().map(p => ({ ...p }));
         }
     }
 
     // -- 4. Radius Culling and Angular Alignment --
     if (filletPts.length > 0) {
-        // A) Radius Culling: Remove points that extend past the form diameter
-        // (Due to discrete simulation steps, the 'closest' point might be slightly too high)
+        // A) Radius Culling: Remove points that extend past the stitch radius,
+        // and interpolate the exact boundary point at r_stitch.
+        let popped = null;
         while (filletPts.length > 1) {
             const last = filletPts[filletPts.length - 1];
             const r = Math.hypot(last.x, last.y);
-            // External: cull if r > r_Ff. Internal: cull if r < r_Ff.
-            if (isInternal ? (r < r_Ff - 1e-6) : (r > r_Ff + 1e-6)) {
-                filletPts.pop();
+            // External: cull if r > r_stitch. Internal: cull if r < r_stitch.
+            if (isInternal ? (r < r_stitch - 1e-6) : (r > r_stitch + 1e-6)) {
+                popped = filletPts.pop();
             } else {
                 break;
+            }
+        }
+
+        // Interpolate the exact boundary point on the curve at r_stitch
+        if (popped) {
+            const pA = filletPts[filletPts.length - 1];
+            const pB = popped;
+            const rA = Math.hypot(pA.x, pA.y);
+            const rB = Math.hypot(pB.x, pB.y);
+            if (Math.abs(rB - rA) > 1e-9) {
+                const t = (r_stitch - rA) / (rB - rA);
+                filletPts.push({
+                    x: pA.x + t * (pB.x - pA.x),
+                    y: pA.y + t * (pB.y - pA.y)
+                });
             }
         }
 
@@ -343,12 +386,12 @@ function assembleToothProfile(eqResult, z, mn, alpha_t, d, db, st, dFf, da, rhoa
             }
         }
 
-        // C) Radius Snapping: Ensure the final point is exactly on the r_Ff circle
-        // This eliminates the tiny radial gap that remains after rotation
+        // C) Radius Snapping: Ensure the final point is exactly on the r_stitch circle.
+        // Use r_stitch (not r_Ff) so the undercut case is handled correctly.
         const last = filletPts[filletPts.length - 1];
         const rCurrent = Math.hypot(last.x, last.y);
         if (rCurrent > 0) {
-            const scale = r_Ff / rCurrent;
+            const scale = r_stitch / rCurrent;
             last.x *= scale;
             last.y *= scale;
         }
@@ -1323,13 +1366,8 @@ function _drawInMesh2D(canvas, gearPts, toolPts, gearCache, toolRes, rollPhase =
     }
 }
 
-function _drawFullAssembly2D(canvas, state) {
-    if (!canvas || !window.assemblyCache || window.assemblyCache.length === 0) return;
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width;
-    const H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
-
+function _computeAssemblyLayout(rollPhase) {
+    if (!window.assemblyCache || window.assemblyCache.length === 0) return null;
     const config = document.getElementById('gear-config')?.value || 'pair';
     const gearCount = (config === 'pair') ? 2 : ((config === 'planetary' || config === '3-train') ? 3 : 4);
 
@@ -1337,28 +1375,16 @@ function _drawFullAssembly2D(canvas, state) {
     const aw2 = parseFloat(document.getElementById('aw2')?.value) || 50;
     const aw3 = parseFloat(document.getElementById('aw3')?.value) || 50;
 
-    const rollPhase = state.rollPhase || 0;
     const g1 = window.assemblyCache[1];
-    if (!g1 || !g1.cache) return;
+    if (!g1 || !g1.cache) return null;
 
     const z1 = Math.abs(g1.cache.z || 20);
-    const phi = rollPhase * (2 * Math.PI / z1); // driver rotation in radians
+    const phi = (rollPhase || 0) * (2 * Math.PI / z1); // driver rotation in radians
 
     // All teeth generated by assembleToothProfile are centered on +y axis (angle Math.PI/2).
     // Rotating by -Math.PI/2 aligns tooth 0 exactly along the +x axis (angle 0).
     const baseRot = -Math.PI / 2;
     const gearInstances = [];
-
-    // Gear 1 (Driver / Sun) at (0, 0)
-    // Contact with G2 is at angle 0 (+x axis). Tip at 0.
-    gearInstances.push({
-        idx: 1,
-        x: 0,
-        y: 0,
-        rot: baseRot + phi,
-        data: g1,
-        col: '#3498db'
-    });
 
     const signedAw = (zA, zB, aw) => {
         return (zA < 0 || zB < 0) ? -aw : aw;
@@ -1393,6 +1419,18 @@ function _drawFullAssembly2D(canvas, state) {
     const k_rot = [0, 1]; // 1-based indexing for matching gear indices
     const rot1_static = baseRot;
 
+    // Gear 1 (Driver / Sun) at (0, 0)
+    gearInstances.push({
+        idx: 1,
+        x: 0,
+        y: 0,
+        rot_static: rot1_static,
+        k_rot: k_rot[1],
+        rot: baseRot + phi,
+        data: g1,
+        col: '#3498db'
+    });
+
     // Gear 2 (Planet / Driven)
     const g2 = window.assemblyCache[2];
     if (g2 && g2.cache && gearCount >= 2) {
@@ -1422,6 +1460,8 @@ function _drawFullAssembly2D(canvas, state) {
                 idx: 2,
                 x: g2_x,
                 y: g2_y,
+                rot_static: rot2_static,
+                k_rot: k_rot[2],
                 rot: rot2,
                 data: g2,
                 col: '#e67e22'
@@ -1454,6 +1494,8 @@ function _drawFullAssembly2D(canvas, state) {
                 idx: 3,
                 x: x3,
                 y: y3,
+                rot_static: rot3_static,
+                k_rot: k_rot[3],
                 rot: rot3,
                 data: g3,
                 col: '#9b59b6'
@@ -1471,6 +1513,8 @@ function _drawFullAssembly2D(canvas, state) {
                 idx: 3,
                 x: x3,
                 y: y3,
+                rot_static: rot3_static,
+                k_rot: k_rot[3],
                 rot: rot3,
                 data: g3,
                 col: '#9b59b6'
@@ -1498,11 +1542,45 @@ function _drawFullAssembly2D(canvas, state) {
             idx: 4,
             x: x4,
             y: y4,
+            rot_static: rot4_static,
+            k_rot: k_rot[4],
             rot: rot4,
             data: g4,
             col: '#2ecc71'
         });
     }
+
+    return { gearInstances, phi, z1, k_rot, config };
+}
+window._computeAssemblyLayout = _computeAssemblyLayout;
+
+function _syncAssemblyTo3D(rollPhase) {
+    if (typeof canvas3DStates !== 'undefined' && canvas3DStates['canvas-assembly-3d']) {
+        const state3D = canvas3DStates['canvas-assembly-3d'];
+        state3D.rollPhase = rollPhase;
+        const slider3D = document.getElementById('roll-slider-assembly-3d');
+        if (slider3D) {
+            let clamped = ((rollPhase % 2) + 2) % 2;
+            if (clamped > 1) clamped -= 2;
+            slider3D.value = clamped;
+        }
+        if (typeof _updateAssembly3DRotation === 'function') {
+            _updateAssembly3DRotation(state3D);
+        }
+    }
+}
+window._syncAssemblyTo3D = _syncAssemblyTo3D;
+
+function _drawFullAssembly2D(canvas, state) {
+    if (!canvas || !window.assemblyCache || window.assemblyCache.length === 0) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const layout = _computeAssemblyLayout(state.rollPhase || 0);
+    if (!layout || !layout.gearInstances || layout.gearInstances.length === 0) return;
+    const { gearInstances } = layout;
 
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     gearInstances.forEach(inst => {
@@ -1777,6 +1855,9 @@ function initGraphicsHandlers() {
                 slider.addEventListener('input', (e) => {
                     state.rollPhase = parseFloat(e.target.value);
                     _redrawCanvas(canvas, state, id);
+                    if (id === 'canvas-assembly' && typeof _syncAssemblyTo3D === 'function') {
+                        _syncAssemblyTo3D(state.rollPhase);
+                    }
                 });
             }
 
@@ -1803,6 +1884,9 @@ function initGraphicsHandlers() {
                         slider.value = clamped;
                     }
                     _redrawCanvas(canvas, state, id);
+                    if (id === 'canvas-assembly' && typeof _syncAssemblyTo3D === 'function') {
+                        _syncAssemblyTo3D(state.rollPhase);
+                    }
                     animFrameId = requestAnimationFrame(loop);
                 };
                 animFrameId = requestAnimationFrame(loop);
@@ -1884,6 +1968,9 @@ function resetGearView(canvasId) {
             const num = canvasId === 'canvas-assembly' ? 'assembly' : canvasId.split('-').pop();
             const slider = document.getElementById('roll-slider-' + num);
             if (slider) slider.value = 0;
+            if (canvasId === 'canvas-assembly' && typeof _syncAssemblyTo3D === 'function') {
+                _syncAssemblyTo3D(0);
+            }
         }
         const canvas = document.getElementById(canvasId);
         if (canvas) {

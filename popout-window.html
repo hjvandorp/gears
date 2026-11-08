@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gear Graphics</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --border: rgba(48, 54, 61, 0.9);
+            --input-bg: #010409;
+            --input-border: #30363d;
+            --text: #c9d1d9;
+            --muted: #8b949e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            padding: 12px 14px 14px;
+            overflow: hidden;
+        }
+
+        h2 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 8px;
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        /* Viewport: fills remaining space, clips overflow */
+        #viewport {
+            width: 100%;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: grab;
+            background: #0a0e14;
+        }
+
+        #viewport:active { cursor: grabbing; }
+
+        /* The image is centred; JS applies a CSS transform for pan/zoom */
+        #view-img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: center center;
+            transform: translate(-50%, -50%) scale(1);
+            max-width: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            display: none;
+        }
+
+        #placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-style: italic;
+            font-size: 0.88rem;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 8px;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        button {
+            background: var(--input-bg);
+            color: var(--text);
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            padding: 4px 11px;
+            font-size: 0.78rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        button:hover { background: #1f2937; color: #fff; }
+
+        #status {
+            margin-top: 7px;
+            font-size: 0.72rem;
+            color: var(--muted);
+            font-style: italic;
+            flex-shrink: 0;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h2 id="popout-title">Gear Graphics</h2>
+
+    <div id="viewport">
+        <div id="placeholder">Waiting for data from main window…</div>
+        <img id="view-img" alt="Gear graphic">
+    </div>
+
+    <div class="btn-row">
+        <button id="btn-fit">Reset / Fit</button>
+    </div>
+
+    <div id="status">Connecting to main window…</div>
+
+    <script>
+    // ─────────────────────────────────────────────────────────────────────────
+    // popout-window.html
+    //
+    // Communication (postMessage — works for file:// in all browsers):
+    //   On load: sends { type:'popout-ready', canvasId } to window.opener
+    //   On message: receives { type:'popout-data', dataURL, title, hint }
+    //               and displays the image.
+    // ─────────────────────────────────────────────────────────────────────────
+
+    const viewport    = document.getElementById('viewport');
+    const img         = document.getElementById('view-img');
+    const placeholder = document.getElementById('placeholder');
+    const statusEl    = document.getElementById('status');
+    const titleEl     = document.getElementById('popout-title');
+
+    // Read the canvas id from the URL fragment (#canvas-2d-1 etc.)
+    const canvasId = decodeURIComponent(window.location.hash.slice(1)) || '';
+
+    if (canvasId) {
+        const labels = {
+            'canvas-assembly': '2D Full Assembly',
+        };
+        const m2d     = canvasId.match(/^canvas-2d-(\d+)$/);
+        const minmesh = canvasId.match(/^canvas-inmesh-(\d+)$/);
+        const title   = labels[canvasId]
+                        || (m2d     ? '2D Gear Profile \u2013 Gear '    + m2d[1]     : null)
+                        || (minmesh ? '2D In-Mesh View \u2013 Gear ' + minmesh[1] : null)
+                        || 'Gear Graphics';
+        titleEl.textContent = title;
+        document.title      = title;
+    }
+
+    // ── Pan / Zoom ────────────────────────────────────────────────────────────
+    let zoom = 1, panX = 0, panY = 0;
+
+    function applyTransform() {
+        img.style.transform =
+            'translate(calc(-50% + ' + panX + 'px), calc(-50% + ' + panY + 'px)) scale(' + zoom + ')';
+    }
+
+    function fitToWindow() {
+        zoom = 1; panX = 0; panY = 0;
+        applyTransform();
+    }
+
+    viewport.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        const rect   = viewport.getBoundingClientRect();
+        const mx     = e.clientX - rect.left - rect.width  / 2;
+        const my     = e.clientY - rect.top  - rect.height / 2;
+        const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+        panX  = mx + (panX - mx) * factor;
+        panY  = my + (panY - my) * factor;
+        zoom  = Math.max(0.05, Math.min(zoom * factor, 80));
+        applyTransform();
+    }, { passive: false });
+
+    let dragging = false, lastX = 0, lastY = 0;
+
+    viewport.addEventListener('mousedown', function (e) {
+        dragging = true;
+        lastX = e.clientX; lastY = e.clientY;
+        viewport.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mousemove', function (e) {
+        if (!dragging) return;
+        panX += e.clientX - lastX;
+        panY += e.clientY - lastY;
+        lastX = e.clientX; lastY = e.clientY;
+        applyTransform();
+    });
+
+    window.addEventListener('mouseup', function () {
+        dragging = false;
+        viewport.style.cursor = 'grab';
+    });
+
+    document.getElementById('btn-fit').addEventListener('click', fitToWindow);
+
+    // ── Receive image data via postMessage ────────────────────────────────────
+    window.addEventListener('message', function (e) {
+        const msg = e.data;
+        if (!msg || msg.type !== 'popout-data') return;
+
+        if (msg.title) {
+            titleEl.textContent = msg.title;
+            document.title      = msg.title;
+        }
+
+        if (!msg.dataURL) {
+            placeholder.textContent = msg.hint || 'Run \u201cCalculate All\u201d to generate graphics.';
+            placeholder.style.display = 'flex';
+            statusEl.textContent = 'No data yet.';
+            return;
+        }
+
+        img.onload = function () {
+            placeholder.style.display = 'none';
+            img.style.display = 'block';
+        };
+        img.src = msg.dataURL;
+        statusEl.textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+    });
+
+    // ── Signal opener that this window is ready to receive data ───────────────
+    // Use a small delay to ensure the message listener above is registered first.
+    function signalReady() {
+        if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({ type: 'popout-ready', canvasId: canvasId }, '*');
+            statusEl.textContent = 'Connected. Waiting for data…';
+        } else {
+            statusEl.textContent = 'No opener found. Open via the main app.';
+        }
+    }
+
+    // Try immediately, then again after a short delay as a fallback.
+    signalReady();
+    setTimeout(signalReady, 300);
+    </script>
+</body>
+</html>

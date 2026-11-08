@@ -1837,6 +1837,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                                         const stMax = snMax / cosBetaG;
                                         const dmVal = parseFloat(document.getElementById('dm-' + i)?.value) || 0;
+                                        const bVal = parseFloat(document.getElementById('b' + i)?.value) || 10;
+                                        const gBeta = gearBetas[i - 1] || 0;
                                         gearGeomCache[i] = {
                                             z: zVal,
                                             mn: mn,
@@ -1862,12 +1864,18 @@ document.addEventListener('DOMContentLoaded', () => {
                                                 const canvas2d = document.getElementById('canvas-2d-' + i);
 
                                                 if (canvas2d) {
+                                                    // Store drawing data in canvasStates so pop-out windows and zoom/pan redraws can access it
+                                                    if (!window.canvasStates) window.canvasStates = {};
+                                                    if (!window.canvasStates['canvas-2d-' + i]) window.canvasStates['canvas-2d-' + i] = { zoom: 1, offsetX: 0, offsetY: 0 };
+                                                    const state2d = window.canvasStates['canvas-2d-' + i];
+                                                    state2d.points = profileRes.points;
+                                                    state2d.geom = profileRes.geom;
+                                                    state2d.di = diVal;
+                                                    state2d.holePattern = holePattern;
                                                     _drawGear2D(canvas2d, profileRes.points, profileRes.geom, diVal, holePattern);
                                                 }
                                                 const canvas3d = document.getElementById('canvas-3d-' + i);
                                                 if (canvas3d && typeof _drawGear3D === 'function') {
-                                                    const bVal = parseFloat(document.getElementById('b' + i).value) || 10;
-                                                    const gBeta = gearBetas[i - 1] || 0;
                                                     _drawGear3D(canvas3d, profileRes.points, profileRes.geom, bVal, gBeta, diVal, holePattern);
                                                 }
 
@@ -1904,7 +1912,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                                             points: profileRes.points,
                                                             geom: profileRes.geom,
                                                             cache: gearGeomCache[i],
-                                                            toolRes: toolRes
+                                                            toolRes: toolRes,
+                                                            b: bVal,
+                                                            beta: gBeta,
+                                                            di: diVal,
+                                                            holePattern: holePattern
                                                         };
                                                     }
                                                 }
@@ -2170,6 +2182,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof _drawFullAssembly2D === 'function') {
                 _drawFullAssembly2D(canvasAssembly, stateA);
             }
+        }
+
+        const canvasAssembly3D = document.getElementById('canvas-assembly-3d');
+        if (canvasAssembly3D && window.assemblyCache) {
+            if (typeof _drawFullAssembly3D === 'function') {
+                _drawFullAssembly3D(canvasAssembly3D);
+            }
+        }
+
+        // Notify any open pop-out windows that new data is available
+        if (typeof window.notifyPopouts === 'function') {
+            window.notifyPopouts();
         }
 
         // ==========================================
